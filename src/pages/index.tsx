@@ -5,7 +5,25 @@ import styles from "@/styles/Home.module.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export async function getStaticProps() {
+	try {
+		const res = await fetch(`${process.env.VERCEL_URL ?? "http://localhost:3000/"}/api/categories`);
+		const data = await res.json();
+		return {
+			props: {
+				categories: data,
+			},
+		};
+	} catch (error) {
+		return {
+			props: {
+				categories: [],
+			},
+		};
+	}
+}
+
+export default function Home({ categories = [] }) {
 	return (
 		<>
 			<Head>
@@ -15,6 +33,9 @@ export default function Home() {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<h1 className="text-3xl font-bold underline">Hello world!</h1>
+			{categories.map((cat) => (
+				<h1 key={cat.id}>{cat.name}</h1>
+			))}
 		</>
 	);
 }
