@@ -2,9 +2,9 @@ import { PrismaClient } from "@prisma/client";
 
 const client = new PrismaClient();
 async function seed() {
+	await client.sport.deleteMany();
 	await client.category.deleteMany();
 	await client.discount.deleteMany();
-	await client.sport.deleteMany();
 
 	const discounts = await client.discount.createMany({
 		data: [

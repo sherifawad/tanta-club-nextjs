@@ -1,28 +1,27 @@
 import Head from "next/head";
-import Image from "next/image";
 import { Inter } from "@next/font/google";
-import styles from "@/styles/Home.module.css";
 import { Category } from "@prisma/client";
+import { getCategories } from "@/data/categoriesData";
+import { prisma } from "lib/prisma";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export async function getStaticProps() {
 	try {
-		const res = await fetch(`${process.env.VERCEL_URL ?? "http://localhost:3000"}/api/categories`);
-		const data = await res.json();
+		const categories = await prisma.category.findMany();
 		return {
 			props: {
-				categories: data,
+				categories: categories,
 			},
 		};
 	} catch (error) {
 		return {
-			props: {},
+			props: { categories: null },
 		};
 	}
 }
 
-export default function Home({ categories }: { categories: Category[] }) {
+export default function Home({ categories = [] }: { categories: Category[] | null }) {
 	return (
 		<>
 			<Head>
@@ -32,6 +31,7 @@ export default function Home({ categories }: { categories: Category[] }) {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<h1 className="text-3xl font-bold underline">Hello world!</h1>
+			{/* {JSON.stringify(categories, null, 2)} */}
 			{categories?.map((cat) => (
 				<h1 key={cat.id}>{cat.name}</h1>
 			))}
