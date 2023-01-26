@@ -18,7 +18,8 @@ enum DiscountType {
 model Sport {
     id              Int        @id @default(autoincrement())
     name            String?
-    code            String?    @unique
+    title           String?
+    code            String?
     price           Float
     createdAt       DateTime   @default(now()) @map(name: "created_at")
     updatedAt       DateTime   @updatedAt @map(name: "updated_at")
@@ -30,13 +31,16 @@ model Sport {
 model Category {
     id     Int     @id @default(autoincrement())
     name   String
+    title  String?
     sports Sport[]
 }
 
 model Discount {
     id      Int          @id @default(autoincrement())
     name    String
+    title   String?
     type    DiscountType
+    step    Float
     minimum Float
     Maximum Float
     sports  Sport[]
