@@ -2,10 +2,42 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum DiscountType {
+    FIXED
+    PERCENTAGE
+}
+
+model Sport {
+    id              Int        @id @default(autoincrement())
+    name            String?
+    code            String?    @unique
+    price           Float
+    createdAt       DateTime   @default(now()) @map(name: "created_at")
+    updatedAt       DateTime   @updatedAt @map(name: "updated_at")
+    DiscountOptions Discount[]
+    Category        Category?  @relation(fields: [categoryId], references: [id])
+    categoryId      Int?
+}
+
+model Category {
+    id     Int     @id @default(autoincrement())
+    name   String
+    sports Sport[]
+}
+
+model Discount {
+    id      Int          @id @default(autoincrement())
+    name    String
+    type    DiscountType
+    minimum Float
+    Maximum Float
+    sports  Sport[]
 }
