@@ -2,12 +2,13 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
+import { Category } from "@prisma/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export async function getStaticProps() {
 	try {
-		const res = await fetch(`${process.env.VERCEL_URL ?? "http://localhost:3000/"}/api/categories`);
+		const res = await fetch(`${process.env.VERCEL_URL ?? "http://localhost:3000"}/api/categories`);
 		const data = await res.json();
 		return {
 			props: {
@@ -16,14 +17,12 @@ export async function getStaticProps() {
 		};
 	} catch (error) {
 		return {
-			props: {
-				categories: [],
-			},
+			props: {},
 		};
 	}
 }
 
-export default function Home({ categories = [] }) {
+export default function Home({ categories }: { categories: Category[] }) {
 	return (
 		<>
 			<Head>
@@ -33,7 +32,7 @@ export default function Home({ categories = [] }) {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<h1 className="text-3xl font-bold underline">Hello world!</h1>
-			{categories.map((cat) => (
+			{categories?.map((cat) => (
 				<h1 key={cat.id}>{cat.name}</h1>
 			))}
 		</>
