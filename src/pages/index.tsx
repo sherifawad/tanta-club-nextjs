@@ -1,27 +1,53 @@
 import Head from "next/head";
 import { Inter } from "@next/font/google";
-import { Category } from "@prisma/client";
-import { getCategories } from "@/data/categoriesData";
+import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
+import SingleSelection from "@/components/ui/SingleSelection";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export async function getStaticProps() {
 	try {
 		const categories = await prisma.category.findMany();
+		const discounts = await prisma.discount.findMany();
+		const penalties = await prisma.penalty.findMany();
+		const sports = await prisma.sport.findMany({
+			include: {
+				DiscountOptions: true,
+				Category: true,
+				Penalty: true,
+			},
+		});
 		return {
 			props: {
-				categories: categories,
+				categories,
+				discounts,
+				penalties,
+				sports: sports.map((x) => ({
+					...x,
+					createdAt: x.createdAt.toString(),
+					updatedAt: x.updatedAt.toString(),
+				})),
 			},
 		};
 	} catch (error) {
 		return {
-			props: { categories: null },
+			props: {},
 		};
 	}
 }
 
-export default function Home({ categories = [] }: { categories: Category[] | null }) {
+export default function Home({
+	categories = [],
+	discounts = [],
+	penalties = [],
+	sports = [],
+}: {
+	categories: Category[] | null;
+	discounts: Discount[] | null;
+	penalties: Penalty[] | null;
+	sports: Sport[] | null;
+}) {
 	return (
 		<>
 			<Head>
@@ -32,9 +58,53 @@ export default function Home({ categories = [] }: { categories: Category[] | nul
 			</Head>
 			<h1 className="text-3xl font-bold underline">Hello world!</h1>
 			{/* {JSON.stringify(categories, null, 2)} */}
-			{categories?.map((cat) => (
+			{/* {categories?.map((cat) => (
 				<h1 key={cat.id}>{cat.name}</h1>
-			))}
+			))} */}
+			{categories ? (
+				<SingleSelection
+					optionsList={categories.map((cat) => (
+						<option key={cat.id} value={cat.id}>
+							{cat.name}
+						</option>
+					))}
+				/>
+			) : (
+				""
+			)}
+			{discounts ? (
+				<SingleSelection
+					optionsList={discounts.map((dis) => (
+						<option key={dis.id} value={dis.id}>
+							{dis.name}
+						</option>
+					))}
+				/>
+			) : (
+				""
+			)}
+			{penalties ? (
+				<SingleSelection
+					optionsList={penalties.map((pen) => (
+						<option key={pen.id} value={pen.id}>
+							{pen.name}
+						</option>
+					))}
+				/>
+			) : (
+				""
+			)}
+			{sports ? (
+				<SingleSelection
+					optionsList={sports.map((sport) => (
+						<option key={sport.id} value={sport.id}>
+							{sport.name}
+						</option>
+					))}
+				/>
+			) : (
+				""
+			)}
 		</>
 	);
 }

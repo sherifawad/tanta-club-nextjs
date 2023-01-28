@@ -9,7 +9,11 @@ export async function getCategories() {
 	try {
 		// 👇️ const data: GetCategoriesResponse
 		const { data, status } = await axios.get<GetCategoriesResponse>(
-			`${process?.env?.VERCEL_URL ?? "http://localhost:3000"}/api/categories`,
+			`${
+				process.env.NODE_ENV !== "production"
+					? "http://localhost:3000"
+					: "tanta-club-nextjs.vercel.app"
+			}/api/categories`,
 			{
 				headers: {
 					Accept: "application/json",

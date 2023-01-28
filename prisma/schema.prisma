@@ -15,6 +15,12 @@ enum DiscountType {
     PERCENTAGE
 }
 
+enum RepetationType {
+    DAILY
+    MONTHLY
+    YEARLY
+}
+
 model Sport {
     id              Int        @id @default(autoincrement())
     name            String?
@@ -26,6 +32,8 @@ model Sport {
     DiscountOptions Discount[]
     Category        Category?  @relation(fields: [categoryId], references: [id])
     categoryId      Int?
+    Penalty         Penalty?   @relation(fields: [penaltyId], references: [id])
+    penaltyId       Int?
 }
 
 model Category {
@@ -44,4 +52,18 @@ model Discount {
     minimum Float
     Maximum Float
     sports  Sport[]
+}
+
+model Penalty {
+    id         Int             @id @default(autoincrement())
+    name       String
+    title      String?
+    type       DiscountType
+    repeated   RepetationType?
+    startDate  Int?
+    startMonth Int?
+    step       Float
+    minimum    Float
+    Maximum    Float
+    sports     Sport[]
 }
