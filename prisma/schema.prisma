@@ -26,6 +26,7 @@ model Sport {
     name            String?
     title           String?
     code            String?
+    note            String?
     price           Float
     createdAt       DateTime   @default(now()) @map(name: "created_at")
     updatedAt       DateTime   @updatedAt @map(name: "updated_at")
@@ -40,28 +41,37 @@ model Category {
     id     Int     @id @default(autoincrement())
     name   String
     title  String?
+    note   String?
     sports Sport[]
 }
 
 model Discount {
-    id      Int          @id @default(autoincrement())
-    name    String
-    title   String?
-    type    DiscountType
-    step    Float
-    minimum Float
-    Maximum Float
-    sports  Sport[]
+    id         Int          @id @default(autoincrement())
+    name       String
+    title      String?
+    note       String?
+    type       DiscountType
+    step       Float
+    minimum    Float
+    Maximum    Float
+    startDay   Int?
+    startMonth Int?
+    endDay     Int?
+    endMonth   Int?
+    sports     Sport[]
 }
 
 model Penalty {
     id         Int             @id @default(autoincrement())
     name       String
     title      String?
+    note       String?
     type       DiscountType
     repeated   RepetationType?
-    startDate  Int?
+    startDay   Int?
     startMonth Int?
+    endDay     Int?
+    endMonth   Int?
     step       Float
     minimum    Float
     Maximum    Float

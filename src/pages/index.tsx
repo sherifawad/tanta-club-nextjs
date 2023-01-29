@@ -3,6 +3,9 @@ import { Inter } from "@next/font/google";
 import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
 import SingleSelection from "@/components/ui/SingleSelection";
+import Card from "@/components/Card";
+import { useEffect, useState } from "react";
+import { PlayerSport, onePlayer } from "@/utils/calc";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,8 +49,70 @@ export default function Home({
 	categories: Category[] | null;
 	discounts: Discount[] | null;
 	penalties: Penalty[] | null;
-	sports: Sport[] | null;
+	sports: PlayerSport[] | null;
 }) {
+	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
+	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
+	const [selectedSportId, setSelectedSportId] = useState<number>();
+	const [selectedSportsList, setSelectedSportsList] = useState<PlayerSport[]>([]);
+	const [sportsResultList, setSportsResultList] = useState([]);
+
+	const onSelectedCategoryChange = (categoryId: number) => {
+		setSelectedCategoryId(categoryId);
+		const sportsList = sports?.filter((sport) => sport.categoryId === categoryId);
+		setSportsList((prev) => {
+			if (sportsList) {
+				setSelectedSportId(sportsList[0].id);
+				return sportsList;
+			}
+			return [];
+		});
+	};
+
+	const onSelectedSportChange = (sportId: number) => {
+		setSelectedSportId(sportId);
+	};
+
+	const onSportAdded = (sportId: Number | undefined) => {
+		if (!sportId) return;
+		const exist = selectedSportsList.some((sport) => sport.id === sportId);
+		if (exist) return;
+		const selectedSport = sportsList.find((sport) => sport.id === sportId);
+
+		setSelectedSportsList((prev) => {
+			if (selectedSport) {
+				return [...prev, selectedSport].sort((s1, s2) =>
+					s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
+				);
+			}
+			return prev;
+		});
+	};
+
+	const calculationHandler = () => {
+		const result = onePlayer({
+			name: "player",
+			sports: selectedSportsList,
+		});
+		const refracted = result?.sports.map((sport) => {
+			return {
+				name: sport.name,
+				price: sport.price,
+			};
+		});
+		setSportsResultList(refracted);
+	};
+
+	useEffect(() => {
+		if (categories && sports) {
+			const sportsList = sports?.filter((sport) => sport.categoryId === selectedCategoryId);
+			if (!sportsList) return;
+			setSportsList(sportsList ?? []);
+			setSelectedSportId(sportsList[0]?.id);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<>
 			<Head>
@@ -61,6 +126,9 @@ export default function Home({
 			{/* {categories?.map((cat) => (
 				<h1 key={cat.id}>{cat.name}</h1>
 			))} */}
+			{/* <div className="flex">
+				{categories ? categories.map((cat) => <Card key={cat.id} title={cat.name} />) : ""}
+			</div> */}
 			{categories ? (
 				<SingleSelection
 					optionsList={categories.map((cat) => (
@@ -68,6 +136,8 @@ export default function Home({
 							{cat.name}
 						</option>
 					))}
+					value={selectedCategoryId}
+					onChange={(e) => onSelectedCategoryChange(Number(e.target.value))}
 				/>
 			) : (
 				""
@@ -94,17 +164,25 @@ export default function Home({
 			) : (
 				""
 			)}
-			{sports ? (
+			{sportsList ? (
 				<SingleSelection
-					optionsList={sports.map((sport) => (
+					optionsList={sportsList.map((sport) => (
 						<option key={sport.id} value={sport.id}>
 							{sport.name}
 						</option>
 					))}
+					value={selectedSportId}
+					onChange={(e) => onSelectedSportChange(Number(e.target.value))}
 				/>
 			) : (
 				""
 			)}
+			<div className="flex flex-col gap-4">
+				<button onClick={() => onSportAdded(selectedSportId)}>Add</button>
+				{JSON.stringify(selectedSportsList, null, 2)}
+				<button onClick={() => calculationHandler()}>cal</button>
+				{JSON.stringify(sportsResultList, null, 2)}
+			</div>
 		</>
 	);
 }

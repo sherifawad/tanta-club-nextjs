@@ -17,7 +17,7 @@ async function seed() {
 				step: 5,
 				name: "swimmingDelayPenalty",
 				repeated: "MONTHLY",
-				startDate: 11,
+				startDay: 11,
 			},
 		],
 	});
@@ -62,7 +62,9 @@ async function seed() {
 				minimum: 10,
 				Maximum: 10,
 				step: 0,
-				name: "firstWeek",
+				name: "firstDays",
+				startDay: 1,
+				endDay: 5,
 			},
 			{
 				id: 6,
@@ -305,7 +307,7 @@ async function seed() {
 
 	await client.sport.create({
 		data: {
-			name: "pingPong",
+			name: "pingPongMonthly",
 			price: 350,
 			categoryId: 8,
 			DiscountOptions: {
@@ -334,24 +336,6 @@ async function seed() {
 			name: "art",
 			price: 50,
 			categoryId: 9,
-		},
-	});
-
-	await client.sport.create({
-		data: {
-			name: "pingPong",
-			price: 350,
-			categoryId: 8,
-			DiscountOptions: {
-				connect: [
-					{
-						id: 1,
-					},
-					{
-						id: 2,
-					},
-				],
-			},
 		},
 	});
 
