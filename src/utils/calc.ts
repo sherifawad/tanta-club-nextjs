@@ -3,8 +3,11 @@ import {
 	calPriceDiscount,
 	discountDayTimeValidation,
 	divvyUp,
+	firstSportsWithDiscountBigger,
 	maxDiscountSorting,
+	numberOfSportsWithDiscount,
 	playerSportsDiscountSorting,
+	playersMaxDiscountSorting,
 	sportDiscountSorting,
 } from "./utils";
 
@@ -27,143 +30,7 @@ export const calculationResult = (data: Player[]) => {
 		}
 		// لو عدد اللاعبين اقل من 3
 		if (data.length < 3) {
-			const haveManySports = data.every((p) => p.sports.length > 1);
-			// كل لاعب يملك اكثر من لعبة
-			if (haveManySports) {
-				const isSecondSportBigger = data[0].sports[0] <= data[1].sports[0];
-				// قيمة اللعبةالأكبر لللاعب الثاني أكبر
-				if (isSecondSportBigger) {
-					return [
-						{
-							name: data[0].name,
-							sports: data[0].sports.map((s, i) => {
-								if (i === 0) {
-									return { ...s, price: s.price * 0.9 };
-								}
-								return s;
-							}),
-						},
-						{
-							name: data[1].name,
-							sports: data[1].sports.map((s, i) => {
-								if (i === 0) {
-									return { ...s, price: s.price * 0.8 };
-								}
-								return s;
-							}),
-						},
-					];
-				}
-				// قيمة اللعبةالأكبر لللاعب الأول أكبر
-				return [
-					{
-						name: data[1].name,
-						sports: data[1].sports.map((s, i) => {
-							if (i === 0) {
-								return { ...s, price: s.price * 0.9 };
-							}
-							return s;
-						}),
-					},
-					{
-						name: data[0].name,
-						sports: data[0].sports.map((s, i) => {
-							if (i === 0) {
-								return { ...s, price: s.price * 0.8 };
-							}
-							return s;
-						}),
-					},
-				];
-			} else {
-				const playerIndexWithMultiple = data.findIndex((x) => x.sports.length > 1);
-				// كل لاعب يملك رياضة واحدة فقط
-				if (playerIndexWithMultiple === -1) {
-					// قيمة لعبة اللاعب الاول أكبر
-					if (data[0].sports[0].price > data[1].sports[0].price) {
-						return [
-							{
-								name: data[0].name,
-								sports: data[0].sports.map((s) => {
-									return { ...s, price: s.price * 0.9 };
-								}),
-							},
-							currentDay <= 7
-								? {
-										name: data[1].name,
-										sports: data[1].sports.map((s) => {
-											return { ...s, price: s.price * 0.9 };
-										}),
-								  }
-								: {
-										name: data[1].name,
-										sports: data[1].sports,
-								  },
-						];
-					}
-					return [
-						{
-							name: data[1].name,
-							sports: data[1].sports.map((s) => {
-								return { ...s, price: s.price * 0.9 };
-							}),
-						},
-						currentDay <= 7
-							? {
-									name: data[0].name,
-									sports: data[0].sports.map((s) => {
-										return { ...s, price: s.price * 0.9 };
-									}),
-							  }
-							: {
-									name: data[0].name,
-									sports: data[0].sports,
-							  },
-					];
-				} else {
-					// اللاعب الذي يملك أكثر من لعبة
-					const higherPlayer = data[playerIndexWithMultiple];
-					// اللاعب الذي يملك لعبة واحدة
-					const lowerPlayer = data[playerIndexWithMultiple === 0 ? 1 : 0];
-					// لو اللاعب  الاكبر يملك أكثر من لعبتين
-					if (higherPlayer.sports.length > 2) {
-						// سعر اكبر ثاني لعبة أكبر من سعر لعبة اللاعب الثاني
-						if (higherPlayer.sports[1].price > lowerPlayer.sports[0].price) {
-							return [
-								{
-									name: higherPlayer.name,
-									sports: higherPlayer.sports.map((s, i) => {
-										if (i === 0) {
-											return { ...s, price: s.price * 0.8 };
-										} else if (i === 1) {
-											return { ...s, price: s.price * 0.9 };
-										}
-										return s;
-									}),
-								},
-								lowerPlayer,
-							];
-						}
-					}
-					return [
-						{
-							name: higherPlayer.name,
-							sports: data[1].sports.map((s, i) => {
-								if (i === 0) {
-									return { ...s, price: s.price * 0.9 };
-								}
-								return s;
-							}),
-						},
-						{
-							name: lowerPlayer.name,
-							sports: lowerPlayer.sports.map((s, i) => {
-								return { ...s, price: s.price * 0.8 };
-							}),
-						},
-					];
-				}
-			}
+			return twoPlayers(data);
 		}
 		// عدد اللاعبين اكبر من 2
 		else {
@@ -267,9 +134,8 @@ export const calculationResult = (data: Player[]) => {
 };
 
 export const onePlayer = (player: Player) => {
-	const sportsWithDiscount = player.sports.filter((sport) =>
-		sport.DiscountOptions?.some((discount) => discount.id !== 6)
-	); // لو عدد الرياضات واحد
+	const sportsWithDiscount = numberOfSportsWithDiscount(player);
+	// لو عدد الرياضات واحد
 	if (sportsWithDiscount.length === 1) {
 		//check first time Discount
 		const discount = sportsWithDiscount[0].DiscountOptions![0];
@@ -339,12 +205,16 @@ export const onePlayer = (player: Player) => {
 	}
 };
 
-export const lessThanThreePlayers = (players: Player[]) => {
+export const twoPlayers = (players: Player[]): Player[] => {
 	const currentDay = new Date().getDate();
-	const haveManySports = players.every((p) => p.sports.length > 1);
+	// const haveManySports = players.every((p) => p.sports.length > 1);
+	const haveManySports = players.every((p) => numberOfSportsWithDiscount(p).length > 1);
 	// كل لاعب يملك اكثر من لعبة
 	if (haveManySports) {
-		const isSecondSportBigger = players[0].sports[0] <= players[1].sports[0];
+		players = playersMaxDiscountSorting(players);
+
+		// const isSecondSportBigger = players[0].sports[0] <= players[1].sports[0];
+		const isSecondSportBigger = firstSportsWithDiscountBigger(players[1].sports[0], players[0].sports[0]);
 		// قيمة اللعبةالأكبر لللاعب الثاني أكبر
 		if (isSecondSportBigger) {
 			return [
@@ -352,7 +222,10 @@ export const lessThanThreePlayers = (players: Player[]) => {
 					name: players[0].name,
 					sports: players[0].sports.map((s, i) => {
 						if (i === 0) {
-							return { ...s, price: s.price * 0.9 };
+							return {
+								...s,
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+							};
 						}
 						return s;
 					}),
@@ -361,7 +234,7 @@ export const lessThanThreePlayers = (players: Player[]) => {
 					name: players[1].name,
 					sports: players[1].sports.map((s, i) => {
 						if (i === 0) {
-							return { ...s, price: s.price * 0.8 };
+							return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 1) };
 						}
 						return s;
 					}),
@@ -390,89 +263,133 @@ export const lessThanThreePlayers = (players: Player[]) => {
 			},
 		];
 	} else {
-		const playerIndexWithMultiple = players.findIndex((x) => x.sports.length > 1);
+		// const playerIndexWithMultiple = players.findIndex((x) => x.sports.length > 1);
+		const playerIndexWithMultiple = players.findIndex((x) => numberOfSportsWithDiscount(x).length > 1);
 		// كل لاعب يملك رياضة واحدة فقط
 		if (playerIndexWithMultiple === -1) {
 			// قيمة لعبة اللاعب الاول أكبر
-			if (players[0].sports[0].price > players[1].sports[0].price) {
+			if (firstSportsWithDiscountBigger(players[0].sports[0], players[1].sports[0])) {
 				return [
 					{
 						name: players[0].name,
-						sports: players[0].sports.map((s) => {
-							return { ...s, price: s.price * 0.9 };
+						sports: players[0].sports.map((s, i) => {
+							if (i === 0) {
+								return {
+									...s,
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+								};
+							}
+							return s;
 						}),
 					},
-					currentDay <= 7
-						? {
-								name: players[1].name,
-								sports: players[1].sports.map((s) => {
-									return { ...s, price: s.price * 0.9 };
-								}),
-						  }
-						: {
-								name: players[1].name,
-								sports: players[1].sports,
-						  },
+					{
+						name: players[1].name,
+						sports: players[1].sports,
+					},
 				];
 			}
 			return [
 				{
 					name: players[1].name,
-					sports: players[1].sports.map((s) => {
-						return { ...s, price: s.price * 0.9 };
-					}),
-				},
-				currentDay <= 7
-					? {
-							name: players[0].name,
-							sports: players[0].sports.map((s) => {
-								return { ...s, price: s.price * 0.9 };
-							}),
-					  }
-					: {
-							name: players[0].name,
-							sports: players[0].sports,
-					  },
-			];
-		} else {
-			// اللاعب الذي يملك أكثر من لعبة
-			const higherPlayer = players[playerIndexWithMultiple];
-			// اللاعب الذي يملك لعبة واحدة
-			const lowerPlayer = players[playerIndexWithMultiple === 0 ? 1 : 0];
-			// لو اللاعب  الاكبر يملك أكثر من لعبتين
-			if (higherPlayer.sports.length > 2) {
-				// سعر اكبر ثاني لعبة أكبر من سعر لعبة اللاعب الثاني
-				if (higherPlayer.sports[1].price > lowerPlayer.sports[0].price) {
-					return [
-						{
-							name: higherPlayer.name,
-							sports: higherPlayer.sports.map((s, i) => {
-								if (i === 0) {
-									return { ...s, price: s.price * 0.8 };
-								} else if (i === 1) {
-									return { ...s, price: s.price * 0.9 };
-								}
-								return s;
-							}),
-						},
-						lowerPlayer,
-					];
-				}
-			}
-			return [
-				{
-					name: higherPlayer.name,
 					sports: players[1].sports.map((s, i) => {
 						if (i === 0) {
-							return { ...s, price: s.price * 0.9 };
+							return {
+								...s,
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+							};
 						}
 						return s;
 					}),
 				},
 				{
-					name: lowerPlayer.name,
-					sports: lowerPlayer.sports.map((s, i) => {
-						return { ...s, price: s.price * 0.8 };
+					name: players[0].name,
+					sports: players[0].sports,
+				},
+			];
+		} else {
+			// اللاعب الذي يملك أكثر من لعبة
+			const higherPlayer = players[playerIndexWithMultiple];
+			// اللاعب الذي يملك لعبة واحدة
+			const lowerPlayer = players.findIndex((x) => numberOfSportsWithDiscount(x).length === 1);
+			const otherPlayer = players[playerIndexWithMultiple === 0 ? 1 : 0];
+			if (!lowerPlayer) {
+				return [
+					{
+						name: higherPlayer.name,
+						sports: higherPlayer.sports.map((s, i) => {
+							if (i === 0) {
+								return {
+									...s,
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+								};
+							}
+							return s;
+						}),
+					},
+					{
+						name: otherPlayer.name,
+						sports: otherPlayer.sports,
+					},
+				];
+			}
+			// const lowerPlayer = players[playerIndexWithMultiple === 0 ? 1 : 0];
+			// لو اللاعب  الاكبر يملك أكثر من لعبتين
+			// مقارنة سعر اللعبة الاولي لللاعب الاعلى واللعبة الاولي لللاعب الادنى
+			const firstPlayerBigger = firstSportsWithDiscountBigger(
+				higherPlayer.sports[0],
+				otherPlayer.sports[0]
+			);
+			if (firstPlayerBigger) {
+				return [
+					{
+						name: higherPlayer.name,
+						sports: higherPlayer.sports.map((s, i) => {
+							if (i === 0) {
+								return {
+									...s,
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 1),
+								};
+							}
+							return s;
+						}),
+					},
+					{
+						name: otherPlayer.name,
+						sports: otherPlayer.sports.map((s, i) => {
+							if (i === 0) {
+								return {
+									...s,
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+								};
+							}
+							return s;
+						}),
+					},
+				];
+			}
+			return [
+				{
+					name: higherPlayer.name,
+					sports: higherPlayer.sports.map((s, i) => {
+						if (i === 0) {
+							return {
+								...s,
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+							};
+						}
+						return s;
+					}),
+				},
+				{
+					name: otherPlayer.name,
+					sports: otherPlayer.sports.map((s, i) => {
+						if (i === 0) {
+							return {
+								...s,
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 1),
+							};
+						}
+						return s;
 					}),
 				},
 			];

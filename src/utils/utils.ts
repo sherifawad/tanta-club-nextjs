@@ -1,5 +1,5 @@
 import { Discount, DiscountType } from "@prisma/client";
-import { PlayerSport } from "./calc";
+import { Player, PlayerSport } from "./calc";
 
 export function divvyUp<T>(array: T[], predicate: (el: T, index?: number, arr?: Array<T>) => any) {
 	// const filterTrue: T[] = [],
@@ -92,4 +92,26 @@ export const maxDiscountSorting = (sports: PlayerSport[], step: number = 0) => {
 			? -1
 			: 0
 	);
+};
+
+export const firstSportsWithDiscountBigger = (
+	firstSport: PlayerSport,
+	secondSport: PlayerSport,
+	step: number = 0
+) => {
+	return calByDiscountType(firstSport.DiscountOptions![0], firstSport.price, step) >
+		calByDiscountType(secondSport.DiscountOptions![0], secondSport.price, step)
+		? true
+		: false;
+};
+
+export const numberOfSportsWithDiscount = (player: Player) => {
+	return player.sports.filter((sport) => sport.DiscountOptions?.some((discount) => discount.id !== 6));
+};
+
+export const playersMaxDiscountSorting = (players: Player[]): Player[] => {
+	return players.map((player) => ({
+		name: player.name,
+		sports: maxDiscountSorting(player.sports),
+	}));
 };

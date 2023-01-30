@@ -5,7 +5,7 @@ import { prisma } from "lib/prisma";
 import SingleSelection from "@/components/ui/SingleSelection";
 import Card from "@/components/Card";
 import { useEffect, useState } from "react";
-import { PlayerSport, onePlayer } from "@/utils/calc";
+import { Player, PlayerSport, onePlayer, twoPlayers } from "@/utils/calc";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,7 +55,9 @@ export default function Home({
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
 	const [selectedSportId, setSelectedSportId] = useState<number>();
 	const [selectedSportsList, setSelectedSportsList] = useState<PlayerSport[]>([]);
-	const [sportsResultList, setSportsResultList] = useState([]);
+	const [playersResultList, setPlayersResultList] = useState<Player[]>([]);
+	const [playerName, setPlayerName] = useState("");
+	const [playersList, setPlayersList] = useState<Player[]>([]);
 
 	const onSelectedCategoryChange = (categoryId: number) => {
 		setSelectedCategoryId(categoryId);
@@ -90,17 +92,17 @@ export default function Home({
 	};
 
 	const calculationHandler = () => {
-		const result = onePlayer({
-			name: "player",
-			sports: selectedSportsList,
-		});
-		const refracted = result?.sports.map((sport) => {
+		const result = twoPlayers(playersList);
+		const refracted = result?.map((player) => {
 			return {
-				name: sport.name,
-				price: sport.price,
+				name: player.name,
+				sports: player.sports.map((sport) => ({
+					name: sport.name,
+					price: sport.price,
+				})),
 			};
-		});
-		setSportsResultList(refracted);
+		}) as Player[];
+		setPlayersResultList(refracted);
 	};
 
 	useEffect(() => {
@@ -178,10 +180,24 @@ export default function Home({
 				""
 			)}
 			<div className="flex flex-col gap-4">
+				<button
+					onClick={() => {
+						setPlayersList((prev) => [...prev, { name: playerName, sports: selectedSportsList }]);
+						setPlayerName("");
+						setSelectedSportsList([]);
+					}}
+				>
+					New
+				</button>
+				<input
+					className="bg-gray-500"
+					onChange={(e) => setPlayerName(e.target.value)}
+					value={playerName}
+				/>
 				<button onClick={() => onSportAdded(selectedSportId)}>Add</button>
 				{JSON.stringify(selectedSportsList, null, 2)}
 				<button onClick={() => calculationHandler()}>cal</button>
-				{JSON.stringify(sportsResultList, null, 2)}
+				{JSON.stringify(playersResultList, null, 2)}
 			</div>
 		</>
 	);

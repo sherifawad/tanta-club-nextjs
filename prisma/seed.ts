@@ -691,6 +691,24 @@ async function seed() {
 
 	await client.sport.create({
 		data: {
+			name: "squashTeam",
+			price: 550,
+			categoryId: 14,
+			DiscountOptions: {
+				connect: [
+					{
+						id: 1,
+					},
+					{
+						id: 2,
+					},
+				],
+			},
+		},
+	});
+
+	await client.sport.create({
+		data: {
 			name: "squashPrivate",
 			price: 110,
 			categoryId: 14,
