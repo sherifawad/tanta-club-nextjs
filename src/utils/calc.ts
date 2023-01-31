@@ -8,6 +8,7 @@ import {
 	numberOfSportsWithDiscount,
 	playerSportsDiscountSorting,
 	playersMaxDiscountSorting,
+	playersWithMaxDiscountSorting,
 	sportDiscountSorting,
 } from "./utils";
 
@@ -206,7 +207,6 @@ export const onePlayer = (player: Player) => {
 };
 
 export const twoPlayers = (players: Player[]): Player[] => {
-	const currentDay = new Date().getDate();
 	// const haveManySports = players.every((p) => p.sports.length > 1);
 	const haveManySports = players.every((p) => numberOfSportsWithDiscount(p).length > 1);
 	// كل لاعب يملك اكثر من لعبة
@@ -395,4 +395,52 @@ export const twoPlayers = (players: Player[]): Player[] => {
 			];
 		}
 	}
+};
+
+export const moreThanTwoPlayers = (players: Player[]): Player[] => {
+	const [playersWithDiscountSports, otherPlayers] = divvyUp(players, (player) =>
+		player.sports.find((sport) => sport.DiscountOptions?.some((discount) => discount.id !== 6))
+	);
+	console.log("🚀 ~ file: calc.ts:401 ~ moreThanTwoPlayers ~ otherPlayers", otherPlayers);
+	console.log(
+		"🚀 ~ file: calc.ts:401 ~ moreThanTwoPlayers ~ playersWithDiscountSports",
+		playersWithDiscountSports
+	);
+	players = playersWithMaxDiscountSorting(playersWithDiscountSports);
+	console.log("🚀 ~ file: calc.ts:402 ~ moreThanTwoPlayers ~ players", players);
+	if (players.length > 2) {
+		players = players.map((p, i) => {
+			switch (i) {
+				case 0:
+					return {
+						name: p.name,
+						sports: p.sports.map((s, i) => {
+							if (i === 0) {
+								return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 1) };
+							}
+							return s;
+						}),
+					};
+				case 1:
+					return {
+						name: p.name,
+						sports: p.sports.map((s, i) => {
+							if (i === 0) {
+								return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 0) };
+							}
+							return s;
+						}),
+					};
+
+				default:
+					return p;
+			}
+		});
+	} else if (players.length === 2) {
+		players = twoPlayers(players);
+	} else if (players.length === 1) {
+		players = [onePlayer(players[0])];
+	}
+
+	return [...players, ...otherPlayers];
 };

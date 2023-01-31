@@ -5,7 +5,7 @@ import { prisma } from "lib/prisma";
 import SingleSelection from "@/components/ui/SingleSelection";
 import Card from "@/components/Card";
 import { useEffect, useState } from "react";
-import { Player, PlayerSport, onePlayer, twoPlayers } from "@/utils/calc";
+import { Player, PlayerSport, moreThanTwoPlayers, onePlayer, twoPlayers } from "@/utils/calc";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -91,8 +91,14 @@ export default function Home({
 		});
 	};
 
+	const newPlayer = () => {
+		setPlayersList((prev) => [...prev, { name: playerName, sports: selectedSportsList }]);
+		setPlayerName("");
+		setSelectedSportsList([]);
+	};
+
 	const calculationHandler = () => {
-		const result = twoPlayers(playersList);
+		const result = moreThanTwoPlayers(playersList);
 		const refracted = result?.map((player) => {
 			return {
 				name: player.name,
@@ -182,13 +188,13 @@ export default function Home({
 			<div className="flex flex-col gap-4">
 				<button
 					onClick={() => {
-						setPlayersList((prev) => [...prev, { name: playerName, sports: selectedSportsList }]);
-						setPlayerName("");
-						setSelectedSportsList([]);
+						newPlayer();
+						setPlayersList([]);
 					}}
 				>
-					New
+					clear
 				</button>
+				<button onClick={() => newPlayer()}>New</button>
 				<input
 					className="bg-gray-500"
 					onChange={(e) => setPlayerName(e.target.value)}

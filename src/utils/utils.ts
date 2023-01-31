@@ -109,9 +109,23 @@ export const numberOfSportsWithDiscount = (player: Player) => {
 	return player.sports.filter((sport) => sport.DiscountOptions?.some((discount) => discount.id !== 6));
 };
 
+// ترتيب العاب كل لاعب حسب أكبر خصم
 export const playersMaxDiscountSorting = (players: Player[]): Player[] => {
 	return players.map((player) => ({
 		name: player.name,
 		sports: maxDiscountSorting(player.sports),
 	}));
+};
+// ترتيب اللاعبين حسب أول كل لعبة بعد ترتيب الالبعاي خسب الخصم
+export const playersWithMaxDiscountSorting = (players: Player[], step: number = 0): Player[] => {
+	players = playersMaxDiscountSorting(players);
+	return players.sort((p1, p2) =>
+		calByDiscountType(p1.sports[0].DiscountOptions![0], p1.sports[0].price, step) <
+		calByDiscountType(p2.sports[0].DiscountOptions![0], p2.sports[0].price, step)
+			? 1
+			: calByDiscountType(p1.sports[0].DiscountOptions![0], p1.sports[0].price, step) >
+			  calByDiscountType(p2.sports[0].DiscountOptions![0], p2.sports[0].price, step)
+			? -1
+			: 0
+	);
 };
