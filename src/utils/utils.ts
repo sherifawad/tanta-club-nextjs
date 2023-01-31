@@ -18,10 +18,8 @@ export const discountDayTimeValidation = (discount: Discount | undefined) => {
 	const currentDay = new Date().getDate();
 	if (
 		discount &&
-		discount.startDay &&
-		discount.startDay >= currentDay &&
-		discount.endDay &&
-		discount.endDay <= currentDay
+		((discount.startDay && discount.startDay >= currentDay) ||
+			(discount.endDay && discount.endDay <= currentDay))
 	) {
 		return true;
 	}
@@ -109,6 +107,12 @@ export const numberOfSportsWithDiscount = (player: Player) => {
 	return player.sports.filter((sport) => sport.DiscountOptions?.some((discount) => discount.id !== 6));
 };
 
+export const numberOfPrivateSwimmingSportsWithDiscount = (players: Player[]) => {
+	return players.filter((player) =>
+		player.sports.filter((sport) => sport.categoryId === 1 && sport.name?.includes("rivat"))
+	);
+};
+
 // ترتيب العاب كل لاعب حسب أكبر خصم
 export const playersMaxDiscountSorting = (players: Player[]): Player[] => {
 	return players.map((player) => ({
@@ -128,4 +132,69 @@ export const playersWithMaxDiscountSorting = (players: Player[], step: number = 
 			? -1
 			: 0
 	);
+};
+
+// اللاعبين اللي عندهم خاص سباحة خصم أول الشهر
+export const getPlayersWithPrivateSwimmingTimeDiscount = (players: Player[]): Player[] => {
+	return players.filter((player) =>
+		player.sports.filter((sport) => sport.DiscountOptions?.find((discount) => discount.id === 5))
+	);
+};
+
+export const swimmingFirstMonthCheck = (player: Player) => {
+	if (!player.sports[0].DiscountOptions) return player;
+	const timeDiscount = player.sports[0].DiscountOptions.find((discount) => discount.id === 5);
+
+	if (timeDiscount && discountDayTimeValidation(timeDiscount)) {
+		return {
+			name: player.name,
+			sports: player.sports.map((s) => {
+				return {
+					...s,
+					price: calPriceDiscount(timeDiscount, s.price, 0),
+					note: "first month discount",
+				};
+			}),
+		};
+	}
+	return player;
+};
+
+export const splitPrivateSwimming = (players: Player[]) => {
+	let [swimmingPrivateList, otherSports] = divvyUp(players, (player) =>
+		player.sports.find((sport) => sport.categoryId === 1 && sport.name?.includes("rivat"))
+	);
+	let filteredSwimmingList: Player[] = [];
+	swimmingPrivateList.forEach((player) => {
+		const currentPlayerOtherSports: Player = { name: player.name, sports: [] };
+		const currentPlayerSwimmingPrivate: Player = { name: player.name, sports: [] };
+		player.sports.map((sport) => {
+			if (sport.name?.includes("rivat")) {
+				currentPlayerSwimmingPrivate.sports.push(sport);
+			} else {
+				currentPlayerOtherSports.sports.push(sport);
+			}
+		});
+		otherSports =
+			currentPlayerOtherSports.sports.length > 0
+				? [...otherSports, currentPlayerOtherSports]
+				: otherSports;
+		filteredSwimmingList =
+			currentPlayerSwimmingPrivate.sports.length > 0
+				? [...filteredSwimmingList, currentPlayerSwimmingPrivate]
+				: filteredSwimmingList;
+	});
+
+	return [filteredSwimmingList, otherSports];
+};
+
+export const mergePlayers = (players1: Player[], players2: Player[]): Player[] => {
+	return players1
+		.map((x) => {
+			const y = players2.find((item) => x.name === item.name);
+			if (y) {
+				return { ...x, sports: [...x.sports, ...y.sports] };
+			} else return x;
+		})
+		.concat(players2.filter((item) => players1.every((x) => x.name !== item.name)));
 };

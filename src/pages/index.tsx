@@ -5,7 +5,15 @@ import { prisma } from "lib/prisma";
 import SingleSelection from "@/components/ui/SingleSelection";
 import Card from "@/components/Card";
 import { useEffect, useState } from "react";
-import { Player, PlayerSport, moreThanTwoPlayers, onePlayer, twoPlayers } from "@/utils/calc";
+import {
+	Player,
+	PlayerSport,
+	moreThanTwoPlayers,
+	onePlayer,
+	swimmingDiscount,
+	twoPlayers,
+} from "@/utils/calc";
+import { divvyUp, mergePlayers, splitPrivateSwimming } from "@/utils/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -98,7 +106,13 @@ export default function Home({
 	};
 
 	const calculationHandler = () => {
-		const result = moreThanTwoPlayers(playersList);
+		// const result = moreThanTwoPlayers(playersList);
+		// const result = swimmingDiscount(playersList);
+		let [swimmingPrivateList, otherSports] = splitPrivateSwimming(playersList);
+
+		swimmingPrivateList = swimmingDiscount(swimmingPrivateList);
+		otherSports = moreThanTwoPlayers(otherSports);
+		const result = mergePlayers(otherSports, swimmingPrivateList);
 		const refracted = result?.map((player) => {
 			return {
 				name: player.name,
@@ -190,6 +204,7 @@ export default function Home({
 					onClick={() => {
 						newPlayer();
 						setPlayersList([]);
+						setPlayersResultList([]);
 					}}
 				>
 					clear

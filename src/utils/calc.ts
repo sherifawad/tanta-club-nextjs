@@ -5,12 +5,15 @@ import {
 	divvyUp,
 	firstSportsWithDiscountBigger,
 	maxDiscountSorting,
+	numberOfPrivateSwimmingSportsWithDiscount,
 	numberOfSportsWithDiscount,
 	playerSportsDiscountSorting,
 	playersMaxDiscountSorting,
 	playersWithMaxDiscountSorting,
 	sportDiscountSorting,
+	swimmingFirstMonthCheck,
 } from "./utils";
+import { disconnect } from "process";
 
 export interface PlayerSport extends Sport {
 	DiscountOptions?: Discount[];
@@ -401,13 +404,7 @@ export const moreThanTwoPlayers = (players: Player[]): Player[] => {
 	const [playersWithDiscountSports, otherPlayers] = divvyUp(players, (player) =>
 		player.sports.find((sport) => sport.DiscountOptions?.some((discount) => discount.id !== 6))
 	);
-	console.log("🚀 ~ file: calc.ts:401 ~ moreThanTwoPlayers ~ otherPlayers", otherPlayers);
-	console.log(
-		"🚀 ~ file: calc.ts:401 ~ moreThanTwoPlayers ~ playersWithDiscountSports",
-		playersWithDiscountSports
-	);
 	players = playersWithMaxDiscountSorting(playersWithDiscountSports);
-	console.log("🚀 ~ file: calc.ts:402 ~ moreThanTwoPlayers ~ players", players);
 	if (players.length > 2) {
 		players = players.map((p, i) => {
 			switch (i) {
@@ -443,4 +440,99 @@ export const moreThanTwoPlayers = (players: Player[]): Player[] => {
 	}
 
 	return [...players, ...otherPlayers];
+};
+
+export const swimmingDiscount = (players: Player[]): Player[] => {
+	players = numberOfPrivateSwimmingSportsWithDiscount(players);
+	let [sportsWithBrothersDiscount, otherSwimming] = divvyUp(players, (player) =>
+		player.sports.find((sport) => sport.DiscountOptions?.find((discount) => discount.id === 6))
+	);
+	if (otherSwimming && otherSwimming.length > 0) {
+		otherSwimming = otherSwimming.map((player) => {
+			return swimmingFirstMonthCheck(player);
+		});
+	}
+	if (sportsWithBrothersDiscount.length === 1) {
+		//check first time Discount
+		const discount = players[0].sports[0].DiscountOptions!.find((disconnect) => disconnect.id === 5);
+		if (discount && discountDayTimeValidation(discount)) {
+			return players.map((p, i) => {
+				if (i === 0) {
+					return {
+						name: p.name,
+						sports: p.sports.map((s) => {
+							return {
+								...s,
+								price: calPriceDiscount(discount, s.price, 0),
+								note: "first month discount",
+							};
+						}),
+					};
+				}
+				return p;
+			});
+		}
+	} else if (sportsWithBrothersDiscount.length === 2) {
+		sportsWithBrothersDiscount = playersWithMaxDiscountSorting(sportsWithBrothersDiscount);
+		sportsWithBrothersDiscount = sportsWithBrothersDiscount.map((player, index) => {
+			switch (index) {
+				case 0:
+					return swimmingFirstMonthCheck(player);
+				case 1:
+					return {
+						name: player.name,
+						sports: player.sports.map((s) => {
+							return {
+								...s,
+								price: s.DiscountOptions
+									? calPriceDiscount(s.DiscountOptions[0], s.price, 0)
+									: s.price,
+								note: "first month discount",
+							};
+						}),
+					};
+
+				default:
+					return player;
+			}
+		});
+	} else if (sportsWithBrothersDiscount.length > 2) {
+		sportsWithBrothersDiscount = playersWithMaxDiscountSorting(sportsWithBrothersDiscount);
+		sportsWithBrothersDiscount = sportsWithBrothersDiscount.map((player, index) => {
+			switch (index) {
+				case 0:
+					return swimmingFirstMonthCheck(player);
+				case 1:
+					return {
+						name: player.name,
+						sports: player.sports.map((s) => {
+							return {
+								...s,
+								price: s.DiscountOptions
+									? calPriceDiscount(s.DiscountOptions[0], s.price, 0)
+									: s.price,
+								note: "first month discount",
+							};
+						}),
+					};
+				case 2:
+					return {
+						name: player.name,
+						sports: player.sports.map((s) => {
+							return {
+								...s,
+								price: s.DiscountOptions
+									? calPriceDiscount(s.DiscountOptions[0], s.price, 0)
+									: s.price,
+								note: "first month discount",
+							};
+						}),
+					};
+
+				default:
+					return player;
+			}
+		});
+	}
+	return [...sportsWithBrothersDiscount, ...otherSwimming];
 };
