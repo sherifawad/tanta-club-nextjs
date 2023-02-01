@@ -28,6 +28,7 @@ model Sport {
     code            String?
     note            String?
     price           Float
+    hidden          Boolean    @default(false)
     createdAt       DateTime   @default(now()) @map(name: "created_at")
     updatedAt       DateTime   @updatedAt @map(name: "updated_at")
     DiscountOptions Discount[]
@@ -42,6 +43,7 @@ model Category {
     name   String
     title  String?
     note   String?
+    hidden Boolean @default(false)
     sports Sport[]
 }
 

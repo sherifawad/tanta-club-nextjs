@@ -19,10 +19,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export async function getStaticProps() {
 	try {
-		const categories = await prisma.category.findMany();
+		const categories = await prisma.category.findMany({ where: { hidden: false } });
 		const discounts = await prisma.discount.findMany();
 		const penalties = await prisma.penalty.findMany();
 		const sports = await prisma.sport.findMany({
+			where: { hidden: false },
 			include: {
 				DiscountOptions: true,
 				Category: true,
@@ -155,7 +156,7 @@ export default function Home({
 				<SingleSelection
 					optionsList={categories.map((cat) => (
 						<option key={cat.id} value={cat.id}>
-							{cat.name}
+							{cat.title}
 						</option>
 					))}
 					value={selectedCategoryId}
@@ -168,7 +169,7 @@ export default function Home({
 				<SingleSelection
 					optionsList={discounts.map((dis) => (
 						<option key={dis.id} value={dis.id}>
-							{dis.name}
+							{dis.title}
 						</option>
 					))}
 				/>
@@ -190,7 +191,7 @@ export default function Home({
 				<SingleSelection
 					optionsList={sportsList.map((sport) => (
 						<option key={sport.id} value={sport.id}>
-							{sport.name}
+							{sport.title}
 						</option>
 					))}
 					value={selectedSportId}
