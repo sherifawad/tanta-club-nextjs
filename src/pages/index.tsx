@@ -3,7 +3,7 @@ import { Inter } from "@next/font/google";
 import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
 import SingleSelection from "@/components/ui/SingleSelection";
-import Card from "@/components/Card";
+import MiniCard from "@/components/MiniCard";
 import { useEffect, useState } from "react";
 import {
 	Player,
@@ -14,8 +14,30 @@ import {
 	twoPlayers,
 } from "@/utils/calc";
 import { divvyUp, mergePlayers, splitPrivateSwimming } from "@/utils/utils";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import { BiFootball } from "react-icons/bi";
+import Card from "@/components/Card";
 
 const inter = Inter({ subsets: ["latin"] });
+
+const responsive = {
+	desktop: {
+		breakpoint: { max: 3000, min: 1024 },
+		items: 6,
+		slidesToSlide: 6, // optional, default to 1.
+	},
+	tablet: {
+		breakpoint: { max: 1024, min: 464 },
+		items: 4,
+		slidesToSlide: 4, // optional, default to 1.
+	},
+	mobile: {
+		breakpoint: { max: 464, min: 0 },
+		items: 2,
+		slidesToSlide: 2, // optional, default to 1.
+	},
+};
 
 export async function getStaticProps() {
 	try {
@@ -145,6 +167,34 @@ export default function Home({
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<h1 className="text-3xl font-bold underline">Hello world!</h1>
+			<div className="my-2">
+				<Carousel
+					swipeable={true}
+					draggable={false}
+					showDots={false}
+					responsive={responsive}
+					ssr={true} // means to render carousel on server-side.
+					infinite={true}
+					keyBoardControl={true}
+					customTransition="all .5"
+					transitionDuration={500}
+					removeArrowOnDeviceType={["tablet", "mobile"]}
+					centerMode={true}
+					rtl={false}
+					containerClass="carousel-container px-40"
+					itemClass="carousel-item"
+					partialVisible={false}
+				>
+					{categories?.map((cat) => (
+						<MiniCard key={cat.id} title={cat.title ?? ""} icon={<BiFootball />} />
+					))}
+				</Carousel>
+			</div>
+			<div className="flex flex-wrap items-center justify-center gap-4 p-8">
+				{sportsList.map((sport) => (
+					<Card key={sport.id} sport={sport} icon={<BiFootball className="relative w-32 h-32" />} />
+				))}
+			</div>
 			{/* {JSON.stringify(categories, null, 2)} */}
 			{/* {categories?.map((cat) => (
 				<h1 key={cat.id}>{cat.name}</h1>
