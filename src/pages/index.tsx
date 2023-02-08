@@ -24,8 +24,8 @@ const inter = Inter({ subsets: ["latin"] });
 const responsive = {
 	desktop: {
 		breakpoint: { max: 3000, min: 1024 },
-		items: 6,
-		slidesToSlide: 6, // optional, default to 1.
+		items: 5,
+		slidesToSlide: 5, // optional, default to 1.
 	},
 	tablet: {
 		breakpoint: { max: 1024, min: 464 },
@@ -34,8 +34,8 @@ const responsive = {
 	},
 	mobile: {
 		breakpoint: { max: 464, min: 0 },
-		items: 2,
-		slidesToSlide: 2, // optional, default to 1.
+		items: 1,
+		slidesToSlide: 1, // optional, default to 1.
 	},
 };
 
@@ -186,7 +186,13 @@ export default function Home({
 					partialVisible={false}
 				>
 					{categories?.map((cat) => (
-						<MiniCard key={cat.id} title={cat.title ?? ""} icon={<BiFootball />} />
+						<button key={cat.id} onClick={() => onSelectedCategoryChange(cat.id)}>
+							<MiniCard
+								category={cat}
+								icon={<BiFootball />}
+								selected={selectedCategoryId === cat.id}
+							/>
+						</button>
 					))}
 				</Carousel>
 			</div>
