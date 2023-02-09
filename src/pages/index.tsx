@@ -2,17 +2,9 @@ import Head from "next/head";
 import { Inter } from "@next/font/google";
 import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
-import SingleSelection from "@/components/ui/SingleSelection";
 import MiniCard from "@/components/MiniCard";
 import { useEffect, useMemo, useState } from "react";
-import {
-	Player,
-	PlayerSport,
-	moreThanTwoPlayers,
-	onePlayer,
-	swimmingDiscount,
-	twoPlayers,
-} from "@/utils/calc";
+import { moreThanTwoPlayers, swimmingDiscount } from "@/utils/calc";
 import { divvyUp, mergePlayers, splitPrivateSwimming } from "@/utils/utils";
 import { BiFootball } from "react-icons/bi";
 import Card from "@/components/Card";
@@ -23,6 +15,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
+import { Player, PlayerSport } from "@/types";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -77,8 +70,8 @@ export default function Home({
 	const [playersList, setPlayersList] = useState<Player[]>([]);
 	const [openNameModel, setOpenNameModel] = useState(false);
 
-	const currentPlayer = useMemo<Player>(
-		() => playersList.find((player) => player.name === playerName.trim()),
+	const currentPlayer = useMemo<Player | undefined>(
+		() => playersList?.find((player) => player.name === playerName.trim()),
 		[playerName, playersList]
 	);
 
@@ -119,6 +112,10 @@ export default function Home({
 			return;
 		}
 		setPlayersList((prev) => {
+			const [currentPlayer, rest] = divvyUp(prev, (player) => player.name === playerName.trim());
+			const orderedSports = [...currentPlayer[0]?.sports, sport].sort((s1, s2) =>
+				s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
+			);
 			toast.success(`${playerName} تم إضافة ${sport.title}  للاعب `, {
 				position: "top-right",
 				autoClose: 500,
@@ -129,11 +126,7 @@ export default function Home({
 				progress: undefined,
 				theme: "light",
 			});
-			const [currentPlayer, rest] = divvyUp(playersList, (player) => player.name === playerName.trim());
-			const orderedSports = [...currentPlayer[0]?.sports, sport].sort((s1, s2) =>
-				s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
-			);
-			return [...rest, { name: currentPlayer[0].name, sports: orderedSports }];
+			return [...rest, { ...currentPlayer[0], sports: orderedSports }];
 		});
 	};
 

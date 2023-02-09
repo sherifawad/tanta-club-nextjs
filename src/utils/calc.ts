@@ -1,4 +1,3 @@
-import { Discount, Penalty, Sport } from "@prisma/client";
 import {
 	calPriceDiscount,
 	discountDayTimeValidation,
@@ -7,13 +6,10 @@ import {
 	maxDiscountSorting,
 	numberOfPrivateSwimmingSportsWithDiscount,
 	numberOfSportsWithDiscount,
-	playerSportsDiscountSorting,
 	playersMaxDiscountSorting,
 	playersWithMaxDiscountSorting,
-	sportDiscountSorting,
 	swimmingFirstMonthCheck,
 } from "./utils";
-import { disconnect } from "process";
 import { Player } from "@/types";
 
 export const calculationResult = (data: Player[]) => {
