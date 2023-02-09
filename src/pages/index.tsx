@@ -4,7 +4,7 @@ import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
 import SingleSelection from "@/components/ui/SingleSelection";
 import MiniCard from "@/components/MiniCard";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
 	Player,
 	PlayerSport,
@@ -14,30 +14,17 @@ import {
 	twoPlayers,
 } from "@/utils/calc";
 import { divvyUp, mergePlayers, splitPrivateSwimming } from "@/utils/utils";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
 import { BiFootball } from "react-icons/bi";
 import Card from "@/components/Card";
+import ListCard from "@/components/ListCard";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Popup from "reactjs-popup";
+import "reactjs-popup/dist/index.css";
 
 const inter = Inter({ subsets: ["latin"] });
-
-const responsive = {
-	desktop: {
-		breakpoint: { max: 3000, min: 1024 },
-		items: 5,
-		slidesToSlide: 5, // optional, default to 1.
-	},
-	tablet: {
-		breakpoint: { max: 1024, min: 464 },
-		items: 4,
-		slidesToSlide: 4, // optional, default to 1.
-	},
-	mobile: {
-		breakpoint: { max: 464, min: 0 },
-		items: 1,
-		slidesToSlide: 1, // optional, default to 1.
-	},
-};
 
 export async function getStaticProps() {
 	try {
@@ -85,10 +72,15 @@ export default function Home({
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
 	const [selectedSportId, setSelectedSportId] = useState<number>();
-	const [selectedSportsList, setSelectedSportsList] = useState<PlayerSport[]>([]);
 	const [playersResultList, setPlayersResultList] = useState<Player[]>([]);
 	const [playerName, setPlayerName] = useState("");
 	const [playersList, setPlayersList] = useState<Player[]>([]);
+	const [openNameModel, setOpenNameModel] = useState(false);
+
+	const currentPlayer = useMemo<Player>(
+		() => playersList.find((player) => player.name === playerName.trim()),
+		[playerName, playersList]
+	);
 
 	const onSelectedCategoryChange = (categoryId: number) => {
 		setSelectedCategoryId(categoryId);
@@ -106,29 +98,58 @@ export default function Home({
 		setSelectedSportId(sportId);
 	};
 
-	const onSportAdded = (sportId: Number | undefined) => {
-		if (!sportId) return;
-		const exist = selectedSportsList.some((sport) => sport.id === sportId);
-		if (exist) return;
-		const selectedSport = sportsList.find((sport) => sport.id === sportId);
-
-		setSelectedSportsList((prev) => {
-			if (selectedSport) {
-				return [...prev, selectedSport].sort((s1, s2) =>
-					s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
-				);
-			}
-			return prev;
+	const onSportAdded = (sport: PlayerSport | undefined) => {
+		if (!sport) return;
+		if (playerName === "") {
+			setOpenNameModel(true);
+		}
+		if (playerName === "" || !currentPlayer) return;
+		const exist = currentPlayer.sports.some((s) => s.id === sport.id);
+		if (exist) {
+			toast.error(` لعبة مكررة ${sport.title} ${playerName}  للاعب `, {
+				position: "top-right",
+				autoClose: 1000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			return;
+		}
+		setPlayersList((prev) => {
+			toast.success(`${playerName} تم إضافة ${sport.title}  للاعب `, {
+				position: "top-right",
+				autoClose: 500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			const [currentPlayer, rest] = divvyUp(playersList, (player) => player.name === playerName.trim());
+			const orderedSports = [...currentPlayer[0]?.sports, sport].sort((s1, s2) =>
+				s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
+			);
+			return [...rest, { name: currentPlayer[0].name, sports: orderedSports }];
 		});
 	};
 
-	const newPlayer = () => {
-		setPlayersList((prev) => [...prev, { name: playerName, sports: selectedSportsList }]);
-		setPlayerName("");
-		setSelectedSportsList([]);
-	};
-
 	const calculationHandler = () => {
+		if (playerName === "") {
+			toast.error("No Name", {
+				position: "bottom-right",
+				autoClose: 500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+		}
 		// const result = moreThanTwoPlayers(playersList);
 		// const result = swimmingDiscount(playersList);
 		let [swimmingPrivateList, otherSports] = splitPrivateSwimming(playersList);
@@ -146,6 +167,31 @@ export default function Home({
 			};
 		}) as Player[];
 		setPlayersResultList(refracted);
+	};
+
+	const savePlayer = () => {
+		setOpenNameModel(true);
+
+		const isNameDuplicated = playersList.find((player) => player.name === playerName.trim());
+
+		if (isNameDuplicated || playerName.trim() === "") {
+			toast.error("Name is exist", {
+				position: "top-right",
+				autoClose: 500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			return;
+		}
+		setPlayersList((prev) => [
+			...prev,
+			{ id: playersList.length + 1, name: playerName.trim(), sports: [] },
+		]);
+		setOpenNameModel(false);
 	};
 
 	useEffect(() => {
@@ -166,117 +212,87 @@ export default function Home({
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<h1 className="text-3xl font-bold underline">Hello world!</h1>
-			<div className="my-2">
-				<Carousel
-					swipeable={true}
-					draggable={false}
-					showDots={false}
-					responsive={responsive}
-					ssr={true} // means to render carousel on server-side.
-					infinite={true}
-					keyBoardControl={true}
-					customTransition="all .5"
-					transitionDuration={500}
-					removeArrowOnDeviceType={["tablet", "mobile"]}
-					centerMode={true}
-					rtl={false}
-					containerClass="carousel-container px-40"
-					itemClass="carousel-item"
-					partialVisible={false}
-				>
-					{categories?.map((cat) => (
-						<button key={cat.id} onClick={() => onSelectedCategoryChange(cat.id)}>
-							<MiniCard
-								category={cat}
-								icon={<BiFootball />}
-								selected={selectedCategoryId === cat.id}
-							/>
+			<ToastContainer />
+			<Popup
+				modal
+				nested
+				open={openNameModel}
+				closeOnDocumentClick
+				onClose={() => setOpenNameModel(false)}
+				contentStyle={{ width: "18rem" }}
+			>
+				<div className="modal ">
+					<div className="flex flex-col justify-center gap-4 ">
+						<input
+							className="bg-gray-500"
+							onChange={(e) => setPlayerName(e.target.value)}
+							value={playerName}
+						/>
+						<button
+							className="px-4 py-2 rounded-full w-full  bg-orange-900 text-white hover:text-black"
+							onClick={() => savePlayer()}
+						>
+							احفظ
 						</button>
-					))}
-				</Carousel>
+					</div>
+				</div>
+			</Popup>
+			<div className="flex flex-wrap justify-center overflow-hidden bg-orange-100">
+				<div className="w-full sm:w-2/3 p-8 flex flex-col items-center">
+					<Carousel
+						responsive={{
+							desktop: {
+								breakpoint: { max: 3000, min: 1024 },
+								items: 3,
+							},
+							tablet: {
+								breakpoint: { max: 1024, min: 464 },
+								items: 3,
+							},
+							mobile: {
+								breakpoint: { max: 464, min: 0 },
+								items: 2,
+							},
+						}}
+						slidesToSlide={2}
+						containerClass="w-4/6 pb-4 "
+						sliderClass="flex justify-center items-center gap-4 rounded-all"
+						deviceType={""}
+						infinite
+						arrows
+						ssr
+						centerMode
+					>
+						{categories?.map((cat) => (
+							<button key={cat.id} onClick={() => onSelectedCategoryChange(cat.id)}>
+								<MiniCard
+									category={cat}
+									icon={<BiFootball />}
+									selected={selectedCategoryId === cat.id}
+								/>
+							</button>
+						))}
+					</Carousel>
+					<div className="flex flex-wrap items-center justify-center gap-4 ">
+						{sportsList.map((sport) => (
+							<Card
+								key={sport.id}
+								sport={sport}
+								icon={<BiFootball className="relative w-32 h-32" />}
+								add={() => onSportAdded(sport)}
+							/>
+						))}
+					</div>
+				</div>
+				<div className="pt-10">
+					<ListCard
+						players={playersList}
+						calc={() => calculationHandler()}
+						newPlayer={() => setOpenNameModel(true)}
+					/>
+				</div>
 			</div>
-			<div className="flex flex-wrap items-center justify-center gap-4 p-8">
-				{sportsList.map((sport) => (
-					<Card key={sport.id} sport={sport} icon={<BiFootball className="relative w-32 h-32" />} />
-				))}
-			</div>
-			{/* {JSON.stringify(categories, null, 2)} */}
-			{/* {categories?.map((cat) => (
-				<h1 key={cat.id}>{cat.name}</h1>
-			))} */}
-			{/* <div className="flex">
-				{categories ? categories.map((cat) => <Card key={cat.id} title={cat.name} />) : ""}
-			</div> */}
-			{categories ? (
-				<SingleSelection
-					optionsList={categories.map((cat) => (
-						<option key={cat.id} value={cat.id}>
-							{cat.title}
-						</option>
-					))}
-					value={selectedCategoryId}
-					onChange={(e) => onSelectedCategoryChange(Number(e.target.value))}
-				/>
-			) : (
-				""
-			)}
-			{discounts ? (
-				<SingleSelection
-					optionsList={discounts.map((dis) => (
-						<option key={dis.id} value={dis.id}>
-							{dis.title}
-						</option>
-					))}
-				/>
-			) : (
-				""
-			)}
-			{penalties ? (
-				<SingleSelection
-					optionsList={penalties.map((pen) => (
-						<option key={pen.id} value={pen.id}>
-							{pen.name}
-						</option>
-					))}
-				/>
-			) : (
-				""
-			)}
-			{sportsList ? (
-				<SingleSelection
-					optionsList={sportsList.map((sport) => (
-						<option key={sport.id} value={sport.id}>
-							{sport.title}
-						</option>
-					))}
-					value={selectedSportId}
-					onChange={(e) => onSelectedSportChange(Number(e.target.value))}
-				/>
-			) : (
-				""
-			)}
-			<div className="flex flex-col gap-4">
-				<button
-					onClick={() => {
-						newPlayer();
-						setPlayersList([]);
-						setPlayersResultList([]);
-					}}
-				>
-					clear
-				</button>
-				<button onClick={() => newPlayer()}>New</button>
-				<input
-					className="bg-gray-500"
-					onChange={(e) => setPlayerName(e.target.value)}
-					value={playerName}
-				/>
-				<button onClick={() => onSportAdded(selectedSportId)}>Add</button>
-				{JSON.stringify(selectedSportsList, null, 2)}
-				<button onClick={() => calculationHandler()}>cal</button>
-				{JSON.stringify(playersResultList, null, 2)}
-			</div>
+			{JSON.stringify(playersResultList, null, 2)}
 		</>
 	);
 }

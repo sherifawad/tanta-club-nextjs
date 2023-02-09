@@ -1,4 +1,4 @@
-import { PlayerSport } from "@/utils/calc";
+import { PlayerSport } from "@/types";
 import Image from "next/image";
 import { ReactNode, useMemo, useState } from "react";
 import { BiFootball } from "react-icons/bi";
@@ -6,8 +6,9 @@ import { BiFootball } from "react-icons/bi";
 type Props = {
 	icon?: ReactNode;
 	sport: PlayerSport;
+	add?: () => void;
 };
-const Card = ({ icon, sport }: Props) => {
+const Card = ({ icon, sport, add }: Props) => {
 	const [openMenu, setOpenMenu] = useState(false);
 
 	const generateColor = useMemo(() => Math.random().toString(16).substr(-6), []);
@@ -65,10 +66,13 @@ const Card = ({ icon, sport }: Props) => {
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-col items-center  p-4 pt-12 bg-orange-100 border border-gray-100 rounded-lg shadow w-72">
+				<div className="flex flex-col items-center  p-4 pt-12 bg-white border border-gray-100 rounded-lg shadow w-72">
 					<div className="text-lg font-extrabold text-black">{sport.title}</div>
 					<div className="text-lg text-orange-900">{sport.price}</div>
-					<button className="flex items-center self-start justify-between p-2 font-semibold transition bg-gray-100 rounded-lg hover:text-orange-900">
+					<button
+						onClick={add}
+						className="flex items-center self-start justify-between p-2 font-semibold transition bg-gray-100 rounded-lg hover:text-orange-900"
+					>
 						اضف
 					</button>
 				</div>

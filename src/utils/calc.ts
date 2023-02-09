@@ -14,16 +14,7 @@ import {
 	swimmingFirstMonthCheck,
 } from "./utils";
 import { disconnect } from "process";
-
-export interface PlayerSport extends Sport {
-	DiscountOptions?: Discount[];
-	Penalty: Penalty;
-}
-
-export interface Player {
-	name: string;
-	sports: PlayerSport[];
-}
+import { Player } from "@/types";
 
 export const calculationResult = (data: Player[]) => {
 	const currentDay = new Date().getDate();
@@ -56,7 +47,7 @@ export const calculationResult = (data: Player[]) => {
 					return data.map((p) => {
 						if (p.name === heighestPlayer.name) {
 							return {
-								name: heighestPlayer.name,
+								...heighestPlayer,
 								sports: heighestPlayer.sports.map((s, i) => {
 									if (i === 0) {
 										return { ...s, price: s.price * 0.8 };
@@ -82,7 +73,7 @@ export const calculationResult = (data: Player[]) => {
 					switch (i) {
 						case 0:
 							return {
-								name: p.name,
+								...p,
 								sports: p.sports.map((s, i) => {
 									if (i === 0) {
 										return { ...s, price: s.price * 0.8 };
@@ -92,7 +83,7 @@ export const calculationResult = (data: Player[]) => {
 							};
 						case 1:
 							return {
-								name: p.name,
+								...p,
 								sports: p.sports.map((s, i) => {
 									if (i === 0) {
 										return { ...s, price: s.price * 0.9 };
@@ -109,7 +100,7 @@ export const calculationResult = (data: Player[]) => {
 				switch (i) {
 					case 0:
 						return {
-							name: p.name,
+							...p,
 							sports: p.sports.map((s, i) => {
 								if (i === 0) {
 									return { ...s, price: s.price * 0.8 };
@@ -119,7 +110,7 @@ export const calculationResult = (data: Player[]) => {
 						};
 					case 1:
 						return {
-							name: p.name,
+							...p,
 							sports: p.sports.map((s, i) => {
 								if (i === 0) {
 									return { ...s, price: s.price * 0.9 };
@@ -146,7 +137,7 @@ export const onePlayer = (player: Player) => {
 		if (discount.id === 5 && discountDayTimeValidation(discount)) {
 			console.log("within time discount");
 			player = {
-				name: player.name,
+				...player,
 				sports: player.sports.map((s) => {
 					return {
 						...s,
@@ -167,7 +158,7 @@ export const onePlayer = (player: Player) => {
 				console.log("two Sports");
 
 				player = {
-					name: player.name,
+					...player,
 					sports: sortingSports.map((s, i) => {
 						if (i === 0) {
 							return {
@@ -187,7 +178,7 @@ export const onePlayer = (player: Player) => {
 			else if (sportsWithDiscount.length > 2) {
 				console.log("more than two Sports");
 				player = {
-					name: player.name,
+					...player,
 					sports: sortingSports.map((s, i) => {
 						if (i === 0) {
 							return {
@@ -222,7 +213,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 		if (isSecondSportBigger) {
 			return [
 				{
-					name: players[0].name,
+					...players[0],
 					sports: players[0].sports.map((s, i) => {
 						if (i === 0) {
 							return {
@@ -234,7 +225,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 					}),
 				},
 				{
-					name: players[1].name,
+					...players[1],
 					sports: players[1].sports.map((s, i) => {
 						if (i === 0) {
 							return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 1) };
@@ -247,7 +238,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 		// قيمة اللعبةالأكبر لللاعب الأول أكبر
 		return [
 			{
-				name: players[1].name,
+				...players[1],
 				sports: players[1].sports.map((s, i) => {
 					if (i === 0) {
 						return { ...s, price: s.price * 0.9 };
@@ -256,7 +247,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 				}),
 			},
 			{
-				name: players[0].name,
+				...players[0],
 				sports: players[0].sports.map((s, i) => {
 					if (i === 0) {
 						return { ...s, price: s.price * 0.8 };
@@ -274,7 +265,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 			if (firstSportsWithDiscountBigger(players[0].sports[0], players[1].sports[0])) {
 				return [
 					{
-						name: players[0].name,
+						...players[0],
 						sports: players[0].sports.map((s, i) => {
 							if (i === 0) {
 								return {
@@ -286,14 +277,14 @@ export const twoPlayers = (players: Player[]): Player[] => {
 						}),
 					},
 					{
-						name: players[1].name,
+						...players[1],
 						sports: players[1].sports,
 					},
 				];
 			}
 			return [
 				{
-					name: players[1].name,
+					...players[1],
 					sports: players[1].sports.map((s, i) => {
 						if (i === 0) {
 							return {
@@ -305,7 +296,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 					}),
 				},
 				{
-					name: players[0].name,
+					...players[0],
 					sports: players[0].sports,
 				},
 			];
@@ -318,7 +309,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 			if (!lowerPlayer) {
 				return [
 					{
-						name: higherPlayer.name,
+						...higherPlayer,
 						sports: higherPlayer.sports.map((s, i) => {
 							if (i === 0) {
 								return {
@@ -330,7 +321,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 						}),
 					},
 					{
-						name: otherPlayer.name,
+						...otherPlayer,
 						sports: otherPlayer.sports,
 					},
 				];
@@ -345,7 +336,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 			if (firstPlayerBigger) {
 				return [
 					{
-						name: higherPlayer.name,
+						...higherPlayer,
 						sports: higherPlayer.sports.map((s, i) => {
 							if (i === 0) {
 								return {
@@ -357,7 +348,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 						}),
 					},
 					{
-						name: otherPlayer.name,
+						...otherPlayer,
 						sports: otherPlayer.sports.map((s, i) => {
 							if (i === 0) {
 								return {
@@ -372,7 +363,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 			}
 			return [
 				{
-					name: higherPlayer.name,
+					...higherPlayer,
 					sports: higherPlayer.sports.map((s, i) => {
 						if (i === 0) {
 							return {
@@ -384,7 +375,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 					}),
 				},
 				{
-					name: otherPlayer.name,
+					...otherPlayer,
 					sports: otherPlayer.sports.map((s, i) => {
 						if (i === 0) {
 							return {
@@ -410,7 +401,7 @@ export const moreThanTwoPlayers = (players: Player[]): Player[] => {
 			switch (i) {
 				case 0:
 					return {
-						name: p.name,
+						...p,
 						sports: p.sports.map((s, i) => {
 							if (i === 0) {
 								return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 1) };
@@ -420,7 +411,7 @@ export const moreThanTwoPlayers = (players: Player[]): Player[] => {
 					};
 				case 1:
 					return {
-						name: p.name,
+						...p,
 						sports: p.sports.map((s, i) => {
 							if (i === 0) {
 								return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 0) };
@@ -459,7 +450,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 			return players.map((p, i) => {
 				if (i === 0) {
 					return {
-						name: p.name,
+						...p,
 						sports: p.sports.map((s) => {
 							return {
 								...s,
@@ -480,7 +471,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 					return swimmingFirstMonthCheck(player);
 				case 1:
 					return {
-						name: player.name,
+						...player,
 						sports: player.sports.map((s) => {
 							return {
 								...s,
@@ -504,7 +495,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 					return swimmingFirstMonthCheck(player);
 				case 1:
 					return {
-						name: player.name,
+						...player,
 						sports: player.sports.map((s) => {
 							return {
 								...s,
@@ -517,7 +508,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 					};
 				case 2:
 					return {
-						name: player.name,
+						...player,
 						sports: player.sports.map((s) => {
 							return {
 								...s,

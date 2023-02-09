@@ -1,5 +1,5 @@
+import { Player, PlayerSport } from "@/types";
 import { Discount, DiscountType } from "@prisma/client";
-import { Player, PlayerSport } from "./calc";
 
 export function divvyUp<T>(array: T[], predicate: (el: T, index?: number, arr?: Array<T>) => any) {
 	// const filterTrue: T[] = [],
@@ -116,7 +116,7 @@ export const numberOfPrivateSwimmingSportsWithDiscount = (players: Player[]) => 
 // ترتيب العاب كل لاعب حسب أكبر خصم
 export const playersMaxDiscountSorting = (players: Player[]): Player[] => {
 	return players.map((player) => ({
-		name: player.name,
+		...player,
 		sports: maxDiscountSorting(player.sports),
 	}));
 };
@@ -147,7 +147,7 @@ export const swimmingFirstMonthCheck = (player: Player) => {
 
 	if (timeDiscount && discountDayTimeValidation(timeDiscount)) {
 		return {
-			name: player.name,
+			...player,
 			sports: player.sports.map((s) => {
 				return {
 					...s,
@@ -166,8 +166,8 @@ export const splitPrivateSwimming = (players: Player[]) => {
 	);
 	let filteredSwimmingList: Player[] = [];
 	swimmingPrivateList.forEach((player) => {
-		const currentPlayerOtherSports: Player = { name: player.name, sports: [] };
-		const currentPlayerSwimmingPrivate: Player = { name: player.name, sports: [] };
+		const currentPlayerOtherSports: Player = { ...player, sports: [] };
+		const currentPlayerSwimmingPrivate: Player = { ...player, sports: [] };
 		player.sports.map((sport) => {
 			if (sport.name?.includes("rivat")) {
 				currentPlayerSwimmingPrivate.sports.push(sport);
