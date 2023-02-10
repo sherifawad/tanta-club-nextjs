@@ -130,6 +130,45 @@ export default function Home({
 		});
 	};
 
+	const deleteSport = (playerId: number, sport: PlayerSport) => {
+		if (!playerId || !sport) return;
+
+		setPlayersList((prev) => {
+			const [currentPlayer, rest] = divvyUp(prev, (player) => player.id === playerId);
+			if (!currentPlayer[0]) return prev;
+			const orderedSports = currentPlayer[0].sports.filter((s) => s.id !== sport.id);
+			toast.success(` تم إزالة  ${sport.title}  `, {
+				position: "top-right",
+				autoClose: 500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+			return [...rest, { ...currentPlayer[0], sports: orderedSports }];
+		});
+	};
+
+	const deletePlayer = (player: Player) => {
+		if (!player) return;
+
+		try {
+			setPlayersList((prev) => prev.filter((p) => p.id !== player.id));
+			toast.success(` تم إزالة  ${player.name}  `, {
+				position: "top-right",
+				autoClose: 500,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+			});
+		} catch (error) {}
+	};
+
 	const calculationHandler = () => {
 		if (playerName === "") {
 			toast.error("No Name", {
@@ -244,11 +283,11 @@ export default function Home({
 							},
 							mobile: {
 								breakpoint: { max: 464, min: 0 },
-								items: 2,
+								items: 1,
 							},
 						}}
 						slidesToSlide={2}
-						containerClass="w-4/6 pb-4 "
+						containerClass="sm:w-4/6 pb-4 w-72"
 						sliderClass="flex justify-center items-center gap-4 rounded-all"
 						deviceType={""}
 						infinite
@@ -277,11 +316,13 @@ export default function Home({
 						))}
 					</div>
 				</div>
-				<div className="pt-10">
+				<div className="pt-10 h-screen">
 					<ListCard
 						players={playersList}
 						calc={() => calculationHandler()}
 						newPlayer={() => setOpenNameModel(true)}
+						deleteSport={deleteSport}
+                        deletePlayer={deletePlayer}
 					/>
 				</div>
 			</div>

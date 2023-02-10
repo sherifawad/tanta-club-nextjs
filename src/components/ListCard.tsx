@@ -2,16 +2,19 @@ import { Player, PlayerSport } from "@/types";
 import React from "react";
 import CustomButton from "./ui/CustomButton";
 import { ButtonsType } from "@/data/constants";
+import { AiFillDelete } from "react-icons/ai";
 
 type Props = {
 	players?: Player[];
 	calc?: () => void;
 	newPlayer?: () => void;
+	deletePlayer: (player: Player) => void;
+	deleteSport: (playerId: number, sport: PlayerSport) => void;
 };
 
-const ListCard = ({ players, calc, newPlayer }: Props) => {
+const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props) => {
 	return (
-		<div className="grid grid-rows-[auto_3fr_1fr] bg-white border border-gray-100 rounded-lg shadow min-w-[1rem] w-72 h-2/3 sm:h-1/3 max-h-screen ">
+		<div className="grid grid-rows-[auto_3fr_1fr] bg-white border border-gray-100 rounded-lg shadow min-w-[1rem] w-72  h-2/3 ">
 			<div className="p-4">
 				<CustomButton onClick={newPlayer} buttontype={ButtonsType.PRIMARY} className="w-full">
 					اضف لاعب ➕
@@ -21,7 +24,14 @@ const ListCard = ({ players, calc, newPlayer }: Props) => {
 				<div className="mx-4 overflow-y-auto divide-y divide-dashed">
 					{players?.map((player) => (
 						<div key={player.id} className=" flex flex-col items-center py-4">
-							<div className="text-orange-900 font-bold text-lg">{player?.name}</div>
+							<div className="flex flex-row-reverse gap-2 bg-orange-100 w-2/3 justify-center rounded-full">
+								<div className="text-black font-bold text-lg w-2/3 m-auto">
+									{player?.name}
+								</div>
+								<button onClick={() => deletePlayer(player)} className="text-orange-900 w-1/3 px-2">
+									<AiFillDelete />
+								</button>
+							</div>
 							<div className=" divide-gray-900 divide-y divide-dashed p-4 w-full">
 								{player?.sports?.map((sport) => (
 									<div
@@ -38,9 +48,12 @@ const ListCard = ({ players, calc, newPlayer }: Props) => {
 												</div>
 											</div>
 										</div>
-										<button className="px-4 py-2 rounded-full w-fit  bg-orange-900 text-white hover:text-black">
+										<CustomButton
+											onClick={() => deleteSport(player.id, sport)}
+											buttontype={ButtonsType.PRIMARY}
+										>
 											X
-										</button>
+										</CustomButton>
 									</div>
 								))}
 							</div>
