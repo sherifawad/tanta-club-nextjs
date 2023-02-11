@@ -3,7 +3,7 @@ import { Inter } from "@next/font/google";
 import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
 import MiniCard from "@/components/MiniCard";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { moreThanTwoPlayers, swimmingDiscount } from "@/utils/calc";
 import { divvyUp, mergePlayers, splitPrivateSwimming } from "@/utils/utils";
 import { BiFootball } from "react-icons/bi";
@@ -18,6 +18,7 @@ import "reactjs-popup/dist/index.css";
 import { Player, PlayerSport } from "@/types";
 import CustomButton from "@/components/ui/CustomButton";
 import { ButtonsType } from "@/data/constants";
+import ResultComponents from "@/components/ResultComponents";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -64,6 +65,7 @@ export default function Home({
 	penalties: Penalty[] | null;
 	sports: PlayerSport[] | null;
 }) {
+	const resultsRef = useRef<null | HTMLDivElement>(null);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
 	const [selectedSportId, setSelectedSportId] = useState<number>();
@@ -200,7 +202,8 @@ export default function Home({
 				})),
 			};
 		}) as Player[];
-		setPlayersResultList(refracted);
+		setPlayersResultList(result);
+		resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 	};
 
 	const savePlayer = () => {
@@ -246,90 +249,96 @@ export default function Home({
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<ToastContainer />
-			<Popup
-				modal
-				nested
-				open={openNameModel}
-				closeOnDocumentClick
-				onClose={() => setOpenNameModel(false)}
-				contentStyle={{ width: "18rem", borderRadius: "0.75rem" }}
-			>
-				<div className="modal">
-					<div className="flex flex-col justify-center gap-4">
-						<div className="grid grid-cols-3 gap-2 rounded-xl border border-black" dir="rtl">
-							<div className="bg-gray-100 text-gray-900 rounded-r-xl p-2 text-sm">
-								اسم اللاعب
-							</div>
-							<input
-								dir="rtl"
-								className="outline-none rounded-xl text-xl"
-								onChange={(e) => setPlayerName(e.target.value)}
-								value={playerName}
-							/>
-						</div>
-						<CustomButton buttontype={ButtonsType.PRIMARY} onClick={() => savePlayer()}>احفظ</CustomButton>
-					</div>
-				</div>
-			</Popup>
-			<div className="flex flex-wrap justify-center overflow-hidden bg-orange-100">
-				<div className="w-full sm:w-2/3 p-8 flex flex-col items-center">
-					<Carousel
-						responsive={{
-							desktop: {
-								breakpoint: { max: 3000, min: 1024 },
-								items: 3,
-							},
-							tablet: {
-								breakpoint: { max: 1024, min: 464 },
-								items: 3,
-							},
-							mobile: {
-								breakpoint: { max: 464, min: 0 },
-								items: 1,
-							},
-						}}
-						slidesToSlide={2}
-						containerClass="sm:w-4/6 pb-4 w-72"
-						sliderClass="flex justify-center items-center gap-4 rounded-all"
-						deviceType={""}
-						infinite
-						arrows
-						ssr
-						centerMode
-					>
-						{categories?.map((cat) => (
-							<button key={cat.id} onClick={() => onSelectedCategoryChange(cat.id)}>
-								<MiniCard
-									category={cat}
-									icon={<BiFootball />}
-									selected={selectedCategoryId === cat.id}
+			<div className="bg-orange-100">
+				<ToastContainer />
+				<Popup
+					modal
+					nested
+					open={openNameModel}
+					closeOnDocumentClick
+					onClose={() => setOpenNameModel(false)}
+					contentStyle={{ width: "18rem", borderRadius: "0.75rem" }}
+				>
+					<div className="modal">
+						<div className="flex flex-col justify-center gap-4">
+							<div className="grid grid-cols-3 gap-2 rounded-xl border border-black" dir="rtl">
+								<div className="bg-gray-100 text-gray-900 rounded-r-xl p-2 text-sm">
+									اسم اللاعب
+								</div>
+								<input
+									dir="rtl"
+									className="outline-none rounded-xl text-xl"
+									onChange={(e) => setPlayerName(e.target.value)}
+									value={playerName}
 								/>
-							</button>
-						))}
-					</Carousel>
-					<div className="flex flex-wrap items-center justify-center gap-4 ">
-						{sportsList.map((sport) => (
-							<Card
-								key={sport.id}
-								sport={sport}
-								icon={<BiFootball className="relative w-32 h-32" />}
-								add={() => onSportAdded(sport)}
-							/>
-						))}
+							</div>
+							<CustomButton buttontype={ButtonsType.PRIMARY} onClick={() => savePlayer()}>
+								احفظ
+							</CustomButton>
+						</div>
 					</div>
-				</div>
-				<div className="pt-10 h-screen">
-					<ListCard
-						players={playersList}
-						calc={() => calculationHandler()}
-						newPlayer={() => setOpenNameModel(true)}
-						deleteSport={deleteSport}
-						deletePlayer={deletePlayer}
-					/>
+				</Popup>
+				<div className="flex flex-wrap justify-center overflow-hidden">
+					<div className="w-full sm:w-2/3 p-8 flex flex-col items-center">
+						<Carousel
+							responsive={{
+								desktop: {
+									breakpoint: { max: 3000, min: 1024 },
+									items: 3,
+								},
+								tablet: {
+									breakpoint: { max: 1024, min: 464 },
+									items: 3,
+								},
+								mobile: {
+									breakpoint: { max: 464, min: 0 },
+									items: 1,
+								},
+							}}
+							slidesToSlide={2}
+							containerClass="sm:w-4/6 pb-4 w-72"
+							sliderClass="flex justify-center items-center gap-4 rounded-all"
+							deviceType={""}
+							infinite
+							arrows
+							ssr
+							centerMode
+						>
+							{categories?.map((cat) => (
+								<button key={cat.id} onClick={() => onSelectedCategoryChange(cat.id)}>
+									<MiniCard
+										category={cat}
+										icon={<BiFootball />}
+										selected={selectedCategoryId === cat.id}
+									/>
+								</button>
+							))}
+						</Carousel>
+						<div className="flex flex-wrap items-center justify-center gap-4 ">
+							{sportsList.map((sport) => (
+								<Card
+									key={sport.id}
+									sport={sport}
+									icon={<BiFootball className="relative w-32 h-32" />}
+									add={() => onSportAdded(sport)}
+								/>
+							))}
+						</div>
+					</div>
+					<div className="h-full">
+						<ListCard
+							players={playersList}
+							calc={() => calculationHandler()}
+							newPlayer={() => setOpenNameModel(true)}
+							deleteSport={deleteSport}
+							deletePlayer={deletePlayer}
+						/>
+					</div>
+					<div ref={resultsRef} className=" p-8 w-full">
+						<ResultComponents result={playersResultList} />
+					</div>
 				</div>
 			</div>
-			{JSON.stringify(playersResultList, null, 2)}
 		</>
 	);
 }

@@ -68,7 +68,7 @@ const Card = ({ icon, sport, add }: Props) => {
 								</ul>
 								<div className="" aria-labelledby="dropdownButton">
 									<a href="#" className="block p-2 text-sm text-orange-900 ">
-										{sport.Penalty?.name}
+										{sport.Penalty?.title}
 									</a>
 								</div>
 							</div>
