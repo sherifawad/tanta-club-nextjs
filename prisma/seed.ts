@@ -16,6 +16,7 @@ async function seed() {
 				Maximum: 25,
 				step: 5,
 				name: "swimmingDelayPenalty",
+				title: "غرامة تأخير دفع سباحة",
 				repeated: "MONTHLY",
 				startDay: 11,
 			},
@@ -192,7 +193,7 @@ async function seed() {
 		data: {
 			name: "footBallAcademy",
 			title: "أكاديمية كرة قدم",
-			price: 200,
+			price: 175,
 			categoryId: 2,
 			DiscountOptions: {
 				connect: [
@@ -211,7 +212,7 @@ async function seed() {
 		data: {
 			name: "footBallSpecial",
 			title: "كرة قدم مميزة",
-			price: 300,
+			price: 275,
 			categoryId: 2,
 			DiscountOptions: {
 				connect: [
@@ -230,7 +231,7 @@ async function seed() {
 		data: {
 			name: "basketBall",
 			title: "سلة",
-			price: 300,
+			price: 275,
 			categoryId: 3,
 			DiscountOptions: {
 				connect: [
@@ -252,7 +253,7 @@ async function seed() {
 		data: {
 			name: "handBall",
 			title: "كرة يد",
-			price: 300,
+			price: 275,
 			categoryId: 4,
 			DiscountOptions: {
 				connect: [
@@ -274,7 +275,7 @@ async function seed() {
 		data: {
 			name: "volleyBall",
 			title: "كرة طائرة",
-			price: 300,
+			price: 275,
 			categoryId: 5,
 			DiscountOptions: {
 				connect: [
@@ -296,7 +297,7 @@ async function seed() {
 		data: {
 			name: "taekwondoMonthly",
 			title: "تايكوندو شهري",
-			price: 300,
+			price: 275,
 			categoryId: 6,
 			DiscountOptions: {
 				connect: [
@@ -315,6 +316,15 @@ async function seed() {
 		data: {
 			name: "taekwondoPrivate",
 			title: "تايكوندو خاص",
+			price: 175,
+			categoryId: 6,
+		},
+	});
+
+	await client.sport.create({
+		data: {
+			name: "taekwondoTest",
+			title: "تايكوندو اختبار حزام",
 			price: 200,
 			categoryId: 6,
 		},
@@ -324,7 +334,7 @@ async function seed() {
 		data: {
 			name: "judo",
 			title: "جودو",
-			price: 300,
+			price: 275,
 			categoryId: 7,
 			DiscountOptions: {
 				connect: [
@@ -343,7 +353,7 @@ async function seed() {
 		data: {
 			name: "pingPongMonthly",
 			title: "تنس طاولة شهري",
-			price: 350,
+			price: 325,
 			categoryId: 8,
 			DiscountOptions: {
 				connect: [
@@ -380,7 +390,7 @@ async function seed() {
 		data: {
 			name: "snooker",
 			title: "بلياردو شهري",
-			price: 350,
+			price: 375,
 			categoryId: 10,
 			DiscountOptions: {
 				connect: [
@@ -408,7 +418,7 @@ async function seed() {
 		data: {
 			name: "modernPentathlonLaser",
 			title: "خماسي ليزر رن",
-			price: 350,
+			price: 325,
 			categoryId: 11,
 			DiscountOptions: {
 				connect: [
@@ -427,7 +437,7 @@ async function seed() {
 		data: {
 			name: "modernPentathlonDouble",
 			title: "خماسي ثنائي",
-			price: 400,
+			price: 375,
 			categoryId: 11,
 			DiscountOptions: {
 				connect: [
@@ -446,7 +456,7 @@ async function seed() {
 		data: {
 			name: "modernPentathlonTriple",
 			title: "خماسي ثلاثي",
-			price: 450,
+			price: 425,
 			categoryId: 11,
 			DiscountOptions: {
 				connect: [
@@ -465,7 +475,7 @@ async function seed() {
 		data: {
 			name: "modernPentathlonSchools",
 			title: "خماسي مدارس",
-			price: 350,
+			price: 325,
 			categoryId: 11,
 			DiscountOptions: {
 				connect: [
@@ -484,7 +494,7 @@ async function seed() {
 		data: {
 			name: "modernPentathlonMaster",
 			title: "خماسي ماسترز",
-			price: 450,
+			price: 425,
 			categoryId: 11,
 			DiscountOptions: {
 				connect: [
@@ -503,7 +513,7 @@ async function seed() {
 		data: {
 			name: "boxingBeginners",
 			title: "ملاكمة مبتدئين",
-			price: 250,
+			price: 225,
 			categoryId: 12,
 			DiscountOptions: {
 				connect: [
@@ -522,7 +532,7 @@ async function seed() {
 		data: {
 			name: "boxingAmateur",
 			title: "ملاكمة هواه",
-			price: 250,
+			price: 225,
 			categoryId: 12,
 			DiscountOptions: {
 				connect: [
@@ -541,7 +551,7 @@ async function seed() {
 		data: {
 			name: "boxingBuds",
 			title: "ملاكمة براعم",
-			price: 200,
+			price: 175,
 			categoryId: 12,
 			DiscountOptions: {
 				connect: [
@@ -560,7 +570,7 @@ async function seed() {
 		data: {
 			name: "boxingTeam",
 			title: "ملاكمة فريق",
-			price: 200,
+			price: 175,
 			categoryId: 12,
 			DiscountOptions: {
 				connect: [
@@ -579,7 +589,7 @@ async function seed() {
 		data: {
 			name: "boxingPrivate",
 			title: "ملاكمة خاص",
-			price: 350,
+			price: 325,
 			categoryId: 12,
 		},
 	});
@@ -588,7 +598,7 @@ async function seed() {
 		data: {
 			name: "tennisSchools",
 			title: "تنس أرضي مدارس",
-			price: 350,
+			price: 325,
 			categoryId: 13,
 			DiscountOptions: {
 				connect: [
@@ -607,7 +617,7 @@ async function seed() {
 		data: {
 			name: "tennisTeam",
 			title: "تنس أرضي فريق",
-			price: 500,
+			price: 475,
 			categoryId: 13,
 			DiscountOptions: {
 				connect: [
@@ -698,7 +708,7 @@ async function seed() {
 		data: {
 			name: "squashBeginners",
 			title: "اسكواش مبتدئين",
-			price: 500,
+			price: 475,
 			categoryId: 14,
 			DiscountOptions: {
 				connect: [
@@ -717,7 +727,7 @@ async function seed() {
 		data: {
 			name: "squashAmateurs",
 			title: "اسكواش هواه",
-			price: 650,
+			price: 625,
 			categoryId: 14,
 			DiscountOptions: {
 				connect: [
@@ -736,7 +746,7 @@ async function seed() {
 		data: {
 			name: "squashBuds",
 			title: "اسكواش براعم",
-			price: 650,
+			price: 625,
 			categoryId: 14,
 			DiscountOptions: {
 				connect: [
@@ -755,7 +765,7 @@ async function seed() {
 		data: {
 			name: "squashTeam",
 			title: "اسكواش فريق",
-			price: 550,
+			price: 525,
 			categoryId: 14,
 			DiscountOptions: {
 				connect: [
@@ -801,7 +811,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsGeneralTeam",
 			title: "جمباز عام فريق",
-			price: 400,
+			price: 350,
 			categoryId: 15,
 			DiscountOptions: {
 				connect: [
@@ -822,6 +832,7 @@ async function seed() {
 			title: "جمباز عام خاص",
 			price: 125,
 			categoryId: 15,
+			hidden: true,
 		},
 	});
 
@@ -846,8 +857,8 @@ async function seed() {
 
 	await client.sport.create({
 		data: {
-			name: "gymnasticsArtistic_6_years",
-			title: "جمباز فني 6 سنوات",
+			name: "gymnasticsArtistic_6-7_years",
+			title: "جمباز فني 6-7 سنوات",
 			price: 450,
 			categoryId: 15,
 			DiscountOptions: {
@@ -865,8 +876,8 @@ async function seed() {
 
 	await client.sport.create({
 		data: {
-			name: "gymnasticsArtistic_7-9_Years",
-			title: "جمباز فني 7-9 سنوات",
+			name: "gymnasticsArtistic_8-9_Years",
+			title: "جمباز فني 8-9 سنوات",
 			price: 500,
 			categoryId: 15,
 			DiscountOptions: {
@@ -886,7 +897,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsArtistic_10_Years",
 			title: "جمباز فني 10 سنوات",
-			price: 600,
+			price: 550,
 			categoryId: 15,
 			DiscountOptions: {
 				connect: [
@@ -905,7 +916,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsArtistic_11-13_Years",
 			title: "جمباز فني 11-13 سنوات",
-			price: 900,
+			price: 850,
 			categoryId: 15,
 			DiscountOptions: {
 				connect: [
@@ -924,7 +935,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsArtistic_1-2_Grade",
 			title: "جمباز فني درجة 1-2",
-			price: 1000,
+			price: 900,
 			categoryId: 15,
 			DiscountOptions: {
 				connect: [
@@ -943,7 +954,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsArtisticPrivate",
 			title: "جمباز فني حاص",
-			price: 75,
+			price: 60,
 			categoryId: 15,
 		},
 	});
@@ -952,7 +963,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsAerobicPrep",
 			title: "جمباز ايروبك تجهيزي",
-			price: 600,
+			price: 550,
 			categoryId: 15,
 			DiscountOptions: {
 				connect: [
@@ -971,7 +982,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsAerobic_7-9_Years",
 			title: "جمباز ايروبك 7-9 سنوات",
-			price: 850,
+			price: 800,
 			categoryId: 15,
 			DiscountOptions: {
 				connect: [
@@ -990,7 +1001,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsAerobic_10-11_Years",
 			title: "جمباز ايروبك 10-11 سنوات",
-			price: 900,
+			price: 850,
 			categoryId: 15,
 			DiscountOptions: {
 				connect: [
@@ -1028,7 +1039,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsAerobicPrivate",
 			title: "جمباز ايروبك خاص",
-			price: 75,
+			price: 60,
 			categoryId: 15,
 		},
 	});
@@ -1037,7 +1048,7 @@ async function seed() {
 		data: {
 			name: "gymnasticsRhythmic_10_Years",
 			title: "جمباز إيقاعي 10 سنوات",
-			price: 1750,
+			price: 1500,
 			categoryId: 15,
 			DiscountOptions: {
 				connect: [
@@ -1056,7 +1067,7 @@ async function seed() {
 		data: {
 			name: "gymnasiumMonthly",
 			title: "جيم شهري",
-			price: 250,
+			price: 225,
 			categoryId: 16,
 			DiscountOptions: {
 				connect: [
@@ -1094,18 +1105,8 @@ async function seed() {
 		data: {
 			name: "gymnasiumSinglePrivate",
 			title: "جيم خاص فردي",
-			price: 700,
+			price: 675,
 			categoryId: 16,
-			DiscountOptions: {
-				connect: [
-					{
-						id: 1,
-					},
-					{
-						id: 2,
-					},
-				],
-			},
 		},
 	});
 
@@ -1113,18 +1114,8 @@ async function seed() {
 		data: {
 			name: "gymnasiumDoublePrivate",
 			title: "جيم خاص زوجي",
-			price: 1000,
+			price: 950,
 			categoryId: 16,
-			DiscountOptions: {
-				connect: [
-					{
-						id: 1,
-					},
-					{
-						id: 2,
-					},
-				],
-			},
 		},
 	});
 
@@ -1132,18 +1123,8 @@ async function seed() {
 		data: {
 			name: "gymnasiumTriplePrivate",
 			title: "جيم خاص ثلاثي",
-			price: 1500,
+			price: 1400,
 			categoryId: 16,
-			DiscountOptions: {
-				connect: [
-					{
-						id: 1,
-					},
-					{
-						id: 2,
-					},
-				],
-			},
 		},
 	});
 
@@ -1160,7 +1141,7 @@ async function seed() {
 		data: {
 			name: "gymnasium_3_Months",
 			title: "جيم ثلاث أشهر",
-			price: 650,
+			price: 600,
 			categoryId: 16,
 		},
 	});
@@ -1169,7 +1150,7 @@ async function seed() {
 		data: {
 			name: "gymnasium_6_Months",
 			title: "جيم ستة أشهر",
-			price: 1300,
+			price: 1100,
 			categoryId: 16,
 		},
 	});
@@ -1177,8 +1158,8 @@ async function seed() {
 	await client.sport.create({
 		data: {
 			name: "gymnasiumFriendsMonthly",
-			title: "جيم أصدقاء شهري",
-			price: 1150,
+			title: "جيم أصدقاء5 أفراد شهري",
+			price: 950,
 			categoryId: 16,
 		},
 	});
@@ -1187,7 +1168,7 @@ async function seed() {
 		data: {
 			name: "athleticsMonthly",
 			title: "ألعاب قوى شهري",
-			price: 300,
+			price: 275,
 			categoryId: 17,
 			DiscountOptions: {
 				connect: [
@@ -1206,7 +1187,7 @@ async function seed() {
 		data: {
 			name: "athleticsPrivate",
 			title: "ألعاب قوى خاص",
-			price: 125,
+			price: 110,
 			categoryId: 17,
 		},
 	});
@@ -1215,7 +1196,7 @@ async function seed() {
 		data: {
 			name: "fitnessMonthly",
 			title: "فتنس تراك شهري",
-			price: 300,
+			price: 275,
 			categoryId: 18,
 			DiscountOptions: {
 				connect: [
@@ -1245,6 +1226,7 @@ async function seed() {
 			title: "فتنس تراك خاص مجموعة",
 			price: 500,
 			categoryId: 18,
+			hidden: true,
 		},
 	});
 
@@ -1252,7 +1234,7 @@ async function seed() {
 		data: {
 			name: "karateSchools",
 			title: "كاراتيه مدارس",
-			price: 300,
+			price: 275,
 			categoryId: 19,
 			DiscountOptions: {
 				connect: [
@@ -1271,7 +1253,7 @@ async function seed() {
 		data: {
 			name: "karateBuds",
 			title: "كاراتيه براعم",
-			price: 250,
+			price: 225,
 			categoryId: 19,
 			DiscountOptions: {
 				connect: [
@@ -1290,7 +1272,7 @@ async function seed() {
 		data: {
 			name: "karateYouth",
 			title: "كاراتيه ناشئين",
-			price: 200,
+			price: 175,
 			categoryId: 19,
 			DiscountOptions: {
 				connect: [
@@ -1309,16 +1291,16 @@ async function seed() {
 		data: {
 			name: "karateExam",
 			title: "كاراتيه اختبار",
-			price: 250,
+			price: 225,
 			categoryId: 19,
 		},
 	});
 
 	await client.sport.create({
 		data: {
-			name: "karatePrivate_2-4_Group",
-			title: "كاراتيه خاص مجموعة 2-4",
-			price: 550,
+			name: "karatePrivate",
+			title: "كاراتيه خاص 4",
+			price: 525,
 			categoryId: 19,
 		},
 	});
@@ -1327,7 +1309,7 @@ async function seed() {
 		data: {
 			name: "karatePrivate_6-8_Group",
 			title: "كاراتيه خاص مجموعة 6-8",
-			price: 450,
+			price: 425,
 			categoryId: 19,
 		},
 	});
@@ -1338,6 +1320,7 @@ async function seed() {
 			title: "سلاح نخبة",
 			price: 1200,
 			categoryId: 20,
+			hidden: true,
 			DiscountOptions: {
 				connect: [
 					{
@@ -1357,6 +1340,7 @@ async function seed() {
 			title: "سلاح مميز",
 			price: 850,
 			categoryId: 20,
+			hidden: true,
 			DiscountOptions: {
 				connect: [
 					{
@@ -1376,6 +1360,7 @@ async function seed() {
 			title: "سلاح مبتدئين",
 			price: 500,
 			categoryId: 20,
+			hidden: true,
 			DiscountOptions: {
 				connect: [
 					{
@@ -1395,6 +1380,7 @@ async function seed() {
 			title: "سلاح لياقة",
 			price: 250,
 			categoryId: 20,
+			hidden: true,
 		},
 	});
 
@@ -1404,6 +1390,7 @@ async function seed() {
 			title: "سلاح درس أوليمبي",
 			price: 200,
 			categoryId: 20,
+			hidden: true,
 		},
 	});
 
@@ -1413,6 +1400,7 @@ async function seed() {
 			title: "سلاح درس دولي",
 			price: 150,
 			categoryId: 20,
+			hidden: true,
 		},
 	});
 
@@ -1422,6 +1410,7 @@ async function seed() {
 			title: "سلاح درس محلي",
 			price: 100,
 			categoryId: 20,
+			hidden: true,
 		},
 	});
 
@@ -1431,6 +1420,7 @@ async function seed() {
 			title: "سلاح معسكر",
 			price: 300,
 			categoryId: 20,
+			hidden: true,
 		},
 	});
 
@@ -1440,6 +1430,7 @@ async function seed() {
 			title: "سلاح مستوى إضافي",
 			price: 500,
 			categoryId: 20,
+			hidden: true,
 		},
 	});
 
@@ -1449,16 +1440,17 @@ async function seed() {
 			title: "سلاح وحدة تدريبية",
 			price: 150,
 			categoryId: 20,
+			hidden: true,
 		},
 	});
 
 	await client.sport.create({
 		data: {
-			name: "swimmingSchools",
-			title: "سباحة مدارس",
-			price: 325,
-			categoryId: 1,
-			penaltyId: 1,
+			name: "fencingMonthly",
+			title: "سلاح شهري",
+			price: 200,
+			categoryId: 20,
+			hidden: true,
 			DiscountOptions: {
 				connect: [
 					{
@@ -1474,9 +1466,29 @@ async function seed() {
 
 	await client.sport.create({
 		data: {
+			name: "swimmingSchools",
+			title: "سباحة مدارس",
+			price: 300,
+			categoryId: 1,
+			penaltyId: 1,
+			DiscountOptions: {
+				connect: [
+					{
+						id: 1,
+					},
+					{
+						id: 2,
+					},
+				],
+			},
+		},
+	});
+
+	await client.sport.create({
+		data: {
 			name: "swimmingSpecialSchools",
 			title: " سباحة مدارس مميزة",
-			price: 450,
+			price: 475,
 			categoryId: 1,
 			penaltyId: 1,
 			DiscountOptions: {
@@ -1496,16 +1508,16 @@ async function seed() {
 		data: {
 			name: "swimmingPrep",
 			title: "سباحة تجهيزي",
-			price: 300,
+			price: 275,
 			categoryId: 1,
 			penaltyId: 1,
 			DiscountOptions: {
 				connect: [
 					{
-						id: 1,
+						id: 3,
 					},
 					{
-						id: 2,
+						id: 4,
 					},
 				],
 			},
@@ -1536,16 +1548,16 @@ async function seed() {
 		data: {
 			name: "swimmingPracticing",
 			title: "سباحة ممارسة",
-			price: 300,
+			price: 275,
 			categoryId: 1,
 			penaltyId: 1,
 			DiscountOptions: {
 				connect: [
 					{
-						id: 1,
+						id: 3,
 					},
 					{
-						id: 2,
+						id: 4,
 					},
 				],
 			},
@@ -1556,15 +1568,15 @@ async function seed() {
 		data: {
 			name: "swimmingSeniorEducation",
 			title: "سباحة تعليم كبار",
-			price: 550,
+			price: 525,
 			categoryId: 1,
 			DiscountOptions: {
 				connect: [
 					{
-						id: 1,
+						id: 3,
 					},
 					{
-						id: 2,
+						id: 4,
 					},
 				],
 			},
@@ -1685,6 +1697,14 @@ async function seed() {
 					},
 				],
 			},
+		},
+	});
+	await client.sport.create({
+		data: {
+			name: "swimmingStar",
+			title: "سباحة النجوم",
+			price: 475,
+			categoryId: 1,
 		},
 	});
 }

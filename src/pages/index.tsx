@@ -66,6 +66,7 @@ export default function Home({
 	sports: PlayerSport[] | null;
 }) {
 	const resultsRef = useRef<null | HTMLDivElement>(null);
+	const listRef = useRef<null | HTMLDivElement>(null);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
 	const [selectedSportId, setSelectedSportId] = useState<number>();
@@ -98,6 +99,8 @@ export default function Home({
 	const onSportAdded = (sport: PlayerSport | undefined) => {
 		if (!sport) return;
 		if (playerName === "" || playersList.length < 1) {
+			listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
 			toast.error("اضف اسم", {
 				position: "top-right",
 				autoClose: 1000,
@@ -335,7 +338,7 @@ export default function Home({
 							))}
 						</div>
 					</div>
-					<div className="h-full">
+					<div ref={listRef} className="h-full">
 						<ListCard
 							players={playersList}
 							calc={() => calculationHandler()}

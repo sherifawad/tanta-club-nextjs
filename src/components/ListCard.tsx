@@ -28,7 +28,10 @@ const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props
 								<div className="text-black font-bold text-lg w-2/3 m-auto">
 									{player?.name}
 								</div>
-								<button onClick={() => deletePlayer(player)} className="text-orange-900 w-1/3 px-2">
+								<button
+									onClick={() => deletePlayer(player)}
+									className="text-orange-900 w-1/3 px-2 hover:text-black"
+								>
 									<AiFillDelete />
 								</button>
 							</div>
@@ -51,6 +54,7 @@ const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props
 										<CustomButton
 											onClick={() => deleteSport(player.id, sport)}
 											buttontype={ButtonsType.PRIMARY}
+											className="px-2 py-0 rounded-full"
 										>
 											X
 										</CustomButton>
