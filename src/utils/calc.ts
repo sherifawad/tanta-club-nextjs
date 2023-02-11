@@ -1,11 +1,13 @@
 import {
 	calPriceDiscount,
+	calcSportPenalty,
 	discountDayTimeValidation,
 	divvyUp,
 	firstSportsWithDiscountBigger,
 	maxDiscountSorting,
 	numberOfPrivateSwimmingSportsWithDiscount,
 	numberOfSportsWithDiscount,
+	playerWithNoDiscountSport,
 	playersMaxDiscountSorting,
 	playersWithMaxDiscountSorting,
 	swimmingFirstMonthCheck,
@@ -13,7 +15,6 @@ import {
 import { Player } from "@/types";
 
 export const calculationResult = (data: Player[]) => {
-	const currentDay = new Date().getDate();
 	const result = data.reduce((acc: Player[], current: Player) => {
 		// لاعب واحد
 		if (data.length === 1) {
@@ -51,7 +52,7 @@ export const calculationResult = (data: Player[]) => {
 									if (i === 1) {
 										return { ...s, price: s.price * 0.9 };
 									}
-									return s;
+									return calcSportPenalty(s);
 								}),
 							};
 						}
@@ -74,7 +75,7 @@ export const calculationResult = (data: Player[]) => {
 									if (i === 0) {
 										return { ...s, price: s.price * 0.8 };
 									}
-									return s;
+									return calcSportPenalty(s);
 								}),
 							};
 						case 1:
@@ -84,7 +85,7 @@ export const calculationResult = (data: Player[]) => {
 									if (i === 0) {
 										return { ...s, price: s.price * 0.9 };
 									}
-									return s;
+									return calcSportPenalty(s);
 								}),
 							};
 						default:
@@ -101,7 +102,7 @@ export const calculationResult = (data: Player[]) => {
 								if (i === 0) {
 									return { ...s, price: s.price * 0.8 };
 								}
-								return s;
+								return calcSportPenalty(s);
 							}),
 						};
 					case 1:
@@ -111,7 +112,7 @@ export const calculationResult = (data: Player[]) => {
 								if (i === 0) {
 									return { ...s, price: s.price * 0.9 };
 								}
-								return s;
+								return calcSportPenalty(s);
 							}),
 						};
 
@@ -137,13 +138,13 @@ export const onePlayer = (player: Player) => {
 				sports: player.sports.map((s) => {
 					return {
 						...s,
-						price: calPriceDiscount(discount, s.price, 0),
+						price: calPriceDiscount(discount, s.price, 0, s.Penalty),
 						note: "first month discount",
 					};
 				}),
 			};
 		}
-		return player;
+		return playerWithNoDiscountSport(player);
 	} else {
 		console.log("more than one Sports");
 
@@ -159,10 +160,15 @@ export const onePlayer = (player: Player) => {
 						if (i === 0) {
 							return {
 								...s,
-								price: calPriceDiscount(sortingSports[0].DiscountOptions![0], s.price, 0),
+								price: calPriceDiscount(
+									sortingSports[0].DiscountOptions![0],
+									s.price,
+									0,
+									s.Penalty
+								),
 							};
 						}
-						return s;
+						return calcSportPenalty(s);
 					}),
 				};
 			}
@@ -179,12 +185,12 @@ export const onePlayer = (player: Player) => {
 						if (i === 0) {
 							return {
 								...s,
-								price: calPriceDiscount(s.DiscountOptions![0], s.price, 1),
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 1, s.Penalty),
 							};
 						} else if (i === 1) {
 							return {
 								...s,
-								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
 							};
 						}
 						return s;
@@ -214,41 +220,53 @@ export const twoPlayers = (players: Player[]): Player[] => {
 						if (i === 0) {
 							return {
 								...s,
-								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
 							};
 						}
-						return s;
+						return calcSportPenalty(s);
 					}),
 				},
 				{
 					...players[1],
 					sports: players[1].sports.map((s, i) => {
 						if (i === 0) {
-							return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 1) };
+							return {
+								...s,
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 1, s.Penalty),
+							};
 						}
-						return s;
+						return calcSportPenalty(s);
 					}),
 				},
 			];
 		}
 		// قيمة اللعبةالأكبر لللاعب الأول أكبر
+		//changed
 		return [
 			{
 				...players[1],
 				sports: players[1].sports.map((s, i) => {
 					if (i === 0) {
-						return { ...s, price: s.price * 0.9 };
+						// return { ...s, price: s.price * 0.9 };
+						return {
+							...s,
+							price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
+						};
 					}
-					return s;
+					return calcSportPenalty(s);
 				}),
 			},
 			{
 				...players[0],
 				sports: players[0].sports.map((s, i) => {
 					if (i === 0) {
-						return { ...s, price: s.price * 0.8 };
+						// return { ...s, price: s.price * 0.8 };
+						return {
+							...s,
+							price: calPriceDiscount(s.DiscountOptions![0], s.price, 1, s.Penalty),
+						};
 					}
-					return s;
+					return calcSportPenalty(s);
 				}),
 			},
 		];
@@ -266,10 +284,10 @@ export const twoPlayers = (players: Player[]): Player[] => {
 							if (i === 0) {
 								return {
 									...s,
-									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
 								};
 							}
-							return s;
+							return calcSportPenalty(s);
 						}),
 					},
 					{
@@ -285,10 +303,10 @@ export const twoPlayers = (players: Player[]): Player[] => {
 						if (i === 0) {
 							return {
 								...s,
-								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
 							};
 						}
-						return s;
+						return calcSportPenalty(s);
 					}),
 				},
 				{
@@ -310,10 +328,10 @@ export const twoPlayers = (players: Player[]): Player[] => {
 							if (i === 0) {
 								return {
 									...s,
-									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
 								};
 							}
-							return s;
+							return calcSportPenalty(s);
 						}),
 					},
 					{
@@ -337,10 +355,10 @@ export const twoPlayers = (players: Player[]): Player[] => {
 							if (i === 0) {
 								return {
 									...s,
-									price: calPriceDiscount(s.DiscountOptions![0], s.price, 1),
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 1, s.Penalty),
 								};
 							}
-							return s;
+							return calcSportPenalty(s);
 						}),
 					},
 					{
@@ -349,10 +367,10 @@ export const twoPlayers = (players: Player[]): Player[] => {
 							if (i === 0) {
 								return {
 									...s,
-									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
 								};
 							}
-							return s;
+							return calcSportPenalty(s);
 						}),
 					},
 				];
@@ -364,10 +382,10 @@ export const twoPlayers = (players: Player[]): Player[] => {
 						if (i === 0) {
 							return {
 								...s,
-								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0),
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
 							};
 						}
-						return s;
+						return calcSportPenalty(s);
 					}),
 				},
 				{
@@ -376,10 +394,10 @@ export const twoPlayers = (players: Player[]): Player[] => {
 						if (i === 0) {
 							return {
 								...s,
-								price: calPriceDiscount(s.DiscountOptions![0], s.price, 1),
+								price: calPriceDiscount(s.DiscountOptions![0], s.price, 1, s.Penalty),
 							};
 						}
-						return s;
+						return calcSportPenalty(s);
 					}),
 				},
 			];
@@ -400,9 +418,12 @@ export const moreThanTwoPlayers = (players: Player[]): Player[] => {
 						...p,
 						sports: p.sports.map((s, i) => {
 							if (i === 0) {
-								return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 1) };
+								return {
+									...s,
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 1, s.Penalty),
+								};
 							}
-							return s;
+							return calcSportPenalty(s);
 						}),
 					};
 				case 1:
@@ -410,9 +431,12 @@ export const moreThanTwoPlayers = (players: Player[]): Player[] => {
 						...p,
 						sports: p.sports.map((s, i) => {
 							if (i === 0) {
-								return { ...s, price: calPriceDiscount(s.DiscountOptions![0], s.price, 0) };
+								return {
+									...s,
+									price: calPriceDiscount(s.DiscountOptions![0], s.price, 0, s.Penalty),
+								};
 							}
-							return s;
+							return calcSportPenalty(s);
 						}),
 					};
 
@@ -450,7 +474,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 						sports: p.sports.map((s) => {
 							return {
 								...s,
-								price: calPriceDiscount(discount, s.price, 0),
+								price: calPriceDiscount(discount, s.price, 0, s.Penalty),
 								note: "first month discount",
 							};
 						}),
@@ -472,7 +496,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 							return {
 								...s,
 								price: s.DiscountOptions
-									? calPriceDiscount(s.DiscountOptions[0], s.price, 0)
+									? calPriceDiscount(s.DiscountOptions[0], s.price, 0, s.Penalty)
 									: s.price,
 								note: "first month discount",
 							};
@@ -480,7 +504,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 					};
 
 				default:
-					return player;
+					return playerWithNoDiscountSport(player);
 			}
 		});
 	} else if (sportsWithBrothersDiscount.length > 2) {
@@ -496,7 +520,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 							return {
 								...s,
 								price: s.DiscountOptions
-									? calPriceDiscount(s.DiscountOptions[0], s.price, 0)
+									? calPriceDiscount(s.DiscountOptions[0], s.price, 0, s.Penalty)
 									: s.price,
 								note: "first month discount",
 							};
@@ -509,7 +533,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 							return {
 								...s,
 								price: s.DiscountOptions
-									? calPriceDiscount(s.DiscountOptions[0], s.price, 0)
+									? calPriceDiscount(s.DiscountOptions[0], s.price, 0, s.Penalty)
 									: s.price,
 								note: "first month discount",
 							};
@@ -517,7 +541,7 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 					};
 
 				default:
-					return player;
+					return playerWithNoDiscountSport(player);
 			}
 		});
 	}

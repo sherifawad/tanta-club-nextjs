@@ -1,5 +1,5 @@
 import { Player, PlayerSport } from "@/types";
-import { Discount, DiscountType } from "@prisma/client";
+import { Discount, DiscountType, Penalty, RepetationType } from "@prisma/client";
 
 export function divvyUp<T>(array: T[], predicate: (el: T, index?: number, arr?: Array<T>) => any) {
 	// const filterTrue: T[] = [],
@@ -36,7 +36,77 @@ export const discountStep = (discount: Discount, step: number) => {
 	return totalDiscount;
 };
 
-export const calPriceDiscount = (discount: Discount | undefined, price: number, step: number = 0) => {
+export const penaltyTimeValid = (penalty: Penalty) => {
+	if (!penalty) return false;
+	const currentDay = new Date().getDate();
+	const currentMonth = new Date().getMonth();
+	if (
+		(penalty.startDay && penalty.startDay >= currentDay) ||
+		(penalty.endDay && penalty.endDay <= currentDay) ||
+		(penalty.startMonth && penalty.startMonth >= currentMonth) ||
+		(penalty.endMonth && penalty.endMonth <= currentMonth)
+	) {
+		return true;
+	}
+	return false;
+};
+
+export const penaltyStep = (penalty: Penalty, step: number) => {
+	let totalPenalty = penalty.minimum;
+
+	for (let index = 0; index <= step; index++) {
+		if (totalPenalty === penalty.Maximum) break;
+		totalPenalty += step * penalty.step;
+	}
+	return totalPenalty;
+};
+
+export const calcPenalty = (penalty: Penalty | undefined) => {
+	if (!penalty) return 0;
+	let totalPenalty = 0;
+	if (penaltyTimeValid(penalty)) {
+		totalPenalty = penalty.minimum;
+		switch (penalty.repeated) {
+			case RepetationType.DAILY: {
+				const currentDay = new Date().getDate();
+				const steps = currentDay - (penalty.startDay ?? currentDay);
+				totalPenalty = penaltyStep(penalty, steps);
+				break;
+			}
+			case RepetationType.MONTHLY: {
+				const currentMonth = new Date().getMonth();
+				const steps = currentMonth - (penalty.startMonth ?? currentMonth);
+				totalPenalty = penaltyStep(penalty, steps);
+				break;
+			}
+			default:
+				break;
+		}
+	}
+
+	return totalPenalty;
+};
+
+export const calcSportPenalty = (sport: PlayerSport): PlayerSport => {
+	return {
+		...sport,
+		price: sport.price + calcPenalty(sport.Penalty),
+	};
+};
+
+export const playerWithNoDiscountSport = (player: Player): Player => {
+	return {
+		...player,
+		sports: player.sports.map((sport) => calcSportPenalty(sport)),
+	};
+};
+
+export const calPriceDiscount = (
+	discount: Discount | undefined,
+	price: number,
+	step: number = 0,
+	penalty: Penalty | undefined = undefined
+) => {
 	if (!discount) return price;
 	const totalDiscount = discountStep(discount, step);
 	if (discount.type === DiscountType.FIXED) {
@@ -45,6 +115,9 @@ export const calPriceDiscount = (discount: Discount | undefined, price: number, 
 		price = price * (1 - totalDiscount / 100);
 	} else {
 		price;
+	}
+	if (penalty) {
+		price += calcPenalty(penalty);
 	}
 	return price;
 };

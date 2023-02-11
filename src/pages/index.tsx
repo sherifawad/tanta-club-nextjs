@@ -95,7 +95,7 @@ export default function Home({
 
 	const onSportAdded = (sport: PlayerSport | undefined) => {
 		if (!sport) return;
-		if (playerName === "") {
+		if (playerName === "" || playersList.length < 1) {
 			setOpenNameModel(true);
 		}
 		if (playerName === "" || !currentPlayer) return;
