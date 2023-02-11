@@ -16,6 +16,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { Player, PlayerSport } from "@/types";
+import CustomButton from "@/components/ui/CustomButton";
+import { ButtonsType } from "@/data/constants";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -251,21 +253,22 @@ export default function Home({
 				open={openNameModel}
 				closeOnDocumentClick
 				onClose={() => setOpenNameModel(false)}
-				contentStyle={{ width: "18rem" }}
+				contentStyle={{ width: "18rem", borderRadius: "0.75rem" }}
 			>
-				<div className="modal ">
-					<div className="flex flex-col justify-center gap-4 ">
-						<input
-							className="bg-gray-500"
-							onChange={(e) => setPlayerName(e.target.value)}
-							value={playerName}
-						/>
-						<button
-							className="px-4 py-2 rounded-full w-full  bg-orange-900 text-white hover:text-black"
-							onClick={() => savePlayer()}
-						>
-							احفظ
-						</button>
+				<div className="modal">
+					<div className="flex flex-col justify-center gap-4">
+						<div className="grid grid-cols-3 gap-2 rounded-xl border border-black" dir="rtl">
+							<div className="bg-gray-100 text-gray-900 rounded-r-xl p-2 text-sm">
+								اسم اللاعب
+							</div>
+							<input
+								dir="rtl"
+								className="outline-none rounded-xl text-xl"
+								onChange={(e) => setPlayerName(e.target.value)}
+								value={playerName}
+							/>
+						</div>
+						<CustomButton buttontype={ButtonsType.PRIMARY} onClick={() => savePlayer()}>احفظ</CustomButton>
 					</div>
 				</div>
 			</Popup>
@@ -322,7 +325,7 @@ export default function Home({
 						calc={() => calculationHandler()}
 						newPlayer={() => setOpenNameModel(true)}
 						deleteSport={deleteSport}
-                        deletePlayer={deletePlayer}
+						deletePlayer={deletePlayer}
 					/>
 				</div>
 			</div>

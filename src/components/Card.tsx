@@ -52,17 +52,26 @@ const Card = ({ icon, sport, add }: Props) => {
 							id="dropdown"
 							className={`${
 								openMenu ? "" : "hidden"
-							} absolute mt-8 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-40`}
+							} absolute mt-8 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow shadow-orange-900 w-40`}
 						>
-							<ul className="py-2" aria-labelledby="dropdownButton">
-								{sport.DiscountOptions?.map((discount) => (
-									<li key={discount.id}>
-										<a href="#" className="block p-2 text-sm text-black ">
-											{discount.title}
-										</a>
-									</li>
-								))}
-							</ul>
+							<div
+								className={`flex flex-col ${sport?.Penalty ? "divide-y divide-dashed" : ""}`}
+							>
+								<ul className="" aria-labelledby="dropdownButton">
+									{sport.DiscountOptions?.map((discount) => (
+										<li key={discount.id}>
+											<a href="#" className="block p-2 text-sm text-black ">
+												{discount.title}
+											</a>
+										</li>
+									))}
+								</ul>
+								<div className="" aria-labelledby="dropdownButton">
+									<a href="#" className="block p-2 text-sm text-orange-900 ">
+										{sport.Penalty?.name}
+									</a>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
