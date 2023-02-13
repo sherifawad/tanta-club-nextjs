@@ -68,7 +68,9 @@ export default function Home({
 	const resultsRef = useRef<null | HTMLDivElement>(null);
 	const listRef = useRef<null | HTMLDivElement>(null);
 	const sportsListRef = useRef<null | HTMLDivElement>(null);
-	const [sportListWidth, setSportListWidth] = useState<number>(0);
+	const [sportListWidth, setSportListWidth] = useState<number>(
+		typeof window !== "undefined" ? window.innerWidth : 0
+	);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
 	const [selectedSportId, setSelectedSportId] = useState<number>();
