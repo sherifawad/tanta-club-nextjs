@@ -282,7 +282,7 @@ export default function Home({
 		if (sportsListRef.current) {
 			setSportListWidth(sportsListRef.current.offsetWidth);
 		}
-	}, []);
+	}, [sportsListRef.current?.offsetWidth]);
 
 	return (
 		<>
