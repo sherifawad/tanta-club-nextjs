@@ -278,11 +278,11 @@ export default function Home({
 	// 	handleResize();
 	// }, [handleResize]);
 
-	useEffect(() => {
-		if (sportsListRef.current) {
-			setSportListWidth(sportsListRef.current.offsetWidth);
-		}
-	}, [sportsListRef.current?.offsetWidth]);
+	// useEffect(() => {
+	// 	if (sportsListRef.current) {
+	// 		setSportListWidth(sportsListRef.current.offsetWidth);
+	// 	}
+	// }, [sportsListRef.current?.offsetWidth]);
 
 	return (
 		<>
