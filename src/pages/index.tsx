@@ -274,7 +274,7 @@ export default function Home({
 		};
 	}, [handleResize]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		handleResize();
 	}, [handleResize]);
 
