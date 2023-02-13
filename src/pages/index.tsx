@@ -280,9 +280,9 @@ export default function Home({
 
 	useEffect(() => {
 		if (sportsListRef.current) {
-			setSportListWidth((prev) => sportsListRef.current?.offsetWidth ?? prev);
+			setSportListWidth(sportsListRef.current.offsetWidth);
 		}
-	});
+	}, [sportsListRef.current?.offsetWidth]);
 
 	return (
 		<>
