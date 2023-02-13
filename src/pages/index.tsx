@@ -68,9 +68,7 @@ export default function Home({
 	const resultsRef = useRef<null | HTMLDivElement>(null);
 	const listRef = useRef<null | HTMLDivElement>(null);
 	const sportsListRef = useRef<null | HTMLDivElement>(null);
-	const [sportListWidth, setSportListWidth] = useState<number>(
-		typeof window !== "undefined" ? window.innerWidth : 0
-	);
+	const [sportListWidth, setSportListWidth] = useState<number>(0);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
 	const [selectedSportId, setSelectedSportId] = useState<number>();
@@ -333,7 +331,7 @@ export default function Home({
 					>
 						<div className="grid grid-rows-[auto_100px_1fr] place-items-center grid-cols-1">
 							<div className="text-xl font-extrabold text-black ">〽 حرك و اخنر رياضتك〽</div>
-							<div className="" style={{ width: `${sportListWidth}px` }}>
+							<div className="w-2/3" style={{ width: `${sportListWidth}px` }}>
 								<Carousel
 									responsive={{
 										xxxxl: {
