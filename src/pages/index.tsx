@@ -274,9 +274,15 @@ export default function Home({
 		};
 	}, [handleResize]);
 
+	// useEffect(() => {
+	// 	handleResize();
+	// }, [handleResize]);
+
 	useLayoutEffect(() => {
-		handleResize();
-	}, [handleResize]);
+		if (sportsListRef.current) {
+			setSportListWidth((prev) => sportsListRef.current?.offsetWidth ?? prev);
+		}
+	}, []);
 
 	return (
 		<>
