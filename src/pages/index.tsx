@@ -86,7 +86,7 @@ export default function Home({
 		setSelectedCategoryId(categoryId);
 		const sportsList = sports?.filter((sport) => sport.categoryId === categoryId);
 		setSportsList((prev) => {
-			if (sportsList) {
+			if (sportsList && sportsList?.length > 0) {
 				setSelectedSportId(sportsList[0].id);
 				return sportsList;
 			}
@@ -280,7 +280,7 @@ export default function Home({
 
 	useEffect(() => {
 		if (sportsListRef.current) {
-			setSportListWidth(sportsListRef.current.offsetWidth);
+			setSportListWidth((prev) => (prev === 0 ? sportsListRef.current?.offsetWidth ?? 0 : prev));
 		}
 	}, [sportsListRef.current?.offsetWidth]);
 
@@ -331,7 +331,7 @@ export default function Home({
 					>
 						<div className="grid grid-rows-[auto_100px_1fr] place-items-center grid-cols-1">
 							<div className="text-xl font-extrabold text-black ">〽 حرك و اخنر رياضتك〽</div>
-							<div className="" style={{ width: `${sportListWidth}px` }}>
+							<div className="w-2/3" style={{ width: `${sportListWidth}px` }}>
 								<Carousel
 									responsive={{
 										xxxxl: {
