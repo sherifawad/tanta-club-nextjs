@@ -278,11 +278,11 @@ export default function Home({
 	// 	handleResize();
 	// }, [handleResize]);
 
-	// useEffect(() => {
-	// 	if (sportsListRef.current) {
-	// 		setSportListWidth(sportsListRef.current.offsetWidth);
-	// 	}
-	// }, [sportsListRef.current?.offsetWidth]);
+	useEffect(() => {
+		if (sportsListRef.current) {
+			setSportListWidth(sportsListRef.current.offsetWidth);
+		}
+	}, []);
 
 	return (
 		<>
@@ -331,7 +331,7 @@ export default function Home({
 					>
 						<div className="grid grid-rows-[auto_100px_1fr] place-items-center grid-cols-1">
 							<div className="text-xl font-extrabold text-black ">〽 حرك و اخنر رياضتك〽</div>
-							<div className="w-2/3" style={{ width: `${sportListWidth}px` }}>
+							<div className="" style={{ width: `${sportListWidth}px` }}>
 								<Carousel
 									responsive={{
 										xxxxl: {
