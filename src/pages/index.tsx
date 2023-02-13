@@ -278,7 +278,7 @@ export default function Home({
 	// 	handleResize();
 	// }, [handleResize]);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		if (sportsListRef.current) {
 			setSportListWidth((prev) => sportsListRef.current?.offsetWidth ?? prev);
 		}
