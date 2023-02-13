@@ -23,7 +23,7 @@ function ResultComponents({ result }: Props) {
 
 	return (
 		<div
-			className="min-w-[18rem] bg-white rounded-xl shadow shadow-orange-900 p-4"
+			className=" bg-white rounded-xl shadow shadow-orange-900 p-4"
 			dir="rtl"
 		>
 			<div className="flex justify-between ">

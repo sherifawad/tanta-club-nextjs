@@ -3,7 +3,7 @@ import { Inter } from "@next/font/google";
 import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
 import MiniCard from "@/components/MiniCard";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { moreThanTwoPlayers, swimmingDiscount } from "@/utils/calc";
 import { divvyUp, mergePlayers, splitPrivateSwimming } from "@/utils/utils";
 import { BiFootball } from "react-icons/bi";
@@ -67,6 +67,8 @@ export default function Home({
 }) {
 	const resultsRef = useRef<null | HTMLDivElement>(null);
 	const listRef = useRef<null | HTMLDivElement>(null);
+	const sportsListRef = useRef<null | HTMLDivElement>(null);
+	const [sportListWidth, setSportListWidth] = useState<number>(0);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
 	const [selectedSportId, setSelectedSportId] = useState<number>();
@@ -242,6 +244,7 @@ export default function Home({
 			{ id: playersList.length + 1, name: playerName.trim(), sports: [] },
 		]);
 		setOpenNameModel(false);
+		sportsListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 	};
 
 	useEffect(() => {
@@ -253,6 +256,27 @@ export default function Home({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const handleResize = useCallback(() => {
+		setSportListWidth((prev) => sportsListRef.current?.offsetWidth ?? prev);
+	}, []);
+
+	useLayoutEffect(() => {
+		// const ref = sportsListRef.current;
+		window.addEventListener("resize", handleResize);
+		// if (ref) ref.addEventListener("resize", handleResize);
+		// console.log("width", ref?.offsetWidth);
+
+		return () => {
+			// remove the event listener before the component gets unmounted
+			window.removeEventListener("resize", handleResize);
+			// ref?.removeEventListener("resize", handleResize);
+		};
+	}, [handleResize]);
+
+	useEffect(() => {
+		handleResize();
+	}, [handleResize]);
 
 	return (
 		<>
@@ -291,62 +315,110 @@ export default function Home({
 						</div>
 					</div>
 				</Popup>
-				<div className="flex flex-wrap justify-center overflow-hidden">
-					<div className="w-full sm:w-2/3 p-8 flex flex-col items-center">
-						<Carousel
-							responsive={{
-								desktop: {
-									breakpoint: { max: 3000, min: 1024 },
-									items: 3,
-								},
-								tablet: {
-									breakpoint: { max: 1024, min: 464 },
-									items: 3,
-								},
-								mobile: {
-									breakpoint: { max: 464, min: 0 },
-									items: 1,
-								},
-							}}
-							slidesToSlide={2}
-							containerClass="sm:w-4/6 pb-4 w-72"
-							sliderClass="flex justify-center items-center gap-4 rounded-all"
-							deviceType={""}
-							infinite
-							arrows
-							ssr
-							centerMode
-						>
-							{categories?.map((cat) => (
-								<button key={cat.id} onClick={() => onSelectedCategoryChange(cat.id)}>
-									<MiniCard
-										category={cat}
-										icon={<BiFootball />}
-										selected={selectedCategoryId === cat.id}
-									/>
-								</button>
-							))}
-						</Carousel>
-						<div className="flex flex-wrap items-center justify-center gap-4 ">
-							{sportsList.map((sport) => (
-								<Card
-									key={sport.id}
-									sport={sport}
-									icon={<BiFootball className="relative w-32 h-32" />}
-									add={() => onSportAdded(sport)}
-								/>
-							))}
+				<div className="pt-12 overflow-hidden">
+					<div
+						style={{ paddingInlineEnd: "10px" }}
+						className="grid lg:grid-cols-[3fr_20rem] grid-cols-1 justify-items-center gap-4"
+					>
+						<div className="grid grid-rows-[auto_100px_1fr] place-items-center grid-cols-1">
+							<div className="text-xl font-extrabold text-black ">〽 حرك و اخنر رياضتك〽</div>
+							<div className="" style={{ width: `${sportListWidth}px` }}>
+								<Carousel
+									responsive={{
+										xxxxl: {
+											breakpoint: { max: 1450, min: 1300 },
+											items: 5,
+											slidesToSlide: 3,
+										},
+										xxxl: {
+											breakpoint: { max: 1300, min: 1170 },
+											items: 4,
+											slidesToSlide: 2,
+											partialVisibilityGutter: 40,
+										},
+										xxl: {
+											breakpoint: { max: 1170, min: 1050 },
+											items: 2,
+											slidesToSlide: 1,
+											partialVisibilityGutter: 4,
+										},
+										xl: {
+											breakpoint: { max: 1080, min: 1020 },
+											items: 2,
+											slidesToSlide: 1,
+											partialVisibilityGutter: 4,
+										},
+										lg: {
+											breakpoint: { max: 1020, min: 850 },
+											items: 4,
+											slidesToSlide: 1,
+											partialVisibilityGutter: 4,
+										},
+										md: {
+											breakpoint: { max: 850, min: 680 },
+											items: 2,
+											slidesToSlide: 1,
+											partialVisibilityGutter: 4,
+										},
+										sm: {
+											breakpoint: { max: 680, min: 0 },
+											items: 1,
+											slidesToSlide: 1,
+											partialVisibilityGutter: 4,
+										},
+									}}
+									keyBoardControl={true}
+									customTransition="all .5"
+									transitionDuration={500}
+									containerClass=""
+									itemClass="py-24"
+									deviceType={""}
+									infinite
+									arrows
+									ssr
+									partialVisible={false}
+									focusOnSelect={true}
+									centerMode={true}
+								>
+									{categories?.map((cat) => (
+										<button key={cat.id} onClick={() => onSelectedCategoryChange(cat.id)}>
+											<MiniCard
+												category={cat}
+												icon={<BiFootball />}
+												selected={selectedCategoryId === cat.id}
+											/>
+										</button>
+									))}
+								</Carousel>
+							</div>
+							<div className="flex flex-col gap-4 items-center px-[8rem]">
+								<div className="text-xl font-extrabold text-black">〽 اضف رياضة〽</div>
+								<div
+									ref={sportsListRef}
+									className="flex flex-wrap items-center justify-center gap-2 "
+								>
+									{sportsList.map((sport) => (
+										<Card
+											key={sport.id}
+											sport={sport}
+											icon={<BiFootball className="relative w-32 h-32" />}
+											add={() => onSportAdded(sport)}
+										/>
+									))}
+								</div>
+							</div>
+						</div>
+						<div ref={listRef} className="">
+							<ListCard
+								players={playersList}
+								calc={() => calculationHandler()}
+								newPlayer={() => setOpenNameModel(true)}
+								deleteSport={deleteSport}
+								deletePlayer={deletePlayer}
+							/>
 						</div>
 					</div>
-					<div ref={listRef} className="h-full">
-						<ListCard
-							players={playersList}
-							calc={() => calculationHandler()}
-							newPlayer={() => setOpenNameModel(true)}
-							deleteSport={deleteSport}
-							deletePlayer={deletePlayer}
-						/>
-					</div>
+
 					<div ref={resultsRef} className=" p-8 w-full">
 						<ResultComponents result={playersResultList} />
 					</div>

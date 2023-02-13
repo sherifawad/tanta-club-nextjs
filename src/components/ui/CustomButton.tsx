@@ -11,9 +11,9 @@ const CustomButton = (props: Props) => {
 			{...props}
 			className={`px-4 py-2 rounded-full ${
 				props.buttontype === ButtonsType.PRIMARY
-					? "bg-orange-900 text-white"
-					: "text-gray-900 bg-gray-100"
-			}  hover:text-black ${props.className}`}
+					? "bg-orange-900 text-white hover:text-black"
+					: "text-black bg-gray-100 hover:text-orange-900"
+			}   ${props.className}`}
 		>
 			{props.children}
 		</button>
