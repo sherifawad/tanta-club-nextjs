@@ -261,7 +261,7 @@ export default function Home({
 		setSportListWidth((prev) => sportsListRef.current?.offsetWidth ?? prev);
 	}, []);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		// const ref = sportsListRef.current;
 		window.addEventListener("resize", handleResize);
 		// if (ref) ref.addEventListener("resize", handleResize);
@@ -282,7 +282,7 @@ export default function Home({
 		if (sportsListRef.current) {
 			setSportListWidth((prev) => sportsListRef.current?.offsetWidth ?? prev);
 		}
-	}, []);
+	});
 
 	return (
 		<>
