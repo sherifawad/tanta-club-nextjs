@@ -320,7 +320,7 @@ export const twoPlayers = (players: Player[]): Player[] => {
 			// اللاعب الذي يملك لعبة واحدة
 			const lowerPlayer = players.findIndex((x) => numberOfSportsWithDiscount(x).length === 1);
 			const otherPlayer = players[playerIndexWithMultiple === 0 ? 1 : 0];
-			if (!lowerPlayer) {
+			if (lowerPlayer === -1) {
 				return [
 					{
 						...higherPlayer,
