@@ -17,7 +17,7 @@ async function seed() {
 				step: 5,
 				name: "swimmingDelayPenalty",
 				title: "غرامة تأخير دفع سباحة",
-				repeated: "MONTHLY",
+				repeated: "DAILY",
 				startDay: 11,
 			},
 		],

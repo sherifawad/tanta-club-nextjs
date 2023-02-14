@@ -41,10 +41,10 @@ export const penaltyTimeValid = (penalty: Penalty) => {
 	const currentDay = new Date().getDate();
 	const currentMonth = new Date().getMonth();
 	if (
-		(penalty.startDay && penalty.startDay >= currentDay) ||
-		(penalty.endDay && penalty.endDay <= currentDay) ||
-		(penalty.startMonth && penalty.startMonth >= currentMonth) ||
-		(penalty.endMonth && penalty.endMonth <= currentMonth)
+		(penalty.startDay && penalty.startDay <= currentDay) ||
+		(penalty.endDay && penalty.endDay >= currentDay) ||
+		(penalty.startMonth && penalty.startMonth <= currentMonth) ||
+		(penalty.endMonth && penalty.endMonth >= currentMonth)
 	) {
 		return true;
 	}
@@ -54,9 +54,9 @@ export const penaltyTimeValid = (penalty: Penalty) => {
 export const penaltyStep = (penalty: Penalty, step: number) => {
 	let totalPenalty = penalty.minimum;
 
-	for (let index = 0; index <= step; index++) {
+	for (let index = 0; index < step - 1; index++) {
 		if (totalPenalty === penalty.Maximum) break;
-		totalPenalty += step * penalty.step;
+		totalPenalty += penalty.step;
 	}
 	return totalPenalty;
 };
@@ -69,13 +69,13 @@ export const calcPenalty = (penalty: Penalty | undefined) => {
 		switch (penalty.repeated) {
 			case RepetationType.DAILY: {
 				const currentDay = new Date().getDate();
-				const steps = currentDay - (penalty.startDay ?? currentDay);
+				const steps = currentDay + 1 - (penalty.startDay ?? currentDay);
 				totalPenalty = penaltyStep(penalty, steps);
 				break;
 			}
 			case RepetationType.MONTHLY: {
 				const currentMonth = new Date().getMonth();
-				const steps = currentMonth - (penalty.startMonth ?? currentMonth);
+				const steps = currentMonth + 1 - (penalty.startMonth ?? currentMonth);
 				totalPenalty = penaltyStep(penalty, steps);
 				break;
 			}
