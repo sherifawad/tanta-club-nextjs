@@ -64,7 +64,8 @@ export const penaltyStep = (penalty: Penalty, step: number) => {
 export const calcPenalty = (penalty: Penalty | undefined) => {
 	if (!penalty) return 0;
 	let totalPenalty = 0;
-	if (penaltyTimeValid(penalty)) {
+	const applyPenalty = penaltyTimeValid(penalty);
+	if (applyPenalty) {
 		totalPenalty = penalty.minimum;
 		switch (penalty.repeated) {
 			case RepetationType.DAILY: {
@@ -88,10 +89,23 @@ export const calcPenalty = (penalty: Penalty | undefined) => {
 };
 
 export const calcSportPenalty = (sport: PlayerSport): PlayerSport => {
+	const penalty = calcPenalty(sport.Penalty);
 	return {
 		...sport,
-		price: sport.price + calcPenalty(sport.Penalty),
+		price: sport.price + penalty,
+		Penalty: penalty === 0 ? undefined : sport.Penalty,
 	};
+};
+
+export const calcTotalSportsPenalty = (sports: PlayerSport[]): PlayerSport[] => {
+	return sports.map((sport) => {
+		const penalty = calcPenalty(sport.Penalty);
+		return {
+			...sport,
+			price: sport.price + penalty,
+			Penalty: penalty === 0 ? undefined : sport.Penalty,
+		};
+	});
 };
 
 export const playerWithNoDiscountSport = (player: Player): Player => {
@@ -120,6 +134,32 @@ export const calPriceDiscount = (
 		price += calcPenalty(penalty);
 	}
 	return price;
+};
+
+export const calSportPrice = (sport: PlayerSport, step: number = 0): PlayerSport => {
+	if (!sport?.DiscountOptions || sport?.DiscountOptions.length < 1)
+		return { ...calcSportPenalty(sport), DiscountOptions: undefined };
+	let discount = sport.DiscountOptions[0];
+	let price = sport.price;
+	let penalty = sport.Penalty;
+	const totalDiscount = discountStep(discount, step);
+	if (discount.type === DiscountType.FIXED) {
+		sport.price -= totalDiscount;
+	} else if (discount.type === DiscountType.PERCENTAGE) {
+		sport.price = price * (1 - totalDiscount / 100);
+	} else {
+		sport.DiscountOptions = undefined;
+		sport.price = price;
+	}
+	if (penalty) {
+		const calculatedPenalty = calcPenalty(penalty);
+		if (calculatedPenalty === 0) {
+			sport.Penalty = undefined;
+		} else {
+			sport.price += calculatedPenalty;
+		}
+	}
+	return sport;
 };
 
 export const calByDiscountType = (discount: Discount | undefined, price: number, step: number = 0) => {

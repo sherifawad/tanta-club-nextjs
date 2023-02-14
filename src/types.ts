@@ -2,7 +2,7 @@ import { Discount, Penalty, Sport } from "@prisma/client";
 
 export interface PlayerSport extends Sport {
 	DiscountOptions?: Discount[];
-	Penalty: Penalty;
+	Penalty?: Penalty;
 }
 
 export interface Player {
