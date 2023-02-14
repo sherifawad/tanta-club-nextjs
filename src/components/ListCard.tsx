@@ -29,13 +29,13 @@ const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props
 	}, [players]);
 
 	return (
-		<div className="grid grid-rows-[auto_3fr_1fr] bg-white border border-gray-100 rounded-lg shadow md:min-w-[20rem] w-60  ">
+		<div className="grid grid-rows-[60px_1fr_120px] bg-white border border-gray-100 rounded-lg shadow md:min-w-[20rem] w-60 sm:max-h-[90vh] max-h-[60vh] min-h-[60vh]">
 			<div className="p-4">
 				<CustomButton onClick={newPlayer} buttontype={ButtonsType.PRIMARY} className="w-full">
 					اضف لاعب ➕
 				</CustomButton>
 			</div>
-			<div className=" py-4 overflow-y-auto">
+			<div className=" py-4 overflow-y-scroll">
 				<div className="mx-4 overflow-y-auto divide-y divide-dashed">
 					{players?.map((player) => (
 						<div key={player.id} className=" flex flex-col items-center py-4">
@@ -89,7 +89,7 @@ const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props
 					))}
 				</div>
 			</div>
-			<div dir="rtl" className="shadow-2xl  p-4">
+			<div dir="rtl" className="shadow-2xl p-4">
 				<div className="flex flex-col  divide-y divide-dashed  gap-2">
 					<div className="flex justify-between font-semibold">
 						<div className="text-orange-900">{players?.length}</div>
@@ -100,7 +100,7 @@ const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props
 						<div className="">Sports</div>
 					</div>
 				</div>
-				<div className="  text-center self-end ">
+				<div className="  text-center self-end">
 					<CustomButton onClick={calc} buttontype={ButtonsType.PRIMARY}>
 						احسب
 					</CustomButton>

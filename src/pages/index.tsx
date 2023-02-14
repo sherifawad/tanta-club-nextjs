@@ -68,6 +68,7 @@ export default function Home({
 	const resultsRef = useRef<null | HTMLDivElement>(null);
 	const listRef = useRef<null | HTMLDivElement>(null);
 	const sportsListRef = useRef<null | HTMLDivElement>(null);
+	const categoriesListRef = useRef<null | HTMLDivElement>(null);
 	const [sportListWidth, setSportListWidth] = useState<number>(0);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
@@ -97,7 +98,7 @@ export default function Home({
 	const onSportAdded = (sport: PlayerSport | undefined) => {
 		if (!sport) return;
 		if (playerName === "" || playersList.length < 1) {
-			listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+			listRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
 			toast.error("اضف اسم", {
 				position: "top-right",
@@ -248,7 +249,7 @@ export default function Home({
 			{ id: playersList.length + 1, name: playerName.trim(), sports: [] },
 		]);
 		setOpenNameModel(false);
-		sportsListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+		categoriesListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 	};
 
 	useEffect(() => {
@@ -334,7 +335,9 @@ export default function Home({
 						className="grid lg:grid-cols-[3fr_20rem] grid-cols-1 justify-items-center gap-4"
 					>
 						<div className="grid grid-rows-[auto_100px_1fr] place-items-center grid-cols-1">
-							<div className="text-xl font-extrabold text-black ">〽 حرك و اخنر رياضتك〽</div>
+							<div ref={categoriesListRef} className="text-xl font-extrabold text-black ">
+								〽 حرك و اخنر رياضتك〽
+							</div>
 							<div className="w-2/3" style={{ width: `${sportListWidth}px` }}>
 								<Carousel
 									responsive={{
@@ -432,7 +435,7 @@ export default function Home({
 						</div>
 					</div>
 
-					<div ref={resultsRef} className=" p-8 w-full">
+					<div ref={resultsRef} className=" p-8 w-full ">
 						<ResultComponents result={playersResultList} />
 					</div>
 				</div>
