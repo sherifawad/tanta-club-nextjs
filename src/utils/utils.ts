@@ -15,15 +15,23 @@ export function divvyUp<T>(array: T[], predicate: (el: T, index?: number, arr?: 
 }
 
 export const discountDayTimeValidation = (discount: Discount | undefined) => {
+	if (!discount) return false;
 	const currentDay = new Date().getDate();
-	if (
-		discount &&
-		((discount.startDay && discount.startDay >= currentDay) ||
-			(discount.endDay && discount.endDay <= currentDay))
-	) {
-		return true;
+	const currentMonth = new Date().getMonth();
+	let valid = false;
+	if (discount.startDay) {
+		valid = discount.startDay <= currentDay ? true : false;
 	}
-	return false;
+	if (discount.endDay) {
+		valid = discount.endDay >= currentDay ? true : false;
+	}
+	if (discount.startMonth) {
+		valid = discount.startMonth <= currentMonth ? true : false;
+	}
+	if (discount.endMonth) {
+		valid = discount.endMonth >= currentMonth ? true : false;
+	}
+	return valid;
 };
 
 export const discountStep = (discount: Discount, step: number) => {
@@ -40,15 +48,20 @@ export const penaltyTimeValid = (penalty: Penalty) => {
 	if (!penalty) return false;
 	const currentDay = new Date().getDate();
 	const currentMonth = new Date().getMonth();
-	if (
-		(penalty.startDay && penalty.startDay <= currentDay) ||
-		(penalty.endDay && penalty.endDay >= currentDay) ||
-		(penalty.startMonth && penalty.startMonth <= currentMonth) ||
-		(penalty.endMonth && penalty.endMonth >= currentMonth)
-	) {
-		return true;
+	let valid = false;
+	if (penalty.startDay) {
+		valid = penalty.startDay <= currentDay ? true : false;
 	}
-	return false;
+	if (penalty.endDay) {
+		valid = penalty.endDay >= currentDay ? true : false;
+	}
+	if (penalty.startMonth) {
+		valid = penalty.startMonth <= currentMonth ? true : false;
+	}
+	if (penalty.endMonth) {
+		valid = penalty.endMonth >= currentMonth ? true : false;
+	}
+	return valid;
 };
 
 export const penaltyStep = (penalty: Penalty, step: number) => {
@@ -258,19 +271,19 @@ export const swimmingFirstMonthCheck = (player: Player) => {
 	if (!player.sports[0].DiscountOptions) return player;
 	const timeDiscount = player.sports[0].DiscountOptions.find((discount) => discount.id === 5);
 
-	if (timeDiscount && discountDayTimeValidation(timeDiscount)) {
-		return {
-			...player,
-			sports: player.sports.map((s) => {
-				return {
-					...s,
-					price: calPriceDiscount(timeDiscount, s.price, 0),
-					note: "first month discount",
-				};
-			}),
-		};
-	}
-	return player;
+	if (!timeDiscount) return player;
+	const validTimeDiscount = discountDayTimeValidation(timeDiscount);
+	if (!validTimeDiscount) return player;
+	return {
+		...player,
+		sports: player.sports.map((s) => {
+			return {
+				...s,
+				price: calPriceDiscount(timeDiscount, s.price, 0),
+				note: "first month discount",
+			};
+		}),
+	};
 };
 
 export const splitPrivateSwimming = (players: Player[]) => {

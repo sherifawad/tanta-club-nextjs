@@ -94,10 +94,6 @@ export default function Home({
 		});
 	};
 
-	const onSelectedSportChange = (sportId: number) => {
-		setSelectedSportId(sportId);
-	};
-
 	const onSportAdded = (sport: PlayerSport | undefined) => {
 		if (!sport) return;
 		if (playerName === "" || playersList.length < 1) {
@@ -156,61 +152,6 @@ export default function Home({
 			return [...rest, { ...currentPlayers[0], sports: orderedSports }];
 		});
 	};
-
-	// const onSportAdded = (sport: PlayerSport | undefined) => {
-	// 	if (!sport) return;
-	// 	if (playerName === "" || playersList.length < 1) {
-	// 		listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-
-	// 		toast.error("اضف اسم", {
-	// 			position: "top-right",
-	// 			autoClose: 1000,
-	// 			hideProgressBar: false,
-	// 			closeOnClick: true,
-	// 			pauseOnHover: true,
-	// 			draggable: true,
-	// 			progress: undefined,
-	// 			theme: "light",
-	// 		});
-	// 		return;
-	// 	}
-	// 	if (playerName === "" || playersList.length < 1) return;
-	// 	if (!currentPlayer) {
-	// 		currentPlayer = playersList.at(-1);
-	// 	}
-	// 	if (!currentPlayer) return;
-	// 	const exist = currentPlayer.sports.some((s) => s.id === sport.id);
-	// 	if (exist) {
-	// 		toast.error(` لعبة مكررة ${sport.title} ${playerName}  للاعب `, {
-	// 			position: "top-right",
-	// 			autoClose: 1000,
-	// 			hideProgressBar: false,
-	// 			closeOnClick: true,
-	// 			pauseOnHover: true,
-	// 			draggable: true,
-	// 			progress: undefined,
-	// 			theme: "light",
-	// 		});
-	// 		return;
-	// 	}
-	// 	setPlayersList((prev) => {
-	// 		const [currentPlayer, rest] = divvyUp(prev, (player) => player.name === playerName.trim());
-	// 		const orderedSports = [...currentPlayer[0]?.sports, sport].sort((s1, s2) =>
-	// 			s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
-	// 		);
-	// 		toast.success(`${playerName} تم إضافة ${sport.title}  للاعب `, {
-	// 			position: "top-right",
-	// 			autoClose: 500,
-	// 			hideProgressBar: false,
-	// 			closeOnClick: true,
-	// 			pauseOnHover: true,
-	// 			draggable: true,
-	// 			progress: undefined,
-	// 			theme: "light",
-	// 		});
-	// 		return [...rest, { ...currentPlayer[0], sports: orderedSports }];
-	// 	});
-	// };
 
 	const deleteSport = (playerId: number, sport: PlayerSport) => {
 		if (!playerId || !sport) return;

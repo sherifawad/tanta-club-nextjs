@@ -411,7 +411,12 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 	if (sportsWithBrothersDiscount.length === 1) {
 		//check first time Discount
 		const discount = players[0].sports[0].DiscountOptions!.find((disconnect) => disconnect.id === 5);
+
 		if (discount && discountDayTimeValidation(discount)) {
+			console.log(
+				"🚀 ~ file: calc.ts:416 ~ swimmingDiscount ~ discountDayTimeValidation(discount)",
+				discountDayTimeValidation(discount)
+			);
 			return players.map((p, i) => {
 				if (i === 0) {
 					return {
