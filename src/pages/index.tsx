@@ -3,7 +3,7 @@ import { Inter } from "@next/font/google";
 import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
 import MiniCard from "@/components/MiniCard";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { moreThanTwoPlayers, swimmingDiscount } from "@/utils/calc";
 import { divvyUp, mergePlayers, splitPrivateSwimming } from "@/utils/utils";
 import { BiFootball } from "react-icons/bi";
@@ -19,6 +19,7 @@ import { Player, PlayerSport } from "@/types";
 import CustomButton from "@/components/ui/CustomButton";
 import { ButtonsType } from "@/data/constants";
 import ResultComponents from "@/components/ResultComponents";
+import Search from "@/components/Search";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -77,6 +78,7 @@ export default function Home({
 	const [playerName, setPlayerName] = useState("");
 	const [playersList, setPlayersList] = useState<Player[]>([]);
 	const [openNameModel, setOpenNameModel] = useState(false);
+	const [searchValue, setSearchValue] = useState("");
 
 	let currentPlayer = useMemo<Player | undefined>(
 		() => playersList?.find((player) => player.name === playerName.trim()),
@@ -252,6 +254,21 @@ export default function Home({
 		categoriesListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 	};
 
+	const onSearchValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const { value } = e.target;
+		setSearchValue(value);
+		if (value.length > 1) {
+			const filteredSports = sports?.filter(
+				(sport) =>
+					sport.title?.toLowerCase()?.includes(value.trim()) ||
+					sport.name?.toLowerCase()?.includes(value.trim())
+			);
+			if (!filteredSports || filteredSports.length < 1) return;
+			setSportsList(filteredSports);
+			setSelectedCategoryId(-1);
+		}
+	};
+
 	useEffect(() => {
 		if (categories && sports) {
 			const sportsList = sports?.filter((sport) => sport.categoryId === selectedCategoryId);
@@ -278,10 +295,6 @@ export default function Home({
 			// ref?.removeEventListener("resize", handleResize);
 		};
 	}, [handleResize]);
-
-	// useEffect(() => {
-	// 	handleResize();
-	// }, [handleResize]);
 
 	useEffect(() => {
 		if (sportsListRef.current) {
@@ -335,8 +348,14 @@ export default function Home({
 						className="grid lg:grid-cols-[3fr_20rem] grid-cols-1 justify-items-center gap-4"
 					>
 						<div className="grid grid-rows-[auto_100px_1fr] place-items-center grid-cols-1">
-							<div ref={categoriesListRef} className="text-xl font-extrabold text-black ">
-								〽 حرك و اخنر رياضتك〽
+							<div className=" w-2/3 flex flex-col">
+								<Search onChange={onSearchValueChange} value={searchValue} />
+								<div
+									ref={categoriesListRef}
+									className="text-xl font-extrabold text-black self-center"
+								>
+									〽 حرك و اختر رياضتك〽
+								</div>
 							</div>
 							<div className="w-2/3" style={{ width: `${sportListWidth}px` }}>
 								<Carousel
