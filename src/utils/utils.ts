@@ -101,12 +101,13 @@ export const calcPenalty = (penalty: Penalty | undefined) => {
 	return totalPenalty;
 };
 
-export const calcSportPenalty = (sport: PlayerSport): PlayerSport => {
+export const calcSportPenalty = (sport: PlayerSport, removeDiscount: boolean = true): PlayerSport => {
 	const penalty = calcPenalty(sport.Penalty);
 	return {
 		...sport,
 		price: sport.price + penalty,
 		Penalty: penalty === 0 ? undefined : sport.Penalty,
+		DiscountOptions: removeDiscount ? undefined : sport.DiscountOptions,
 	};
 };
 
@@ -170,8 +171,7 @@ export const calSportPrice = (sport: PlayerSport, step: number = 0): PlayerSport
 			sport.Penalty = undefined;
 		} else {
 			sport.price += calculatedPenalty;
-		}
-	}
+		}	}
 	return sport;
 };
 

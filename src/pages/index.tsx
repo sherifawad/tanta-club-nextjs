@@ -101,7 +101,7 @@ export default function Home({
 			listRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 
 			toast.error("اضف اسم", {
-				position: "top-right",
+				position: "top-center",
 				autoClose: 1000,
 				hideProgressBar: false,
 				closeOnClick: true,

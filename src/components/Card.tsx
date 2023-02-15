@@ -4,6 +4,7 @@ import { ReactNode, useMemo, useState } from "react";
 import { BiFootball } from "react-icons/bi";
 import CustomButton from "./ui/CustomButton";
 import { ButtonsType } from "@/data/constants";
+import CardMenu from "./CardMenu";
 
 type Props = {
 	icon?: ReactNode;
@@ -31,54 +32,10 @@ const Card = ({ icon, sport, add }: Props) => {
 					{icon}
 				</div> */}
 				<div
-					className="self-end px-4 pt-4 -mb-12 z-50 relative flex justify-between w-full items-center"
+					className="self-end px-4 pt-4 -mb-12 z-50 relative flex justify-between  w-full items-start"
 					dir="rtl"
 				>
-					<div className="flex flex-col">
-						<button
-							id="dropdownButton"
-							data-dropdown-toggle="dropdown"
-							className="inline-block text-black  hover:bg-gray-100  focus:ring-4 focus:outline-none focus:ring-gray-100 rounded-lg text-sm p-1.5"
-							type="button"
-							onClick={onMenuClick}
-						>
-							<span className="sr-only">Open dropdown</span>
-							<svg
-								className="w-6 h-6"
-								aria-hidden="true"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
-							</svg>
-						</button>
-						<div
-							id="dropdown"
-							className={`${
-								openMenu ? "" : "hidden"
-							} absolute mt-8 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow shadow-orange-900 w-40`}
-						>
-							<div
-								className={`flex flex-col ${sport?.Penalty ? "divide-y divide-dashed" : ""}`}
-							>
-								<ul className="" aria-labelledby="dropdownButton">
-									{sport.DiscountOptions?.map((discount) => (
-										<li key={discount.id}>
-											<a href="#" className="block p-2 text-sm text-black ">
-												{discount.title}
-											</a>
-										</li>
-									))}
-								</ul>
-								<div className="" aria-labelledby="dropdownButton">
-									<a href="#" className="block p-2 text-sm text-orange-900 ">
-										{sport.Penalty?.title}
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
+					<CardMenu sport={sport} />
 					<div className="text-lg text-orange-900 font-semibold px-4 flex">
 						<span className="">L.E_</span>
 						<p className="">{sport.price}</p>
