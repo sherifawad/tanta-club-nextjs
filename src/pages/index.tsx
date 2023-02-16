@@ -107,64 +107,67 @@ export default function Home({
 		[sports]
 	);
 
-	const onSportAdded = useCallback((sport: PlayerSport | undefined) => {
-		if (!sport) return;
-		if (playerName === "" || playersList.length < 1) {
-			listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+	const onSportAdded = useCallback(
+		(sport: PlayerSport | undefined) => {
+			if (!sport) return;
+			if (playerName === "" || playersList.length < 1) {
+				listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-			toast.error("اضف اسم", {
-				position: "top-center",
-				autoClose: 1000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "light",
+				toast.error("اضف اسم", {
+					position: "top-center",
+					autoClose: 1000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
+				return;
+			}
+			if (playerName === "" || playersList.length < 1) return;
+			if (!currentPlayer) {
+				currentPlayer = playersList.at(-1);
+				if (!currentPlayer) return;
+				setPlayerName(currentPlayer.name);
+			}
+			const exist = currentPlayer.sports.some((s) => s.id === sport.id);
+			if (exist) {
+				toast.error(` لعبة مكررة ${sport.title} ${playerName}  للاعب `, {
+					position: "top-right",
+					autoClose: 1000,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
+				return;
+			}
+			setPlayersList((prev) => {
+				const [currentPlayers, rest] = divvyUp(
+					prev,
+					(player) => player.name === currentPlayer?.name.trim()
+				);
+				const orderedSports = [...currentPlayers[0]?.sports, sport].sort((s1, s2) =>
+					s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
+				);
+				toast.success(`${playerName} تم إضافة ${sport.title}  للاعب `, {
+					position: "top-right",
+					autoClose: 500,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
+				return [...rest, { ...currentPlayers[0], sports: orderedSports }];
 			});
-			return;
-		}
-		if (playerName === "" || playersList.length < 1) return;
-		if (!currentPlayer) {
-			currentPlayer = playersList.at(-1);
-			if (!currentPlayer) return;
-			setPlayerName(currentPlayer.name);
-		}
-		const exist = currentPlayer.sports.some((s) => s.id === sport.id);
-		if (exist) {
-			toast.error(` لعبة مكررة ${sport.title} ${playerName}  للاعب `, {
-				position: "top-right",
-				autoClose: 1000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "light",
-			});
-			return;
-		}
-		setPlayersList((prev) => {
-			const [currentPlayers, rest] = divvyUp(
-				prev,
-				(player) => player.name === currentPlayer?.name.trim()
-			);
-			const orderedSports = [...currentPlayers[0]?.sports, sport].sort((s1, s2) =>
-				s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
-			);
-			toast.success(`${playerName} تم إضافة ${sport.title}  للاعب `, {
-				position: "top-right",
-				autoClose: 500,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "light",
-			});
-			return [...rest, { ...currentPlayers[0], sports: orderedSports }];
-		});
-	}, []);
+		},
+		[playerName, playersList]
+	);
 
 	const deleteSport = useCallback((playerId: number, sport: PlayerSport) => {
 		if (!playerId || !sport) return;
@@ -183,7 +186,9 @@ export default function Home({
 				progress: undefined,
 				theme: "light",
 			});
-			return [...rest, { ...currentPlayer[0], sports: orderedSports }];
+			return orderedSports.length < 1
+				? prev.filter((player) => player.id !== playerId)
+				: [...rest, { ...currentPlayer[0], sports: orderedSports }];
 		});
 	}, []);
 
