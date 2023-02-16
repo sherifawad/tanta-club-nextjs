@@ -85,13 +85,25 @@ function ResultComponents({ result }: Props) {
 								<Tooltip
 									float
 									anchorId={`tooltip-anchor-discount-${player.id}-${sport.id}`}
-									content={sport.totalDiscount ? sport.totalDiscount.toString() : undefined}
+									content={
+										sport.DiscountOptions
+											? `${
+													sport.DiscountOptions[0].type === DiscountType.PERCENTAGE
+														? "%"
+														: "ج"
+											  } ${sport.totalDiscount}` ?? undefined
+											: undefined
+									}
 									events={["hover", "click"]}
 								/>
 								<Tooltip
 									float
 									anchorId={`tooltip-anchor-penalty-${player.id}-${sport.id}`}
-									content={sport.totalPenalty ? sport.totalPenalty.toString() : undefined}
+									content={
+										sport.totalPenalty
+											? `ج ${sport.totalPenalty}` ?? undefined
+											: undefined
+									}
 									clickable
 									events={["hover", "click"]}
 								/>
