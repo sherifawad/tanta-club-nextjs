@@ -1,20 +1,19 @@
+import { discountDayTimeValidation } from "helpers/discountUtils";
 import {
 	calPriceDiscount,
 	calSportPrice,
 	calcSportPenalty,
 	calcTotalSportsPenalty,
-	discountDayTimeValidation,
-	divvyUp,
 	firstSportsWithDiscountBigger,
 	maxDiscountSorting,
 	numberOfPrivateSwimmingSportsWithDiscount,
 	numberOfSportsWithDiscount,
 	playerWithNoDiscountSport,
-	playersMaxDiscountSorting,
-	playersWithMaxDiscountSorting,
 	swimmingFirstMonthCheck,
-} from "./utils";
+} from "../helpers/sportsUtils";
 import { Player } from "@/types";
+import { divvyUp } from "helpers/arrayUtils";
+import { playersMaxDiscountSorting, playersWithMaxDiscountSorting } from "helpers/playerUtils";
 
 export const onePlayer = (player: Player) => {
 	const sportsWithDiscount = numberOfSportsWithDiscount(player);

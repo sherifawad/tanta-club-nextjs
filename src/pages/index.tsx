@@ -2,10 +2,9 @@ import Head from "next/head";
 import { Inter } from "@next/font/google";
 import { Category, Discount, Penalty, Sport } from "@prisma/client";
 import { prisma } from "lib/prisma";
-import MiniCard from "@/components/MiniCard";
 import { ChangeEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { moreThanTwoPlayers, swimmingDiscount } from "@/utils/calc";
-import { divvyUp, mergePlayers, splitPrivateSwimming } from "@/utils/utils";
+import { moreThanTwoPlayers, swimmingDiscount } from "lib/calc";
+import { splitPrivateSwimming } from "helpers/sportsUtils";
 import { BiFootball } from "react-icons/bi";
 import Card from "@/components/Card";
 import ListCard from "@/components/ListCard";
@@ -23,6 +22,8 @@ import Search from "@/components/Search";
 import { FcCalculator } from "react-icons/fc";
 import PopUp from "@/components/PopUp";
 import CategoriesList from "@/components/CategoriesList";
+import { divvyUp } from "helpers/arrayUtils";
+import { mergePlayers } from "helpers/playerUtils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -365,12 +366,14 @@ export default function Home({
 										: (windowWidth - sportListWidth) / 4.9
 								}px`,
 							}}
-							className="flex flex-col items-center fixed pt-3"
+							className="flex flex-col items-center fixed pt-3 z-50"
 							onClick={() =>
-								calcButtonRef.current?.scrollIntoView({
-									behavior: "smooth",
-									block: "end",
-								})
+								playersList.length > 0
+									? calculationHandler()
+									: calcButtonRef.current?.scrollIntoView({
+											behavior: "smooth",
+											block: "end",
+									  })
 							}
 						>
 							<FcCalculator className="text-3xl " />
@@ -423,7 +426,6 @@ export default function Home({
 							</div>
 						</div>
 						{/* ListCard */}
-
 						<div ref={listRef} className="">
 							<ListCard
 								ref={calcButtonRef}

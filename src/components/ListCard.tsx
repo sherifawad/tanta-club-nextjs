@@ -71,7 +71,7 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
 										<CustomButton
 											onClick={() => deleteSport(player.id, sport)}
 											buttontype={ButtonsType.PRIMARY}
-											className="px-2 py-0 rounded-full"
+											className="!p-0.5 rounded-full !text-white hover:!text-black"
 										>
 											<AiFillDelete />
 										</CustomButton>
