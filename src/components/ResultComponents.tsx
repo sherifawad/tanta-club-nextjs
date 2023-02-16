@@ -104,7 +104,6 @@ function ResultComponents({ result }: Props) {
 											: undefined
 									}
 									clickable
-									events={["hover", "click"]}
 								/>
 							</div>
 						))}
