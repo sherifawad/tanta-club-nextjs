@@ -1,5 +1,5 @@
 import { Player, PlayerSport } from "@/types";
-import React, { useEffect, useState } from "react";
+import { RefObject, forwardRef, useEffect, useState } from "react";
 import CustomButton from "./ui/CustomButton";
 import { ButtonsType } from "@/data/constants";
 import { AiFillDelete } from "react-icons/ai";
@@ -12,7 +12,10 @@ type Props = {
 	deleteSport: (playerId: number, sport: PlayerSport) => void;
 };
 
-const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props) => {
+const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
+	{ players, calc, newPlayer, deletePlayer, deleteSport }: Props,
+	ref
+) {
 	const [sportCount, setSportCount] = useState(0);
 	const [total, setTotal] = useState(0);
 
@@ -56,16 +59,6 @@ const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props
 										key={sport.id}
 										className="grid grid-cols-[auto_1fr_auto] gap-2 items-center justify-between py-4 w-full"
 									>
-										{/* <div className="flex flex-col items-center w-2/3">
-											<div className="text-lg font-semibold text-start w-full" dir="rtl">
-												{sport.title} 
-											</div>
-											<div className="  w-full">
-												<div className="font-semibold text-orange-900 px-4">
-													{sport.price}
-												</div>
-											</div>
-										</div> */}
 										<div className="">
 											<div className="font-semibold text-base text-orange-900 flex">
 												<p className="">{sport.price}</p>
@@ -101,13 +94,13 @@ const ListCard = ({ players, calc, newPlayer, deletePlayer, deleteSport }: Props
 					</div>
 				</div>
 				<div className="  text-center self-end">
-					<CustomButton onClick={calc} buttontype={ButtonsType.PRIMARY}>
+					<CustomButton ref={ref} onClick={calc} buttontype={ButtonsType.PRIMARY}>
 						احسب
 					</CustomButton>
 				</div>
 			</div>
 		</div>
 	);
-};
+});
 
 export default ListCard;

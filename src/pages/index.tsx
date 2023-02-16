@@ -20,6 +20,9 @@ import CustomButton from "@/components/ui/CustomButton";
 import { ButtonsType } from "@/data/constants";
 import ResultComponents from "@/components/ResultComponents";
 import Search from "@/components/Search";
+import { FcCalculator } from "react-icons/fc";
+import PopUp from "@/components/PopUp";
+import CategoriesList from "@/components/CategoriesList";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -66,11 +69,15 @@ export default function Home({
 	penalties: Penalty[] | null;
 	sports: PlayerSport[] | null;
 }) {
+	const fixedButtonRef = useRef<null | HTMLButtonElement>(null);
+	const calcButtonRef = useRef<null | HTMLButtonElement>(null);
 	const resultsRef = useRef<null | HTMLDivElement>(null);
 	const listRef = useRef<null | HTMLDivElement>(null);
 	const sportsListRef = useRef<null | HTMLDivElement>(null);
 	const categoriesListRef = useRef<null | HTMLDivElement>(null);
 	const [sportListWidth, setSportListWidth] = useState<number>(0);
+	const [fixedButtonWidth, setFixedButtonWidth] = useState<number>(0);
+	const [windowWidth, setWindowWidth] = useState<number>(0);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
 	const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
 	const [selectedSportId, setSelectedSportId] = useState<number>();
@@ -85,22 +92,25 @@ export default function Home({
 		[playerName, playersList]
 	);
 
-	const onSelectedCategoryChange = (categoryId: number) => {
-		setSelectedCategoryId(categoryId);
-		const sportsList = sports?.filter((sport) => sport.categoryId === categoryId);
-		setSportsList((prev) => {
-			if (sportsList && sportsList?.length > 0) {
-				setSelectedSportId(sportsList[0].id);
-				return sportsList;
-			}
-			return [];
-		});
-	};
+	const onSelectedCategoryChange = useCallback(
+		(categoryId: number) => {
+			setSelectedCategoryId(categoryId);
+			const sportsList = sports?.filter((sport) => sport.categoryId === categoryId);
+			setSportsList((prev) => {
+				if (sportsList && sportsList?.length > 0) {
+					setSelectedSportId(sportsList[0].id);
+					return sportsList;
+				}
+				return [];
+			});
+		},
+		[sports]
+	);
 
-	const onSportAdded = (sport: PlayerSport | undefined) => {
+	const onSportAdded = useCallback((sport: PlayerSport | undefined) => {
 		if (!sport) return;
 		if (playerName === "" || playersList.length < 1) {
-			listRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+			listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
 			toast.error("اضف اسم", {
 				position: "top-center",
@@ -154,9 +164,9 @@ export default function Home({
 			});
 			return [...rest, { ...currentPlayers[0], sports: orderedSports }];
 		});
-	};
+	}, []);
 
-	const deleteSport = (playerId: number, sport: PlayerSport) => {
+	const deleteSport = useCallback((playerId: number, sport: PlayerSport) => {
 		if (!playerId || !sport) return;
 
 		setPlayersList((prev) => {
@@ -175,9 +185,9 @@ export default function Home({
 			});
 			return [...rest, { ...currentPlayer[0], sports: orderedSports }];
 		});
-	};
+	}, []);
 
-	const deletePlayer = (player: Player) => {
+	const deletePlayer = useCallback((player: Player) => {
 		if (!player) return;
 
 		try {
@@ -193,9 +203,9 @@ export default function Home({
 				theme: "light",
 			});
 		} catch (error) {}
-	};
+	}, []);
 
-	const calculationHandler = () => {
+	const calculationHandler = useCallback(() => {
 		if (playerName === "") {
 			toast.error("No Name", {
 				position: "bottom-right",
@@ -226,7 +236,7 @@ export default function Home({
 		}) as Player[];
 		setPlayersResultList(result);
 		resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-	};
+	}, [playerName, playersList]);
 
 	const savePlayer = () => {
 		setOpenNameModel(true);
@@ -251,23 +261,30 @@ export default function Home({
 			{ id: playersList.length + 1, name: playerName.trim(), sports: [] },
 		]);
 		setOpenNameModel(false);
-		categoriesListRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+		window.scrollTo({
+			top: 0,
+			left: 0,
+			behavior: "smooth",
+		});
 	};
 
-	const onSearchValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const { value } = e.target;
-		setSearchValue(value);
-		if (value.length > 1) {
-			const filteredSports = sports?.filter(
-				(sport) =>
-					sport.title?.toLowerCase()?.includes(value.trim()) ||
-					sport.name?.toLowerCase()?.includes(value.trim())
-			);
-			if (!filteredSports || filteredSports.length < 1) return;
-			setSportsList(filteredSports);
-			setSelectedCategoryId(-1);
-		}
-	};
+	const onSearchValueChange = useCallback(
+		(e: ChangeEvent<HTMLInputElement>) => {
+			const { value } = e.target;
+			setSearchValue(value);
+			if (value.length > 1) {
+				const filteredSports = sports?.filter(
+					(sport) =>
+						sport.title?.toLowerCase()?.includes(value.trim()) ||
+						sport.name?.toLowerCase()?.includes(value.trim())
+				);
+				if (!filteredSports || filteredSports.length < 1) return;
+				setSportsList(filteredSports);
+				setSelectedCategoryId(-1);
+			}
+		},
+		[sports]
+	);
 
 	useEffect(() => {
 		if (categories && sports) {
@@ -281,6 +298,8 @@ export default function Home({
 
 	const handleResize = useCallback(() => {
 		setSportListWidth((prev) => sportsListRef.current?.offsetWidth ?? prev);
+		setFixedButtonWidth((prev) => fixedButtonRef.current?.offsetWidth ?? prev);
+		setWindowWidth(window.innerWidth);
 	}, []);
 
 	useEffect(() => {
@@ -299,8 +318,10 @@ export default function Home({
 	useEffect(() => {
 		if (sportsListRef.current) {
 			setSportListWidth((prev) => (prev === 0 ? sportsListRef.current?.offsetWidth ?? 0 : prev));
+			setFixedButtonWidth((prev) => (prev === 0 ? fixedButtonRef.current?.offsetWidth ?? 0 : prev));
+			setWindowWidth((prev) => (prev === 0 ? window.innerWidth ?? 0 : prev));
 		}
-	}, [sportsListRef.current?.offsetWidth]);
+	}, [sportsListRef.current?.offsetWidth, fixedButtonRef.current?.offsetWidth]);
 
 	return (
 		<>
@@ -315,118 +336,71 @@ export default function Home({
 			</Head>
 			<div className="bg-orange-100">
 				<ToastContainer />
-				<Popup
-					modal
-					nested
-					open={openNameModel}
-					closeOnDocumentClick
+				<PopUp
+					onChange={(e) => setPlayerName(e.target.value)}
 					onClose={() => setOpenNameModel(false)}
-					contentStyle={{ width: "18rem", borderRadius: "0.75rem" }}
-				>
-					<div className="modal">
-						<div className="flex flex-col justify-center gap-4">
-							<div className="grid grid-cols-3 gap-2 rounded-xl border border-black" dir="rtl">
-								<div className="bg-gray-100 text-gray-900 rounded-r-xl p-2 text-sm">
-									اسم اللاعب
-								</div>
-								<input
-									dir="rtl"
-									className="outline-none rounded-xl text-xl"
-									onChange={(e) => setPlayerName(e.target.value)}
-									value={playerName}
-								/>
-							</div>
-							<CustomButton buttontype={ButtonsType.PRIMARY} onClick={() => savePlayer()}>
-								احفظ
-							</CustomButton>
-						</div>
-					</div>
-				</Popup>
-				<div className="pt-12 overflow-hidden">
+					openNameModel={openNameModel}
+					playerName={playerName}
+					savePlayer={() => savePlayer()}
+				/>
+
+				<div className="overflow-hidden">
+					{/* data */}
 					<div
 						style={{ paddingInlineEnd: "10px" }}
-						className="grid lg:grid-cols-[3fr_20rem] grid-cols-1 justify-items-center gap-4"
+						className="grid lg:grid-cols-[3fr_20rem] grid-cols-1 justify-items-center gap-4 pt-28"
 					>
-						<div className="grid grid-rows-[auto_100px_1fr] place-items-center grid-cols-1">
-							<div className=" w-2/3 flex flex-col">
+						{/* fixed Button */}
+						<button
+							ref={fixedButtonRef}
+							style={{
+								left: `${
+									sportListWidth / windowWidth > 0.46 && windowWidth < 1024
+										? (windowWidth - sportListWidth) / 2.25
+										: (windowWidth - sportListWidth) / 4.9
+								}px`,
+							}}
+							className="flex flex-col items-center fixed pt-3"
+							onClick={() =>
+								calcButtonRef.current?.scrollIntoView({
+									behavior: "smooth",
+									block: "end",
+								})
+							}
+						>
+							<FcCalculator className="text-3xl " />
+							<div className="text-orange-900 font-extrabold text-lg cursor-pointer">احسب</div>
+						</button>
+						{/* DataBody */}
+						<div className="flex flex-col items-center gap-1">
+							{/* searchBar */}
+							<div
+								className="pl-8"
+								style={{
+									width: `${sportListWidth - fixedButtonWidth}px`,
+								}}
+							>
 								<Search onChange={onSearchValueChange} value={searchValue} />
+							</div>
+							{/* CategoryList */}
+							<div className="grid grid-rows-[50px_50px] gap-4 place-items-center grid-cols-1">
 								<div
 									ref={categoriesListRef}
 									className="text-xl font-extrabold text-black self-center"
 								>
 									〽 حرك و اختر رياضتك〽
 								</div>
+
+								<div className="w-2/3" style={{ width: `${sportListWidth}px` }}>
+									<CategoriesList
+										categories={categories ?? []}
+										selectedCategoryId={selectedCategoryId}
+										onCategorySelected={(id) => onSelectedCategoryChange(id)}
+									/>
+								</div>
 							</div>
-							<div className="w-2/3" style={{ width: `${sportListWidth}px` }}>
-								<Carousel
-									responsive={{
-										xxxxl: {
-											breakpoint: { max: 1450, min: 1300 },
-											items: 5,
-											slidesToSlide: 3,
-										},
-										xxxl: {
-											breakpoint: { max: 1300, min: 1170 },
-											items: 4,
-											slidesToSlide: 2,
-											partialVisibilityGutter: 40,
-										},
-										xxl: {
-											breakpoint: { max: 1170, min: 1050 },
-											items: 2,
-											slidesToSlide: 1,
-											partialVisibilityGutter: 4,
-										},
-										xl: {
-											breakpoint: { max: 1080, min: 1020 },
-											items: 2,
-											slidesToSlide: 1,
-											partialVisibilityGutter: 4,
-										},
-										lg: {
-											breakpoint: { max: 1020, min: 850 },
-											items: 4,
-											slidesToSlide: 1,
-											partialVisibilityGutter: 4,
-										},
-										md: {
-											breakpoint: { max: 850, min: 680 },
-											items: 2,
-											slidesToSlide: 1,
-											partialVisibilityGutter: 4,
-										},
-										sm: {
-											breakpoint: { max: 680, min: 0 },
-											items: 1,
-											slidesToSlide: 1,
-											partialVisibilityGutter: 4,
-										},
-									}}
-									keyBoardControl={true}
-									customTransition="all .5"
-									transitionDuration={500}
-									containerClass=""
-									itemClass="py-24"
-									deviceType={""}
-									infinite
-									arrows
-									ssr
-									partialVisible={false}
-									focusOnSelect={true}
-									centerMode={true}
-								>
-									{categories?.map((cat) => (
-										<button key={cat.id} onClick={() => onSelectedCategoryChange(cat.id)}>
-											<MiniCard
-												category={cat}
-												icon={<BiFootball />}
-												selected={selectedCategoryId === cat.id}
-											/>
-										</button>
-									))}
-								</Carousel>
-							</div>
-							<div className="flex flex-col gap-4 items-center px-[8rem]">
+							{/* sportList */}
+							<div className="flex flex-col gap-6 items-center px-[8rem]">
 								<div className="text-xl font-extrabold text-black">〽 اضف رياضة〽</div>
 								<div
 									ref={sportsListRef}
@@ -443,8 +417,11 @@ export default function Home({
 								</div>
 							</div>
 						</div>
+						{/* ListCard */}
+
 						<div ref={listRef} className="">
 							<ListCard
+								ref={calcButtonRef}
 								players={playersList}
 								calc={() => calculationHandler()}
 								newPlayer={() => setOpenNameModel(true)}
@@ -453,7 +430,7 @@ export default function Home({
 							/>
 						</div>
 					</div>
-
+					{/* Result */}
 					<div ref={resultsRef} className=" p-8 w-full ">
 						<ResultComponents result={playersResultList} />
 					</div>

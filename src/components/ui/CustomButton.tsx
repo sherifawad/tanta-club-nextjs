@@ -1,23 +1,27 @@
 import { ButtonsType } from "@/data/constants";
-import React, { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes, forwardRef, useEffect } from "react";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 	buttontype?: ButtonsType;
 }
 
-const CustomButton = (props: Props) => {
+const CustomButton = forwardRef<null | HTMLButtonElement, Props>(function CustomButton(
+	{ buttontype, className, children, ...rest }: Props,
+	ref
+) {
 	return (
 		<button
-			{...props}
+			ref={ref}
+			{...rest}
 			className={`px-4 py-2 rounded-full ${
-				props.buttontype === ButtonsType.PRIMARY
+				buttontype === ButtonsType.PRIMARY
 					? "bg-orange-900 text-white hover:text-black"
 					: "text-black bg-gray-100 hover:text-orange-900"
-			}   ${props.className}`}
+			}   ${className}`}
 		>
-			{props.children}
+			{children}
 		</button>
 	);
-};
+});
 
 export default CustomButton;

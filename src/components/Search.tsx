@@ -7,7 +7,7 @@ type Props = {
 
 function Search({ value, onChange }: Props) {
 	return (
-		<div dir="rtl" className="flex flex-col p-2">
+		<div dir="rtl" className="flex flex-col w-full">
 			<div
 				className="bg-white items-center justify-between w-full flex rounded-full shadow shadow-orange-900 p-2 mb-5 sticky"
 				style={{ top: "5px" }}
