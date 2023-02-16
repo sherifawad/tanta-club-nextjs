@@ -96,7 +96,6 @@ function ResultComponents({ result }: Props) {
 									events={["hover", "click"]}
 								/>
 								<Tooltip
-									float
 									anchorId={`tooltip-anchor-penalty-${player.id}-${sport.id}`}
 									content={
 										sport.totalPenalty
