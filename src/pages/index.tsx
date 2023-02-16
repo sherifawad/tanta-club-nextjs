@@ -95,21 +95,25 @@ export default function Home({
 
 	const onSelectedCategoryChange = useCallback(
 		(categoryId: number) => {
-			setSelectedCategoryId(categoryId);
-			const sportsList = sports?.filter((sport) => sport.categoryId === categoryId);
-			setSportsList((prev) => {
-				if (sportsList && sportsList?.length > 0) {
-					setSelectedSportId(sportsList[0].id);
-					return sportsList;
-				}
-				return [];
-			});
+			try {
+				setSelectedCategoryId(categoryId);
+				const sportsList = sports?.filter((sport) => sport.categoryId === categoryId);
+				setSportsList((prev) => {
+					if (sportsList && sportsList?.length > 0) {
+						setSelectedSportId(sportsList[0].id);
+						return sportsList;
+					}
+					return [];
+				});
+			} catch (error) {
+				console.error(error);
+			}
 		},
 		[sports]
 	);
 
-	const onSportAdded = useCallback(
-		(sport: PlayerSport | undefined) => {
+	const onSportAdded = (sport: PlayerSport | undefined) => {
+		try {
 			if (!sport) return;
 			if (playerName === "" || playersList.length < 1) {
 				listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -166,37 +170,41 @@ export default function Home({
 				});
 				return [...rest, { ...currentPlayers[0], sports: orderedSports }];
 			});
-		},
-		[playerName, playersList]
-	);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 	const deleteSport = useCallback((playerId: number, sport: PlayerSport) => {
-		if (!playerId || !sport) return;
+		try {
+			if (!playerId || !sport) return;
 
-		setPlayersList((prev) => {
-			const [currentPlayer, rest] = divvyUp(prev, (player) => player.id === playerId);
-			if (!currentPlayer[0]) return prev;
-			const orderedSports = currentPlayer[0].sports.filter((s) => s.id !== sport.id);
-			toast.success(` تم إزالة  ${sport.title}  `, {
-				position: "top-right",
-				autoClose: 500,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "light",
+			setPlayersList((prev) => {
+				const [currentPlayer, rest] = divvyUp(prev, (player) => player.id === playerId);
+				if (!currentPlayer[0]) return prev;
+				const orderedSports = currentPlayer[0].sports.filter((s) => s.id !== sport.id);
+				toast.success(` تم إزالة  ${sport.title}  `, {
+					position: "top-right",
+					autoClose: 500,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
+				return orderedSports.length < 1
+					? prev.filter((player) => player.id !== playerId)
+					: [...rest, { ...currentPlayer[0], sports: orderedSports }];
 			});
-			return orderedSports.length < 1
-				? prev.filter((player) => player.id !== playerId)
-				: [...rest, { ...currentPlayer[0], sports: orderedSports }];
-		});
+		} catch (error) {
+			console.error(error);
+		}
 	}, []);
 
 	const deletePlayer = useCallback((player: Player) => {
-		if (!player) return;
-
 		try {
+			if (!player) return;
 			setPlayersList((prev) => prev.filter((p) => p.id !== player.id));
 			toast.success(` تم إزالة  ${player.name}  `, {
 				position: "top-right",
@@ -208,89 +216,114 @@ export default function Home({
 				progress: undefined,
 				theme: "light",
 			});
-		} catch (error) {}
+		} catch (error) {
+			console.error(error);
+		}
 	}, []);
 
 	const calculationHandler = useCallback(() => {
-		if (playerName === "") {
-			toast.error("No Name", {
-				position: "bottom-right",
-				autoClose: 500,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "light",
-			});
-		}
-		// const result = moreThanTwoPlayers(playersList);
-		// const result = swimmingDiscount(playersList);
-		let [swimmingPrivateList, otherSports] = splitPrivateSwimming(playersList);
+		try {
+			if (playerName === "") {
+				toast.error("No Name", {
+					position: "bottom-right",
+					autoClose: 500,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
+			}
+			// const result = moreThanTwoPlayers(playersList);
+			// const result = swimmingDiscount(playersList);
+			let [swimmingPrivateList, otherSports] = splitPrivateSwimming(playersList);
 
-		swimmingPrivateList = swimmingDiscount(swimmingPrivateList);
-		otherSports = moreThanTwoPlayers(otherSports);
-		const result = mergePlayers(otherSports, swimmingPrivateList);
-		const refracted = result?.map((player) => {
-			return {
-				name: player.name,
-				sports: player.sports.map((sport) => ({
-					name: sport.name,
-					price: sport.price,
-				})),
-			};
-		}) as Player[];
-		setPlayersResultList(result);
-		resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+			swimmingPrivateList = swimmingDiscount(swimmingPrivateList);
+			otherSports = moreThanTwoPlayers(otherSports);
+			const result = mergePlayers(otherSports, swimmingPrivateList);
+			const refracted = result?.map((player) => {
+				return {
+					name: player.name,
+					sports: player.sports.map((sport) => ({
+						name: sport.name,
+						price: sport.price,
+					})),
+				};
+			}) as Player[];
+			setPlayersResultList(result);
+			resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+		} catch (error) {
+			console.error(error);
+		}
 	}, [playerName, playersList]);
 
-	const savePlayer = () => {
-		setOpenNameModel(true);
+	const savePlayer = useCallback(() => {
+		try {
+			setOpenNameModel(true);
 
-		const isNameDuplicated = playersList.find((player) => player.name === playerName.trim());
+			const isNameDuplicated = playersList.find((player) => player.name === playerName.trim());
 
-		if (isNameDuplicated || playerName.trim() === "") {
-			toast.error("Name is exist", {
-				position: "top-right",
-				autoClose: 500,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "light",
+			if (isNameDuplicated || playerName.trim() === "") {
+				toast.error("Name is exist", {
+					position: "top-right",
+					autoClose: 500,
+					hideProgressBar: false,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: "light",
+				});
+				return;
+			}
+			setPlayersList((prev) => [
+				...prev,
+				{ id: playersList.length + 1, name: playerName.trim(), sports: [] },
+			]);
+			setOpenNameModel(false);
+			window.scrollTo({
+				top: 0,
+				left: 0,
+				behavior: "smooth",
 			});
-			return;
+		} catch (error) {
+			console.error(error);
 		}
-		setPlayersList((prev) => [
-			...prev,
-			{ id: playersList.length + 1, name: playerName.trim(), sports: [] },
-		]);
-		setOpenNameModel(false);
-		window.scrollTo({
-			top: 0,
-			left: 0,
-			behavior: "smooth",
-		});
-	};
+	}, [playerName, playersList]);
 
 	const onSearchValueChange = useCallback(
 		(e: ChangeEvent<HTMLInputElement>) => {
-			const { value } = e.target;
-			setSearchValue(value);
-			if (value.length > 1) {
-				const filteredSports = sports?.filter(
-					(sport) =>
-						sport.title?.toLowerCase()?.includes(value.trim()) ||
-						sport.name?.toLowerCase()?.includes(value.trim())
-				);
-				if (!filteredSports || filteredSports.length < 1) return;
-				setSportsList(filteredSports);
-				setSelectedCategoryId(-1);
+			try {
+				const { value } = e.target;
+				setSearchValue(value);
+				if (value.length > 1) {
+					const filteredSports = sports?.filter(
+						(sport) =>
+							sport.title?.toLowerCase()?.includes(value.trim()) ||
+							sport.name?.toLowerCase()?.includes(value.trim())
+					);
+					if (!filteredSports || filteredSports.length < 1) return;
+					setSportsList(filteredSports);
+					setSelectedCategoryId(-1);
+				}
+			} catch (error) {
+				console.error(error);
 			}
 		},
 		[sports]
 	);
+
+	const onFixedButtonCLicked = useCallback(() => {
+		try {
+			playersList.length > 0
+				? calculationHandler()
+				: calcButtonRef.current?.scrollIntoView({
+						behavior: "smooth",
+						block: "end",
+				  });
+		} catch (error) {}
+	}, [calculationHandler, playersList.length]);
 
 	useEffect(() => {
 		if (categories && sports) {
@@ -367,14 +400,7 @@ export default function Home({
 								}px`,
 							}}
 							className="flex flex-col items-center fixed pt-3 z-50"
-							onClick={() =>
-								playersList.length > 0
-									? calculationHandler()
-									: calcButtonRef.current?.scrollIntoView({
-											behavior: "smooth",
-											block: "end",
-									  })
-							}
+							onClick={onFixedButtonCLicked}
 						>
 							<FcCalculator className="text-3xl " />
 							<div className="text-orange-900 font-extrabold text-lg cursor-pointer">احسب</div>
