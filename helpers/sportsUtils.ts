@@ -138,23 +138,29 @@ export const numberOfPrivateSwimmingSportsWithDiscount = (players: Player[]) => 
 	);
 };
 
-
-
 export const swimmingFirstMonthCheck = (player: Player) => {
 	if (!player.sports[0].DiscountOptions) return player;
 	const timeDiscount = player.sports[0].DiscountOptions.find((discount) => discount.id === 5);
 
-	if (!timeDiscount) return player;
+	if (!timeDiscount)
+		return {
+			...player,
+			sports: player.sports.map((s) => {
+				return calcSportPenalty(s);
+			}),
+		};
 	const validTimeDiscount = discountDayTimeValidation(timeDiscount);
-	if (!validTimeDiscount) return player;
+	if (!validTimeDiscount)
+		return {
+			...player,
+			sports: player.sports.map((s) => {
+				return calcSportPenalty(s);
+			}),
+		};
 	return {
 		...player,
 		sports: player.sports.map((s) => {
-			return {
-				...s,
-				price: calPriceDiscount(timeDiscount, s.price, 0),
-				note: "first month discount",
-			};
+			return calSportPrice(s);
 		}),
 	};
 };
@@ -186,5 +192,3 @@ export const splitPrivateSwimming = (players: Player[]) => {
 
 	return [filteredSwimmingList, otherSports];
 };
-
-

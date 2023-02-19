@@ -1,6 +1,5 @@
 import { discountDayTimeValidation } from "helpers/discountUtils";
 import {
-	calPriceDiscount,
 	calSportPrice,
 	calcSportPenalty,
 	calcTotalSportsPenalty,
@@ -11,9 +10,9 @@ import {
 	playerWithNoDiscountSport,
 	swimmingFirstMonthCheck,
 } from "../helpers/sportsUtils";
-import { Player } from "@/types";
+import { Player, PlayerSport } from "@/types";
 import { divvyUp } from "helpers/arrayUtils";
-import { playersMaxDiscountSorting, playersWithMaxDiscountSorting } from "helpers/playerUtils";
+import { mergePlayers, playersMaxDiscountSorting, playersWithMaxDiscountSorting } from "helpers/playerUtils";
 
 export const onePlayer = (player: Player) => {
 	const sportsWithDiscount = numberOfSportsWithDiscount(player);
@@ -293,44 +292,35 @@ export const moreThanTwoPlayers = (players: Player[]): Player[] => {
 
 export const swimmingDiscount = (players: Player[]): Player[] => {
 	players = numberOfPrivateSwimmingSportsWithDiscount(players);
-	let [sportsWithBrothersDiscount, otherSwimming] = divvyUp(players, (player) =>
-		player.sports.find((sport) => sport.DiscountOptions?.find((discount) => discount.id === 6))
+	let [otherSwimming, sportsWithBrothersDiscount] = divvyUp(players, (player) =>
+		player.sports.find((sport) => sport.DiscountOptions?.every((discount) => discount.id === 5))
 	);
-	if (otherSwimming && otherSwimming.length > 0) {
-		otherSwimming = otherSwimming.map((player) => {
+	let otherSwimmingWithoutBrotherDiscount: Player[] = [];
+	let otherSwimmingWithBrothersDiscount: Player[] = [];
+	otherSwimming.forEach((player) => {
+		let [hasNoBrotherDiscount, hasBrotherDiscount] = divvyUp(player.sports, (sport) =>
+			sport.DiscountOptions?.every((discount) => discount.id !== 6)
+		);
+		otherSwimmingWithoutBrotherDiscount = [
+			...otherSwimmingWithoutBrotherDiscount,
+			{ ...player, sports: hasNoBrotherDiscount },
+		];
+		otherSwimmingWithBrothersDiscount = [
+			...otherSwimmingWithBrothersDiscount,
+			{ ...player, sports: hasBrotherDiscount },
+		];
+	});
+	sportsWithBrothersDiscount = [...sportsWithBrothersDiscount, ...otherSwimmingWithBrothersDiscount].filter(
+		(player) => player.sports.length !== 0
+	);
+
+	if (otherSwimmingWithoutBrotherDiscount && otherSwimmingWithoutBrotherDiscount.length > 0) {
+		otherSwimmingWithoutBrotherDiscount = otherSwimmingWithoutBrotherDiscount.map((player) => {
 			return swimmingFirstMonthCheck(player);
 		});
 	}
 	if (sportsWithBrothersDiscount.length === 1) {
-		//check first time Discount
-		const discount = players[0].sports[0].DiscountOptions!.find((disconnect) => disconnect.id === 5);
-
-		if (discount && discountDayTimeValidation(discount)) {
-			console.log(
-				"🚀 ~ file: calc.ts:416 ~ swimmingDiscount ~ discountDayTimeValidation(discount)",
-				discountDayTimeValidation(discount)
-			);
-			return players.map((p, i) => {
-				if (i === 0) {
-					return {
-						...p,
-						sports: p.sports.map((s) => {
-							return {
-								...s,
-								price: calPriceDiscount(discount, s.price, 0, s.Penalty),
-								note: "first month discount",
-							};
-						}),
-					};
-				}
-				return {
-					...p,
-					sports: p.sports.map((s) => {
-						return calcSportPenalty(s);
-					}),
-				};
-			});
-		}
+		return [swimmingFirstMonthCheck(players[0])];
 	} else if (sportsWithBrothersDiscount.length === 2) {
 		sportsWithBrothersDiscount = playersWithMaxDiscountSorting(sportsWithBrothersDiscount);
 		sportsWithBrothersDiscount = sportsWithBrothersDiscount.map((player, index) => {
@@ -340,14 +330,8 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 				case 1:
 					return {
 						...player,
-						sports: player.sports.map((s) => {
-							return {
-								...s,
-								price: s.DiscountOptions
-									? calPriceDiscount(s.DiscountOptions[0], s.price, 0, s.Penalty)
-									: s.price,
-								note: "first month discount",
-							};
+						sports: player.sports.map((s, i) => {
+							return i === 0 ? calSportPrice(s) : calcSportPenalty(s);
 						}),
 					};
 
@@ -364,27 +348,15 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 				case 1:
 					return {
 						...player,
-						sports: player.sports.map((s) => {
-							return {
-								...s,
-								price: s.DiscountOptions
-									? calPriceDiscount(s.DiscountOptions[0], s.price, 0, s.Penalty)
-									: s.price,
-								note: "first month discount",
-							};
+						sports: player.sports.map((s, i) => {
+							return i === 0 ? calSportPrice(s) : calcSportPenalty(s);
 						}),
 					};
 				case 2:
 					return {
 						...player,
-						sports: player.sports.map((s) => {
-							return {
-								...s,
-								price: s.DiscountOptions
-									? calPriceDiscount(s.DiscountOptions[0], s.price, 0, s.Penalty)
-									: s.price,
-								note: "first month discount",
-							};
+						sports: player.sports.map((s, i) => {
+							return i === 0 ? calSportPrice(s) : calcSportPenalty(s);
 						}),
 					};
 
@@ -393,5 +365,6 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
 			}
 		});
 	}
-	return [...sportsWithBrothersDiscount, ...otherSwimming];
+
+	return mergePlayers(sportsWithBrothersDiscount, otherSwimmingWithoutBrotherDiscount);
 };
