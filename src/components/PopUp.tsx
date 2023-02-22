@@ -24,7 +24,7 @@ function PopUp({ savePlayer, openNameModel, onClose, onChange, playerName }: Pro
 			<div className="modal">
 				<div className="flex flex-col justify-center gap-4">
 					<div className="grid grid-cols-3 gap-2 rounded-xl border border-black" dir="rtl">
-						<div className="bg-gray-100 text-gray-900 rounded-r-xl p-2 text-sm">اسم اللاعب</div>
+						<div className="bg-gray-100 text-gray-900 rounded-r-xl p-2 text-sm">اكتب اي اسم</div>
 						<input
 							dir="rtl"
 							className="outline-none rounded-xl text-xl"
