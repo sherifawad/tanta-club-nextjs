@@ -27,7 +27,7 @@ function PopUp({ savePlayer, openNameModel, onClose, onChange, playerName }: Pro
 						<div className="bg-gray-100 text-gray-900 rounded-r-xl p-2 text-sm ">اسم اللاعب</div>
 						<input
 							dir="rtl"
-							className="outline-none rounded-xl text-xl placeholder-black"
+							className="outline-none rounded-xl text-xl placeholder-gray-900"
 							onChange={onChange}
 							placeholder="اي اسم"
 							value={playerName}
