@@ -4,8 +4,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	try {
 		if (req.headers.appsecret === process.env.APP_SECRET) {
-			const categories = await prisma.category.findMany();
-			return res.status(200).send(categories);
+			const penalties = await prisma.penalty.findMany();
+			return res.status(200).send(penalties);
 		}
 		return res.status(401).send("Unauthorized");
 	} catch (err) {
