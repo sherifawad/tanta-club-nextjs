@@ -8,9 +8,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			return res.json({ revalidated: true });
 		} else if (req.headers.appsecret === process.env.APP_SECRET) {
 			const sports = await prisma.sport.findMany({
+				where: { hidden: false },
 				include: {
-					Category: true,
 					DiscountOptions: true,
+					Category: true,
+					Penalty: true,
 				},
 			});
 			return res.status(200).send(sports);
