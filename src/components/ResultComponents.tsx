@@ -86,7 +86,8 @@ function ResultComponents({ result }: Props) {
 									float
 									anchorId={`tooltip-anchor-discount-${player.id}-${sport.id}`}
 									content={
-										sport.DiscountOptions
+										sport.DiscountOptions !== undefined &&
+										sport.DiscountOptions.length > 0
 											? `${
 													sport.DiscountOptions[0].type === DiscountType.PERCENTAGE
 														? "%"
