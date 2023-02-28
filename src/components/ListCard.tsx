@@ -7,13 +7,14 @@ import { AiFillDelete } from "react-icons/ai";
 type Props = {
 	players?: Player[];
 	calc?: () => void;
+	addSport: (id: number) => void;
 	newPlayer?: () => void;
 	deletePlayer: (player: Player) => void;
 	deleteSport: (playerId: number, sport: PlayerSport) => void;
 };
 
 const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
-	{ players, calc, newPlayer, deletePlayer, deleteSport }: Props,
+	{ players, addSport, calc, newPlayer, deletePlayer, deleteSport }: Props,
 	ref
 ) {
 	const [sportCount, setSportCount] = useState(0);
@@ -35,12 +36,12 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
 		<div className="grid grid-rows-[60px_1fr_120px] bg-white border border-gray-100 rounded-lg shadow md:min-w-[20rem] w-60 sm:max-h-[90vh] max-h-[60vh] min-h-[60vh]">
 			<div className="p-4">
 				<CustomButton onClick={newPlayer} buttontype={ButtonsType.PRIMARY} className="w-full">
-					اضف لاعب ➕
+					{`${players && players.length < 1 ? "اضف لاعب ➕" : " اضف اخ ➕"}`}
 				</CustomButton>
 			</div>
 			<div className=" py-4 overflow-y-scroll">
 				<div className="mx-4 overflow-y-auto divide-y divide-dashed">
-					{players?.map((player) => (
+					{players?.map((player, PlayerIndex) => (
 						<div key={player.id} className=" flex flex-col items-center py-4">
 							<div className="flex flex-row-reverse gap-2 bg-orange-100 w-2/3 justify-center rounded-full">
 								<div className="text-black font-bold text-lg w-2/3 m-auto">
@@ -77,6 +78,13 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
 										</CustomButton>
 									</div>
 								))}
+								<CustomButton
+									onClick={() => addSport(player.id)}
+									buttontype={ButtonsType.SECONDARY}
+									className="w-full"
+								>
+									اضف لعبة ➕
+								</CustomButton>
 							</div>
 						</div>
 					))}
