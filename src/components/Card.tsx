@@ -35,7 +35,7 @@ const Card = ({ icon, sport, add }: Props) => {
 					{icon}
 				</div> */}
                 <div
-                    className="relative z-50 flex items-start self-end justify-between w-full px-4 pt-4 -mb-12"
+                    className="relative z-20 flex items-start self-end justify-between w-full px-4 pt-4 -mb-12"
                     dir="rtl"
                 >
                     <CardMenu sport={sport} />

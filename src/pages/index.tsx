@@ -32,27 +32,22 @@ import { divvyUp } from "helpers/arrayUtils";
 import { mergePlayers } from "helpers/playerUtils";
 import { sportsRepo } from "lib/sports-repo";
 import { categoriesRepo } from "lib/categories-repo";
+import { discountsRepo } from "lib/discounts-repo";
+import { penaltiesRepo } from "lib/penalties-repo";
+import SelectCategories from "@/components/SelectCategories";
+import { arrayToReactSelectOption } from "@/lib/utils";
 
 export async function getStaticProps() {
     try {
-        // const categories = await prisma.category.findMany({
-        //     where: { hidden: false },
-        // });
         const categories = categoriesRepo.getAll();
-        // const discounts = await prisma.discount.findMany();
-        // const penalties = await prisma.penalty.findMany();
-        // const sports = await prisma.sport.findMany({
-        // 	where: { hidden: false },
-        // 	include: {
-        // 		discounts: true,
-        // 		Category: true,
-        // 		Penalty: true,
-        // 	},
-        // });
         const sports = sportsRepo.getAll();
+        const discounts = discountsRepo.getAll();
+        const penalties = penaltiesRepo.getAll();
         return {
             props: {
                 categories,
+                discounts,
+                penalties,
                 sports,
             },
         };
@@ -500,7 +495,14 @@ export default function Home({
                                 />
                             </div>
                             {/* CategoryList */}
-                            <div className="grid grid-rows-[50px_50px] gap-4 place-items-center grid-cols-1">
+                            <div
+                                className="grid grid-rows-[50px_50px] gap-4 grid-cols-1 mb-4"
+                                style={{
+                                    width: `${
+                                        sportListWidth - fixedButtonWidth
+                                    }px`,
+                                }}
+                            >
                                 <div
                                     ref={categoriesListRef}
                                     className="self-center text-xl font-extrabold text-black"
@@ -508,16 +510,24 @@ export default function Home({
                                     〽 حرك و اختر رياضتك〽
                                 </div>
 
-                                <div
-                                    className="w-2/3"
-                                    style={{ width: `${sportListWidth}px` }}
-                                >
-                                    <CategoriesList
+                                <div className="z-50 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-orange-900">
+                                    {/* <CategoriesList
                                         categories={categories ?? []}
                                         selectedCategoryId={selectedCategoryId}
                                         onCategorySelected={(id) =>
                                             onSelectedCategoryChange(id)
                                         }
+                                    /> */}
+                                    <SelectCategories
+                                        options={
+                                            arrayToReactSelectOption(
+                                                "name",
+                                                "id",
+                                                categories ?? []
+                                            ) ?? []
+                                        }
+                                        onChange={onSelectedCategoryChange}
+                                        value={selectedCategoryId}
                                     />
                                 </div>
                             </div>

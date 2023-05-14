@@ -1183,5 +1183,20 @@
         "title": "سباحة النجوم",
         "price": 475,
         "categoryId": 1
+    },
+    {
+        "id": 100,
+        "name": "footBallAcademy",
+        "title": "أكاديمية كرة قدم",
+        "price": 175,
+        "categoryId": 2,
+        "discounts": [
+            {
+                "id": 1
+            },
+            {
+                "id": 2
+            }
+        ]
     }
 ]
