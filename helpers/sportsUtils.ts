@@ -11,11 +11,11 @@ export const calcSportPenalty = (
     sport: PlayerSport,
     removeDiscount: boolean = true
 ): PlayerSport => {
-    const penalty = calcPenalty(sport.Penalty!);
+    const penalty = calcPenalty(sport.penalty!);
     return {
         ...sport,
         price: sport.price + penalty,
-        Penalty: penalty === 0 ? undefined : sport.Penalty,
+        penalty: penalty === 0 ? undefined : sport.penalty,
         totalPenalty: penalty === 0 ? undefined : penalty,
         discounts: removeDiscount ? undefined : sport.discounts,
     };
@@ -25,11 +25,11 @@ export const calcTotalSportsPenalty = (
     sports: PlayerSport[]
 ): PlayerSport[] => {
     return sports.map((sport) => {
-        const penalty = calcPenalty(sport.Penalty!);
+        const penalty = calcPenalty(sport.penalty!);
         return {
             ...sport,
             price: sport.price + penalty,
-            Penalty: penalty === 0 ? undefined : sport.Penalty,
+            Penalty: penalty === 0 ? undefined : sport.penalty,
             totalPenalty: penalty === 0 ? undefined : penalty,
         };
     });
@@ -71,7 +71,7 @@ export const calSportPrice = (
         return { ...calcSportPenalty(sport), discounts: undefined };
     let discount = sport.discounts[0];
     let price = sport.price;
-    let penalty = sport.Penalty;
+    let penalty = sport.penalty;
     const totalDiscount = discountStep(discount, step);
     if (discount.type === DiscountType.FIXED) {
         sport.price -= totalDiscount;
@@ -87,7 +87,7 @@ export const calSportPrice = (
     if (penalty) {
         const calculatedPenalty = calcPenalty(penalty);
         if (calculatedPenalty === 0) {
-            sport.Penalty = undefined;
+            sport.penalty = undefined;
             sport.totalPenalty = undefined;
         } else {
             sport.price += calculatedPenalty;

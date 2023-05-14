@@ -114,7 +114,7 @@ export enum RepetitionType {
 
 export interface PlayerSport extends Omit<Sport, "discounts"> {
     discounts?: Discount[] | null;
-    Penalty?: Penalty | null;
+    penalty?: Penalty | null;
     totalPenalty?: number;
     totalDiscount?: number;
 }

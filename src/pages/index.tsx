@@ -76,9 +76,6 @@ export default function Home({
     const sportsListRef = useRef<null | HTMLDivElement>(null);
     const categoriesListRef = useRef<null | HTMLDivElement>(null);
     const [currentPlayer, setCurrentPlayer] = useState<Player | undefined>();
-    const [sportListWidth, setSportListWidth] = useState<number>(0);
-    const [fixedButtonWidth, setFixedButtonWidth] = useState<number>(0);
-    const [windowWidth, setWindowWidth] = useState<number>(0);
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
     const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
     const [selectedSportId, setSelectedSportId] = useState<number>();
@@ -87,6 +84,7 @@ export default function Home({
     const [playersList, setPlayersList] = useState<Player[]>([]);
     const [openNameModel, setOpenNameModel] = useState(false);
     const [searchValue, setSearchValue] = useState("");
+    const [pending, setPending] = useState(false);
 
     const onSelectedCategoryChange = useCallback(
         (categoryId: number) => {
@@ -95,8 +93,8 @@ export default function Home({
                 const sportsList = sports?.filter(
                     (sport) => sport.categoryId === categoryId
                 );
-                setSportsList((prev) => {
-                    if (sportsList && sportsList?.length > 0) {
+                setSportsList(() => {
+                    if (sportsList != null && sportsList?.length > 0) {
                         setSelectedSportId(sportsList[0].id);
                         return sportsList;
                     }
@@ -109,44 +107,20 @@ export default function Home({
         [sports]
     );
 
-    const onSportAdded = (sport: PlayerSport | undefined) => {
-        try {
-            if (!sport) return;
-            if (playersList.length < 1) {
-                listRef.current?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                });
+    const onSportAdded = useCallback(
+        (sport: PlayerSport | undefined) => {
+            try {
+                if (pending) return;
+                setPending(true);
+                if (!sport) return;
+                if (playersList.length < 1) {
+                    listRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                    });
 
-                toast.error("اضف لاعب", {
-                    position: "top-center",
-                    autoClose: 1000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                });
-                return;
-            }
-            if (playersList.length < 1) return;
-            let lastPlayer = currentPlayer;
-            if (!lastPlayer) {
-                lastPlayer = playersList.at(-1);
-                if (!lastPlayer) return;
-                setCurrentPlayer(lastPlayer);
-            }
-            const exist = lastPlayer.sports.some((s) => s.id === sport.id);
-            console.log(
-                "🚀 ~ file: index.tsx:138 ~ onSportAdded ~ exist:",
-                exist
-            );
-            if (exist) {
-                toast.error(
-                    ` لعبة مكررة ${sport.title} ${lastPlayer.name}  للاعب `,
-                    {
-                        position: "top-right",
+                    toast.error("اضف لاعب", {
+                        position: "top-center",
                         autoClose: 1000,
                         hideProgressBar: false,
                         closeOnClick: true,
@@ -154,23 +128,48 @@ export default function Home({
                         draggable: true,
                         progress: undefined,
                         theme: "light",
-                    }
+                    });
+                    return;
+                }
+                // if (playersList.length < 1) return;
+                let player = currentPlayer;
+                if (player == null) return;
+                const exist = player.sports.some((s) => s.id === sport.id);
+
+                if (exist) {
+                    toast.error(
+                        ` لعبة مكررة ${sport.title} ${player.name}  للاعب `,
+                        {
+                            position: "top-right",
+                            autoClose: 1000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                        }
+                    );
+                    return;
+                }
+
+                const playerListCopy = playersList ?? [];
+                const playerIndex = playerListCopy.findIndex(
+                    (p) => p.id === player!.id
                 );
-                return;
-            }
-            setPlayersList((prev) => {
-                // const [currentPlayers, rest] = divvyUp(
-                // 	prev,
-                // 	(player) => player.name === lastPlayer?.name.trim()
-                // );
-                // if (!currentPlayers || currentPlayers.length < 1) return prev;
-                if (!lastPlayer || !lastPlayer?.sports) return prev;
-                const orderedSports = [...lastPlayer.sports, sport].sort(
-                    (s1, s2) =>
-                        s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
+                if (playerIndex < 0) return;
+                const orderedSports = [
+                    ...playerListCopy[playerIndex].sports,
+                    sport,
+                ].sort((s1, s2) =>
+                    s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
                 );
+
+                playerListCopy[playerIndex].sports = orderedSports;
+
+                setPlayersList([...playerListCopy]);
                 toast.success(
-                    `${lastPlayer.name} تم إضافة ${sport.title}  للاعب `,
+                    `${player.name} تم إضافة ${sport.title}  للاعب `,
                     {
                         position: "top-right",
                         autoClose: 500,
@@ -182,32 +181,69 @@ export default function Home({
                         theme: "light",
                     }
                 );
-                // return [ ...prev, lastPlayer: { ...lastPlayer, sports: orderedSports } ];
-                return prev.map((player) => {
-                    return player.id === lastPlayer?.id
-                        ? { ...lastPlayer, sports: orderedSports }
-                        : player;
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setPending(false);
+            }
+        },
+        [currentPlayer, pending, playersList]
+    );
+
+    const deleteSport = useCallback(
+        (playerId: number, sport: PlayerSport) => {
+            try {
+                if (pending) return;
+                setPending(true);
+                if (!playerId || !sport) return;
+
+                setPlayersList((prev) => {
+                    const [currentPlayer, rest] = divvyUp(
+                        prev,
+                        (player) => player.id === playerId
+                    );
+                    if (!currentPlayer[0]) return prev;
+                    const orderedSports = currentPlayer[0].sports.filter(
+                        (s) => s.id !== sport.id
+                    );
+                    toast.success(` تم إزالة  ${sport.title}  `, {
+                        position: "top-right",
+                        autoClose: 500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    return orderedSports.length < 1
+                        ? prev.filter((player) => player.id !== playerId)
+                        : [
+                              ...rest,
+                              { ...currentPlayer[0], sports: orderedSports },
+                          ];
                 });
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    };
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setPending(false);
+            }
+        },
+        [pending]
+    );
 
-    const deleteSport = useCallback((playerId: number, sport: PlayerSport) => {
-        try {
-            if (!playerId || !sport) return;
-
-            setPlayersList((prev) => {
-                const [currentPlayer, rest] = divvyUp(
-                    prev,
-                    (player) => player.id === playerId
-                );
-                if (!currentPlayer[0]) return prev;
-                const orderedSports = currentPlayer[0].sports.filter(
-                    (s) => s.id !== sport.id
-                );
-                toast.success(` تم إزالة  ${sport.title}  `, {
+    const deletePlayer = useCallback(
+        (player: Player) => {
+            try {
+                if (pending) return;
+                setPending(true);
+                if (!player) return;
+                setPlayersList((prev) => {
+                    const filteredList = prev.filter((p) => p.id !== player.id);
+                    setCurrentPlayer(filteredList.at(-1));
+                    return filteredList;
+                });
+                toast.success(` تم إزالة  ${player.name}  `, {
                     position: "top-right",
                     autoClose: 500,
                     hideProgressBar: false,
@@ -217,36 +253,19 @@ export default function Home({
                     progress: undefined,
                     theme: "light",
                 });
-                return orderedSports.length < 1
-                    ? prev.filter((player) => player.id !== playerId)
-                    : [...rest, { ...currentPlayer[0], sports: orderedSports }];
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    }, []);
-
-    const deletePlayer = useCallback((player: Player) => {
-        try {
-            if (!player) return;
-            setPlayersList((prev) => prev.filter((p) => p.id !== player.id));
-            toast.success(` تم إزالة  ${player.name}  `, {
-                position: "top-right",
-                autoClose: 500,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    }, []);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setPending(false);
+            }
+        },
+        [pending]
+    );
 
     const calculationHandler = useCallback(() => {
         try {
+            if (pending) return;
+            setPending(true);
             if (playersList.length < 1) {
                 calcButtonRef.current?.scrollIntoView({
                     behavior: "smooth",
@@ -287,11 +306,15 @@ export default function Home({
             });
         } catch (error) {
             console.error(error);
+        } finally {
+            setPending(false);
         }
-    }, [playersList]);
+    }, [pending, playersList]);
 
     const savePlayer = useCallback(() => {
         try {
+            if (pending) return;
+            setPending(true);
             setOpenNameModel(true);
 
             const isNameDuplicated = playersList.find(
@@ -311,24 +334,27 @@ export default function Home({
                 });
                 return;
             }
-            setPlayersList((prev) => [
-                ...prev,
-                {
-                    id: playersList.length + 1,
-                    name: playerName.trim(),
-                    sports: [],
-                },
-            ]);
+            const newPlayer = {
+                id: playersList.length + 1,
+                name: playerName.trim(),
+                sports: [],
+            };
+            setPlayersList((prev) => [...prev, newPlayer]);
+            setCurrentPlayer(newPlayer);
             setOpenNameModel(false);
             setPlayerName("");
         } catch (error) {
             console.error(error);
+        } finally {
+            setPending(false);
         }
-    }, [playerName, playersList]);
+    }, [pending, playerName, playersList]);
 
     const onSearchValueChange = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
             try {
+                if (pending) return;
+                setPending(true);
                 const { value } = e.target;
                 setSearchValue(value);
                 if (value.length > 1) {
@@ -345,27 +371,34 @@ export default function Home({
                 }
             } catch (error) {
                 console.error(error);
+            } finally {
+                setPending(false);
             }
         },
-        [sports]
+        [pending, sports]
     );
 
     const addSport = (playerId: number) => {
-        if (playerId) {
-            console.log(
-                "🚀 ~ file: index.tsx:313 ~ addSport ~ playerId:",
-                playerId
-            );
-            setCurrentPlayer(
-                (prev) =>
-                    playersList.find((player) => player.id === playerId) ?? prev
-            );
+        try {
+            if (pending) return;
+            setPending(true);
+            if (playerId) {
+                setCurrentPlayer(
+                    (prev) =>
+                        playersList.find((player) => player.id === playerId) ??
+                        prev
+                );
+            }
+            window.scrollTo({
+                top: 0,
+                left: 0,
+                behavior: "smooth",
+            });
+        } catch (error) {
+            console.log("🚀 ~ file: index.tsx:399 ~ addSport ~ error:", error);
+        } finally {
+            setPending(false);
         }
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: "smooth",
-        });
     };
 
     useEffect(() => {
@@ -391,44 +424,6 @@ export default function Home({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleResize = useCallback(() => {
-        setSportListWidth((prev) => sportsListRef.current?.offsetWidth ?? prev);
-        setFixedButtonWidth(
-            (prev) => fixedButtonRef.current?.offsetWidth ?? prev
-        );
-        setWindowWidth(window.innerWidth);
-    }, []);
-
-    useEffect(() => {
-        // const ref = sportsListRef.current;
-        window.addEventListener("resize", handleResize);
-        // if (ref) ref.addEventListener("resize", handleResize);
-        // console.log("width", ref?.offsetWidth);
-
-        return () => {
-            // remove the event listener before the component gets unmounted
-            window.removeEventListener("resize", handleResize);
-            // ref?.removeEventListener("resize", handleResize);
-        };
-    }, [handleResize]);
-
-    useEffect(() => {
-        if (sportsListRef.current) {
-            setSportListWidth((prev) =>
-                prev === 0 ? sportsListRef.current?.offsetWidth ?? 0 : prev
-            );
-            setFixedButtonWidth((prev) =>
-                prev === 0 ? fixedButtonRef.current?.offsetWidth ?? 0 : prev
-            );
-            setWindowWidth((prev) =>
-                prev === 0 ? window.innerWidth ?? 0 : prev
-            );
-        }
-    }, [
-        sportsListRef.current?.offsetWidth,
-        fixedButtonRef.current?.offsetWidth,
-    ]);
-
     return (
         <>
             <Head>
@@ -443,7 +438,7 @@ export default function Home({
                 />
                 <link rel="icon" href="/part_alternation_mark_color.svg" />
             </Head>
-            <div className="bg-orange-100">
+            <div className="min-h-full mx-auto bg-orange-100">
                 <ToastContainer />
                 <PopUp
                     onChange={(e) => setPlayerName(e.target.value)}
@@ -453,108 +448,87 @@ export default function Home({
                     savePlayer={() => savePlayer()}
                 />
 
-                <div className="overflow-hidden">
+                <div className="container mx-auto overflow-hidden">
                     {/* data */}
                     <div
                         style={{ paddingInlineEnd: "10px" }}
-                        className="grid lg:grid-cols-[3fr_20rem] grid-cols-1 justify-items-center gap-4 pt-28"
+                        className="flex flex-col gap-4 lg:flex-row pt-28"
                     >
-                        {/* fixed Button */}
-                        <button
-                            ref={fixedButtonRef}
-                            style={{
-                                left: `${
-                                    sportListWidth / windowWidth > 0.46 &&
-                                    windowWidth < 1024
-                                        ? (windowWidth - sportListWidth) / 2.25
-                                        : (windowWidth - sportListWidth) / 4.9
-                                }px`,
-                            }}
-                            className="fixed z-50 flex flex-col items-center pt-3"
-                            onClick={calculationHandler}
-                        >
-                            <FcCalculator className="text-3xl " />
-                            <div className="text-lg font-extrabold text-orange-900 cursor-pointer">
-                                احسب
-                            </div>
-                        </button>
-                        {/* DataBody */}
-                        <div className="flex flex-col items-center gap-1">
-                            {/* searchBar */}
-                            <div
-                                className="pl-8"
-                                style={{
-                                    width: `${
-                                        sportListWidth - fixedButtonWidth
-                                    }px`,
-                                }}
-                            >
-                                <Search
-                                    onChange={onSearchValueChange}
-                                    value={searchValue}
-                                />
-                            </div>
-                            {/* CategoryList */}
-                            <div
-                                className="grid grid-rows-[50px_50px] gap-4 grid-cols-1 mb-4"
-                                style={{
-                                    width: `${
-                                        sportListWidth - fixedButtonWidth
-                                    }px`,
-                                }}
-                            >
-                                <div
-                                    ref={categoriesListRef}
-                                    className="self-center text-xl font-extrabold text-black"
-                                >
-                                    〽 حرك و اختر رياضتك〽
-                                </div>
-
-                                <div className="z-50 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-orange-900">
-                                    {/* <CategoriesList
-                                        categories={categories ?? []}
-                                        selectedCategoryId={selectedCategoryId}
-                                        onCategorySelected={(id) =>
-                                            onSelectedCategoryChange(id)
-                                        }
-                                    /> */}
-                                    <SelectCategories
-                                        options={
-                                            arrayToReactSelectOption(
-                                                "name",
-                                                "id",
-                                                categories ?? []
-                                            ) ?? []
-                                        }
-                                        onChange={onSelectedCategoryChange}
-                                        value={selectedCategoryId}
+                        <div className="flex flex-col w-full px-8 mx-auto">
+                            {/* fixed */}
+                            <div className="sm:relative fixed z-50 flex items-center self-center min-w-[60%] gap-2">
+                                {/* searchBar */}
+                                <div className="flex-grow">
+                                    <Search
+                                        onChange={onSearchValueChange}
+                                        value={searchValue}
                                     />
                                 </div>
-                            </div>
-                            {/* sportList */}
-                            <div className="flex flex-col gap-6 items-center px-[8rem]">
-                                <div className="text-xl font-extrabold text-black">
-                                    〽 اضف رياضة〽
-                                </div>
-                                <div
-                                    ref={sportsListRef}
-                                    className="flex flex-wrap items-center justify-center gap-2 "
+
+                                {/* calc Button */}
+
+                                <button
+                                    ref={fixedButtonRef}
+                                    className="flex flex-col items-center"
+                                    onClick={calculationHandler}
                                 >
-                                    {sportsList.map((sport) => (
-                                        <Card
-                                            key={sport.id}
-                                            sport={sport}
-                                            icon={
-                                                <BiFootball className="relative w-32 h-32" />
+                                    <FcCalculator className="text-3xl " />
+                                    <div className="text-lg font-extrabold text-orange-900 cursor-pointer">
+                                        احسب
+                                    </div>
+                                </button>
+                            </div>
+
+                            {/* DataBody */}
+                            <div className="flex flex-col items-center gap-1 mt-16">
+                                {/* CategoryList */}
+                                <div className="flex flex-col min-w-[60%] gap-4 my-4">
+                                    <div
+                                        ref={categoriesListRef}
+                                        className="self-center text-xl font-extrabold text-black justify-self-center"
+                                    >
+                                        〽 اختر رياضتك〽
+                                    </div>
+
+                                    <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-orange-900">
+                                        <SelectCategories
+                                            options={
+                                                arrayToReactSelectOption(
+                                                    "name",
+                                                    "id",
+                                                    categories ?? []
+                                                ) ?? []
                                             }
-                                            add={() => onSportAdded(sport)}
+                                            onChange={onSelectedCategoryChange}
+                                            value={selectedCategoryId}
                                         />
-                                    ))}
+                                    </div>
+                                </div>
+                                {/* sportList */}
+                                <div className="flex flex-col items-center gap-6 ">
+                                    <div className="text-xl font-extrabold text-black">
+                                        〽 اضف رياضة〽
+                                    </div>
+                                    <div
+                                        ref={sportsListRef}
+                                        className="flex flex-wrap items-center justify-center gap-2 "
+                                    >
+                                        {sportsList.map((sport) => (
+                                            <Card
+                                                key={sport.id}
+                                                sport={sport}
+                                                icon={
+                                                    <BiFootball className="relative w-32 h-32" />
+                                                }
+                                                add={() => onSportAdded(sport)}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         {/* ListCard */}
-                        <div ref={listRef} className="">
+                        <div ref={listRef} className="max-w-[20rem] mx-auto">
                             <ListCard
                                 ref={calcButtonRef}
                                 addSport={addSport}

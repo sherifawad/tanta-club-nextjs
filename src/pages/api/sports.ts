@@ -7,14 +7,6 @@ export default async function handler(
 ) {
     try {
         if (req.headers.appsecret === process.env.APP_SECRET) {
-            // const sports = await prisma.sport.findMany({
-            // 	where: { hidden: false },
-            // 	include: {
-            // 		discounts: true,
-            // 		Category: true,
-            // 		Penalty: true,
-            // 	},
-            // });
             const sports = sportsRepo.getAll();
             return res.status(200).send(sports);
         }

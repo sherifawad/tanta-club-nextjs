@@ -65,7 +65,7 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
                                     <AiFillDelete />
                                 </button>
                             </div>
-                            <div className="w-full p-4 divide-y divide-gray-900  divide-dashed">
+                            <div className="w-full p-4 divide-y divide-gray-900 divide-dashed">
                                 {player?.sports?.map((sport) => (
                                     <div
                                         key={sport.id}
@@ -73,10 +73,12 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
                                     >
                                         <div className="">
                                             <div className="flex text-base font-semibold text-orange-900">
+                                                <span className="-mt-1">
+                                                    ج_
+                                                </span>
                                                 <p className="">
                                                     {sport.price}
                                                 </p>
-                                                <span className="">_L.E</span>
                                             </div>
                                         </div>
                                         <div
