@@ -1,0 +1,102 @@
+[
+    {
+        "id": 1,
+        "name": "swimming",
+        "title": "سباحة"
+    },
+    {
+        "id": 2,
+        "name": "footBall",
+        "title": "كرة قدم"
+    },
+    {
+        "id": 3,
+        "name": "basket",
+        "title": "كرة سلة"
+    },
+    {
+        "id": 4,
+        "name": "handBall",
+        "title": "كرة يد"
+    },
+    {
+        "id": 5,
+        "name": "volleyBall",
+        "title": "كرة طائرة"
+    },
+    {
+        "id": 6,
+        "name": "taekwondo",
+        "title": "تايكوندو"
+    },
+    {
+        "id": 7,
+        "name": "judo",
+        "title": "جودو"
+    },
+    {
+        "id": 8,
+        "name": "pingPong",
+        "title": "تنس طاولة"
+    },
+    {
+        "id": 9,
+        "name": "art",
+        "title": "طلائع"
+    },
+    {
+        "id": 10,
+        "name": "snooker",
+        "title": "بلياردو"
+    },
+    {
+        "id": 11,
+        "name": "modernPentathlon",
+        "title": "خماسي حديث"
+    },
+    {
+        "id": 12,
+        "name": "boxing",
+        "title": "ملاكمة"
+    },
+    {
+        "id": 13,
+        "name": "tennis",
+        "title": "نتس أرضي"
+    },
+    {
+        "id": 14,
+        "name": "squash",
+        "title": "اسكواش"
+    },
+    {
+        "id": 15,
+        "name": "gymnastics",
+        "title": "جمباز"
+    },
+    {
+        "id": 16,
+        "name": "gymnasium",
+        "title": "جيم"
+    },
+    {
+        "id": 17,
+        "name": "athletics",
+        "title": "ألعاب قوى"
+    },
+    {
+        "id": 18,
+        "name": "fitness",
+        "title": "فتنس تراك"
+    },
+    {
+        "id": 19,
+        "name": "karate",
+        "title": "كاراتيه"
+    },
+    {
+        "id": 20,
+        "name": "fencing",
+        "title": "سلاح"
+    }
+]
