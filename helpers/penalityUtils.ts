@@ -36,7 +36,7 @@ export const calcPenalty = (penalty: Penalty | undefined) => {
     const applyPenalty = penaltyTimeValid(penalty);
     if (applyPenalty) {
         totalPenalty = penalty.minimum;
-        switch (penalty.repeated) {
+        switch (<RepetitionType>penalty.repeated) {
             case RepetitionType.DAILY: {
                 const currentDay = new Date().getDate();
                 const steps = currentDay + 1 - (penalty.startDay ?? currentDay);

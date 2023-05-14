@@ -96,20 +96,20 @@ export type User = {
 // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
 
 export enum Role {
-    ADMIN,
-    USER,
-    CLIENT,
+    ADMIN = "ADMIN",
+    USER = "USER",
+    CLIENT = "CLIENT",
 }
 
 export enum DiscountType {
-    FIXED,
-    PERCENTAGE,
+    FIXED = "FIXED",
+    PERCENTAGE = "PERCENTAGE",
 }
 
 export enum RepetitionType {
-    DAILY,
-    MONTHLY,
-    YEARLY,
+    DAILY = "DAILY",
+    MONTHLY = "MONTHLY",
+    YEARLY = "YEARLY",
 }
 
 export interface PlayerSport extends Omit<Sport, "discounts"> {

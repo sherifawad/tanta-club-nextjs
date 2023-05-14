@@ -29,7 +29,7 @@ export const calcTotalSportsPenalty = (
         return {
             ...sport,
             price: sport.price + penalty,
-            Penalty: penalty === 0 ? undefined : sport.penalty,
+            penalty: penalty === 0 ? undefined : sport.penalty,
             totalPenalty: penalty === 0 ? undefined : penalty,
         };
     });
@@ -50,9 +50,9 @@ export const calPriceDiscount = (
 ) => {
     if (!discount) return price;
     const totalDiscount = discountStep(discount, step);
-    if (discount.type === DiscountType.FIXED) {
+    if (<DiscountType>discount.type === DiscountType.FIXED) {
         price -= totalDiscount;
-    } else if (discount.type === DiscountType.PERCENTAGE) {
+    } else if (<DiscountType>discount.type === DiscountType.PERCENTAGE) {
         price = price * (1 - totalDiscount / 100);
     } else {
         price;
@@ -73,10 +73,10 @@ export const calSportPrice = (
     let price = sport.price;
     let penalty = sport.penalty;
     const totalDiscount = discountStep(discount, step);
-    if (discount.type === DiscountType.FIXED) {
+    if (<DiscountType>discount.type === DiscountType.FIXED) {
         sport.price -= totalDiscount;
         sport.totalDiscount = totalDiscount;
-    } else if (discount.type === DiscountType.PERCENTAGE) {
+    } else if (<DiscountType>discount.type === DiscountType.PERCENTAGE) {
         sport.price = price * (1 - totalDiscount / 100);
         sport.totalDiscount = totalDiscount;
     } else {

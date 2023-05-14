@@ -38,9 +38,9 @@ export const calByDiscountType = (
     let discountValue = 0;
     if (!discount) return discountValue;
     const totalDiscount = discountStep(discount, step);
-    if (discount.type === DiscountType.FIXED) {
+    if (<DiscountType>discount.type === DiscountType.FIXED) {
         discountValue = totalDiscount;
-    } else if (discount.type === DiscountType.PERCENTAGE) {
+    } else if (<DiscountType>discount.type === DiscountType.PERCENTAGE) {
         discountValue = price * (totalDiscount / 100);
     }
     return discountValue;

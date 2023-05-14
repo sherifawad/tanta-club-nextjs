@@ -357,6 +357,10 @@ export const swimmingDiscount = (players: Player[]): Player[] => {
         sportsWithBrothersDiscount = playersWithMaxDiscountSorting(
             sportsWithBrothersDiscount
         );
+        console.log(
+            "🚀 ~ file: calc.ts:358 ~ swimmingDiscount ~ sportsWithBrothersDiscount:",
+            sportsWithBrothersDiscount
+        );
         sportsWithBrothersDiscount = sportsWithBrothersDiscount.map(
             (player, index) => {
                 switch (index) {

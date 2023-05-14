@@ -78,7 +78,6 @@ export default function Home({
     const [currentPlayer, setCurrentPlayer] = useState<Player | undefined>();
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(1);
     const [sportsList, setSportsList] = useState<PlayerSport[]>([]);
-    const [selectedSportId, setSelectedSportId] = useState<number>();
     const [playersResultList, setPlayersResultList] = useState<Player[]>([]);
     const [playerName, setPlayerName] = useState("");
     const [playersList, setPlayersList] = useState<Player[]>([]);
@@ -95,7 +94,6 @@ export default function Home({
                 );
                 setSportsList(() => {
                     if (sportsList != null && sportsList?.length > 0) {
-                        setSelectedSportId(sportsList[0].id);
                         return sportsList;
                     }
                     return [];
@@ -153,21 +151,24 @@ export default function Home({
                     return;
                 }
 
-                const playerListCopy = playersList ?? [];
-                const playerIndex = playerListCopy.findIndex(
-                    (p) => p.id === player!.id
-                );
-                if (playerIndex < 0) return;
-                const orderedSports = [
-                    ...playerListCopy[playerIndex].sports,
-                    sport,
-                ].sort((s1, s2) =>
-                    s1.price < s2.price ? 1 : s1.price > s2.price ? -1 : 0
-                );
+                setPlayersList((prev) => {
+                    const getPlayer = prev.find((p) => p.id === player!.id);
 
-                playerListCopy[playerIndex].sports = orderedSports;
-
-                setPlayersList([...playerListCopy]);
+                    if (getPlayer == null) return prev;
+                    const orderedSports = [...getPlayer.sports, sport].sort(
+                        (s1, s2) =>
+                            s1.price < s2.price
+                                ? 1
+                                : s1.price > s2.price
+                                ? -1
+                                : 0
+                    );
+                    return prev.map((player) =>
+                        player.id === getPlayer?.id
+                            ? { ...getPlayer, sports: orderedSports }
+                            : player
+                    );
+                });
                 toast.success(
                     `${player.name} تم إضافة ${sport.title}  للاعب `,
                     {
@@ -288,6 +289,7 @@ export default function Home({
                 splitPrivateSwimming(playersList);
 
             swimmingPrivateList = swimmingDiscount(swimmingPrivateList);
+
             otherSports = moreThanTwoPlayers(otherSports);
             const result = mergePlayers(otherSports, swimmingPrivateList);
             const refracted = result?.map((player) => {
@@ -419,7 +421,6 @@ export default function Home({
             );
             if (!sportsList) return;
             setSportsList(sportsList ?? []);
-            setSelectedSportId(sportsList[0]?.id);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
