@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import Select from "react-select";
-import { colourOptions } from "../data";
 
 export default function SelectCategories() {
     const [isClearable, setIsClearable] = useState(true);
@@ -19,7 +18,7 @@ export default function SelectCategories() {
             isRtl={isRtl}
             isSearchable={isSearchable}
             name="color"
-            options={colourOptions}
+            // options={colourOptions}
         />
     );
 }

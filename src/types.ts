@@ -1,4 +1,4 @@
-import { Discount, Penalty, Sport } from "@prisma/client";
+import { Discount, Penalty, Sport } from "types";
 
 // export interface PlayerSport extends Sport {
 //     discounts?: Discount[];

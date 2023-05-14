@@ -1,8 +1,7 @@
-import { Player } from "@/types";
+import { DiscountType, Player } from "types";
 import { useEffect, useRef, useState } from "react";
 import "react-tooltip/dist/react-tooltip.css";
 import { Tooltip, TooltipProvider, TooltipWrapper } from "react-tooltip";
-import { DiscountType } from "@prisma/client";
 
 type Props = {
     result: Player[];
@@ -26,30 +25,30 @@ function ResultComponents({ result }: Props) {
 
     return (
         <div
-            className=" bg-white rounded-xl shadow shadow-orange-900 p-4"
+            className="p-4 bg-white shadow rounded-xl shadow-orange-900"
             dir="rtl"
         >
             <div className="flex flex-row-reverse justify-between ">
-                <div className="flex flex-col w-1/3 divide-y divide-dashed  gap-2">
-                    <div className="flex flex-row-reverse justify-between font-semibold   gap-4">
+                <div className="flex flex-col w-1/3 gap-2 divide-y divide-dashed">
+                    <div className="flex flex-row-reverse justify-between gap-4 font-semibold">
                         <div className="text-orange-900">{result.length}</div>
                         <div className="">اللاعبين</div>
                     </div>
-                    <div className="flex flex-row-reverse justify-between font-semibold  gap-4">
+                    <div className="flex flex-row-reverse justify-between gap-4 font-semibold">
                         <div className="text-orange-900">{sportCount}</div>
                         <div className="">الرياضات</div>
                     </div>
-                    <div className="flex flex-row-reverse justify-between font-semibold   gap-4">
+                    <div className="flex flex-row-reverse justify-between gap-4 font-semibold">
                         <div className="text-orange-900">{total}</div>
                         <div className="">الإجمالي</div>
                     </div>
                 </div>
-                <div className="text-center font-bold text-xl">النتائج</div>
+                <div className="text-xl font-bold text-center">النتائج</div>
             </div>
             {result.map((player) => (
                 <div key={player.id} className="flex flex-col ">
-                    <div className=" py-4">
-                        <div className="font-extrabold text-xl text-orange-900">
+                    <div className="py-4 ">
+                        <div className="text-xl font-extrabold text-orange-900">
                             {" "}
                             〽 {player.name}
                         </div>
@@ -58,7 +57,7 @@ function ResultComponents({ result }: Props) {
                         {player.sports.map((sport) => (
                             <div
                                 key={sport.id}
-                                className="flex bg-gray-100 rounded-xl p-2 gap-2 justify-between shadow items-center"
+                                className="flex items-center justify-between gap-2 p-2 bg-gray-100 shadow rounded-xl"
                             >
                                 <div className="font-extrabold">
                                     {sport.title}
@@ -72,7 +71,7 @@ function ResultComponents({ result }: Props) {
                                                 : "text-gray-900 bg-gray-100"
                                         }`}
                                     >
-                                        <div className="text-sm font-extrabold whitespace-nowrap -rotate-90 -ml-1">
+                                        <div className="-ml-1 text-sm font-extrabold -rotate-90 whitespace-nowrap">
                                             خصم
                                         </div>
                                     </div>
@@ -84,11 +83,11 @@ function ResultComponents({ result }: Props) {
                                                 : "text-gray-900 bg-gray-100"
                                         }`}
                                     >
-                                        <div className="text-sm font-extrabold whitespace-nowrap -rotate-90 -ml-1">
+                                        <div className="-ml-1 text-sm font-extrabold -rotate-90 whitespace-nowrap">
                                             غرامه
                                         </div>
                                     </div>
-                                    <div className="text-lg  font-bold text-orange-900">
+                                    <div className="text-lg font-bold text-orange-900">
                                         {sport.price}
                                     </div>
                                 </div>
@@ -97,9 +96,9 @@ function ResultComponents({ result }: Props) {
                                     anchorId={`tooltip-anchor-discount-${player.id}-${sport.id}`}
                                     content={
                                         sport.discounts !== undefined &&
-                                        sport.discounts.length > 0
+                                        sport.discounts!.length > 0
                                             ? `${
-                                                  sport.discounts[0].type ===
+                                                  sport.discounts![0].type ===
                                                   DiscountType.PERCENTAGE
                                                       ? "%"
                                                       : "ج"

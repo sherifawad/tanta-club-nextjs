@@ -1,7 +1,5 @@
 import Head from "next/head";
-import { Inter } from "@next/font/google";
-import { Category, Discount, Penalty, Sport } from "@prisma/client";
-import { prisma } from "lib/prisma";
+import { Category, Discount, Penalty, Sport } from "types";
 import {
     ChangeEvent,
     useCallback,
@@ -34,8 +32,6 @@ import { divvyUp } from "helpers/arrayUtils";
 import { mergePlayers } from "helpers/playerUtils";
 import { sportsRepo } from "lib/sports-repo";
 import { categoriesRepo } from "lib/categories-repo";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export async function getStaticProps() {
     try {

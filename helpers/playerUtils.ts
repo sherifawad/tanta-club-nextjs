@@ -1,6 +1,6 @@
-import { Player } from "@/types";
 import { maxDiscountSorting } from "./sportsUtils";
 import { calByDiscountType } from "./discountUtils";
+import { Player } from "types";
 
 // ترتيب العاب كل لاعب حسب أكبر خصم
 export const playersMaxDiscountSorting = (players: Player[]): Player[] => {

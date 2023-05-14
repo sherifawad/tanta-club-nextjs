@@ -1,4 +1,3 @@
-import { prisma } from "lib/prisma";
 import { sportsRepo } from "lib/sports-repo";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -7,10 +6,7 @@ export default async function handler(
     res: NextApiResponse
 ) {
     try {
-        if (req.query.secret === process.env.DATABASE_TRIGGER_SECRET) {
-            await res.revalidate("/");
-            return res.json({ revalidated: true });
-        } else if (req.headers.appsecret === process.env.APP_SECRET) {
+        if (req.headers.appsecret === process.env.APP_SECRET) {
             // const sports = await prisma.sport.findMany({
             // 	where: { hidden: false },
             // 	include: {

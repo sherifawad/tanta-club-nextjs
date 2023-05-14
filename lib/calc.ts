@@ -10,7 +10,7 @@ import {
     playerWithNoDiscountSport,
     swimmingFirstMonthCheck,
 } from "../helpers/sportsUtils";
-import { Player, PlayerSport } from "@/types";
+import { Player, PlayerSport } from "types";
 import { divvyUp } from "helpers/arrayUtils";
 import {
     mergePlayers,

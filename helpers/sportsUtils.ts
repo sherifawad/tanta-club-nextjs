@@ -1,5 +1,4 @@
-import { Player, PlayerSport } from "@/types";
-import { Discount, DiscountType, Penalty } from "@prisma/client";
+import { Discount, DiscountType, Penalty, Player, PlayerSport } from "types";
 import { calcPenalty } from "./penalityUtils";
 import {
     calByDiscountType,
@@ -12,7 +11,7 @@ export const calcSportPenalty = (
     sport: PlayerSport,
     removeDiscount: boolean = true
 ): PlayerSport => {
-    const penalty = calcPenalty(sport.Penalty);
+    const penalty = calcPenalty(sport.Penalty!);
     return {
         ...sport,
         price: sport.price + penalty,
@@ -26,7 +25,7 @@ export const calcTotalSportsPenalty = (
     sports: PlayerSport[]
 ): PlayerSport[] => {
     return sports.map((sport) => {
-        const penalty = calcPenalty(sport.Penalty);
+        const penalty = calcPenalty(sport.Penalty!);
         return {
             ...sport,
             price: sport.price + penalty,

@@ -95,29 +95,22 @@ export type User = {
 // Based on
 // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
 
-export const Role = {
-    ADMIN: "ADMIN",
-    USER: "USER",
-    CLIENT: "CLIENT",
-};
+export enum Role {
+    ADMIN,
+    USER,
+    CLIENT,
+}
 
-export type Role = (typeof Role)[keyof typeof Role];
+export enum DiscountType {
+    FIXED,
+    PERCENTAGE,
+}
 
-export const DiscountType = {
-    FIXED: "FIXED",
-    PERCENTAGE: "PERCENTAGE",
-};
-
-export type DiscountType = (typeof DiscountType)[keyof typeof DiscountType];
-
-export const RepetitionType = {
-    DAILY: "DAILY",
-    MONTHLY: "MONTHLY",
-    YEARLY: "YEARLY",
-};
-
-export type RepetitionType =
-    (typeof RepetitionType)[keyof typeof RepetitionType];
+export enum RepetitionType {
+    DAILY,
+    MONTHLY,
+    YEARLY,
+}
 
 export interface PlayerSport extends Omit<Sport, "discounts"> {
     discounts?: Discount[] | null;
