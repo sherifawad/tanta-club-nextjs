@@ -1,4 +1,14 @@
 /**
+ * Model Queue
+ *
+ */
+export type Queue = {
+    id: number;
+    code: string;
+    status: QueueStatus;
+};
+
+/**
  * Model Sport
  *
  */
@@ -110,6 +120,13 @@ export enum RepetitionType {
     DAILY = "DAILY",
     MONTHLY = "MONTHLY",
     YEARLY = "YEARLY",
+}
+
+export enum QueueStatus {
+    PENDING = "PENDING",
+    COMPLETED = "COMPLETED",
+    MISSED = "MISSED",
+    POSTPONE = "POSTPONE",
 }
 
 export interface PlayerSport extends Omit<Sport, "discounts"> {

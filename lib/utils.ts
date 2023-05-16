@@ -1,5 +1,8 @@
 import { IReactSelectOption } from "../types";
 
+export const stringTrim = (str: string): string =>
+    str.replace(/\s\s+/g, " ").trim();
+
 export const isArray = function (a: unknown) {
     return Array.isArray(a);
 };
