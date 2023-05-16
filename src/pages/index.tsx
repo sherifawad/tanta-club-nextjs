@@ -439,7 +439,7 @@ export default function Home({
                 />
                 <link rel="icon" href="/part_alternation_mark_color.svg" />
             </Head>
-            <div className="min-h-full mx-auto bg-orange-100">
+            <div className="min-h-full mx-auto bg-customOrange-100">
                 <ToastContainer />
                 <PopUp
                     onChange={(e) => setPlayerName(e.target.value)}
@@ -474,7 +474,7 @@ export default function Home({
                                     onClick={calculationHandler}
                                 >
                                     <FcCalculator className="text-3xl " />
-                                    <div className="text-lg font-extrabold text-orange-900 cursor-pointer">
+                                    <div className="text-lg font-extrabold text-customOrange-900 cursor-pointer">
                                         احسب
                                     </div>
                                 </button>
@@ -491,7 +491,7 @@ export default function Home({
                                         〽 اختر رياضتك〽
                                     </div>
 
-                                    <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-orange-900">
+                                    <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-customOrange-900">
                                         <SelectCategories
                                             options={
                                                 arrayToReactSelectOption(

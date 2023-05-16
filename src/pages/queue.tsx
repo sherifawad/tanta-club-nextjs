@@ -79,7 +79,7 @@ function POPUPQueue({ closeModal, isOpen, clickHandler }: POPUPQueueProps) {
                                 <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                                     <Dialog.Title
                                         as="h3"
-                                        className="text-lg font-medium leading-6 text-gray-900 text-start"
+                                        className="text-lg font-medium leading-6 text-customGray-900 text-start"
                                     >
                                         اضف العضوية
                                     </Dialog.Title>
@@ -92,9 +92,9 @@ function POPUPQueue({ closeModal, isOpen, clickHandler }: POPUPQueueProps) {
                                                 رقم العضوية
                                             </label>
                                         </div>
-                                        <div className="flex items-center justify-center gap-3 px-3 py-2 bg-gray-100 rounded-full overflow-x-clip">
+                                        <div className="flex items-center justify-center gap-3 px-3 py-2 bg-customGray-100 rounded-full overflow-x-clip">
                                             <input
-                                                className="[appearance:textfield] outline-none bg-gray-100 w-full sm:px-4 placeholder:text-center"
+                                                className="[appearance:textfield] outline-none bg-customGray-100 w-full sm:px-4 placeholder:text-center"
                                                 name="year"
                                                 id="year"
                                                 type="number"
@@ -110,7 +110,7 @@ function POPUPQueue({ closeModal, isOpen, clickHandler }: POPUPQueueProps) {
                                             />
                                             <span>/</span>
                                             <input
-                                                className="[appearance:textfield] outline-none bg-gray-100 w-full sm:px-4 placeholder:text-center"
+                                                className="[appearance:textfield] outline-none bg-customGray-100 w-full sm:px-4 placeholder:text-center"
                                                 name="code"
                                                 id="code"
                                                 type="number"
@@ -130,28 +130,28 @@ function POPUPQueue({ closeModal, isOpen, clickHandler }: POPUPQueueProps) {
                                     <div className="flex items-center justify-between gap-2 mt-4">
                                         <label className="flex items-center gap-2">
                                             <input
-                                                className="mt-1 accent-orange-900"
+                                                className="mt-1 accent-customOrange-900"
                                                 type="checkbox"
                                                 checked={force}
                                                 onChange={(e) =>
                                                     setForce(e.target.checked)
                                                 }
                                             />
-                                            <span className="text-xs font-bold text-orange-900">
+                                            <span className="text-xs font-bold text-customOrange-900">
                                                 يجب الحصول على رقم جديد
                                             </span>
                                         </label>
                                         <div className="flex items-center justify-end flex-grow gap-2">
                                             <button
                                                 type="button"
-                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium text-orange-900 bg-orange-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium text-customOrange-900 bg-customOrange-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                                 onClick={GetQueueNumber}
                                             >
                                                 احصل على رقم
                                             </button>
                                             <button
                                                 type="button"
-                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-900 bg-gray-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium text-customGray-900 bg-customGray-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                                 onClick={closeModal}
                                             >
                                                 إلغاء
@@ -235,33 +235,33 @@ export default function QueuePage({
                 clickHandler={getQueue}
             />
 
-            <section className="flex flex-col gap-4  p-4 bg-white border border-gray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-orange-900">
+            <section className="flex flex-col gap-4  p-4 bg-white border border-customGray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-customOrange-900">
                 <div className="flex flex-col items-center gap-2 border-b border-dashed">
-                    <span className="text-lg font-bold text-orange-900">
+                    <span className="text-lg font-bold text-customOrange-900">
                         الحالي
                     </span>
                     <p className="pb-2 text-3xl">{currentNumber}</p>
                 </div>
                 <div className="flex flex-col items-center gap-2 border-b border-dashed">
-                    <span className="text-lg font-bold text-orange-900">
+                    <span className="text-lg font-bold text-customOrange-900">
                         رقمك
                     </span>
                     <p className="text-3xl">{queueNumber?.id}</p>
-                    <p className="pb-2 text-lg text-gray-900">
+                    <p className="pb-2 text-lg text-customGray-900">
                         {queueNumber?.status}
                     </p>
                 </div>
                 <button
                     onClick={() => setOpenModel(true)}
-                    className="py-2 text-orange-900 bg-orange-100 rounded-full shadow shadow-gray-900"
+                    className="py-2 text-customOrange-900 bg-customOrange-100 rounded-full shadow shadow-customGray-900"
                 >
                     احصل على دور
                 </button>
             </section>
-            <section className="flex flex-col gap-4  p-4 bg-white border border-gray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-orange-900">
+            <section className="flex flex-col gap-4  p-4 bg-white border border-customGray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-customOrange-900">
                 <button
                     onClick={getCurrentQueue}
-                    className="py-2 text-orange-900 bg-orange-100 rounded-full shadow shadow-gray-900"
+                    className="py-2 text-customOrange-900 bg-customOrange-100 rounded-full shadow shadow-customGray-900"
                 >
                     الحالي
                 </button>
@@ -276,7 +276,7 @@ export default function QueuePage({
                             {currentQueue?.code.split(",")[1]}
                         </p>
                     </div>
-                    <p className="pb-2 text-lg text-gray-900">
+                    <p className="pb-2 text-lg text-customGray-900">
                         {currentQueue?.status}
                     </p>
                 </div>
@@ -288,7 +288,7 @@ export default function QueuePage({
                                 QueueStatus.COMPLETED
                             )
                         }
-                        className="p-2 text-orange-900 bg-orange-100 rounded-md shadow shadow-gray-900"
+                        className="p-2 text-customOrange-900 bg-customOrange-100 rounded-md shadow shadow-customGray-900"
                     >
                         تم
                     </button>
@@ -296,7 +296,7 @@ export default function QueuePage({
                         onClick={() =>
                             completeQueue(currentQueue?.id, QueueStatus.MISSED)
                         }
-                        className="p-2 text-orange-900 bg-orange-100 rounded-md shadow shadow-gray-900"
+                        className="p-2 text-customOrange-900 bg-customOrange-100 rounded-md shadow shadow-customGray-900"
                     >
                         لم يحضر
                     </button>
@@ -307,7 +307,7 @@ export default function QueuePage({
                                 QueueStatus.POSTPONE
                             )
                         }
-                        className="p-2 text-orange-900 bg-orange-100 rounded-md shadow shadow-gray-900"
+                        className="p-2 text-customOrange-900 bg-customOrange-100 rounded-md shadow shadow-customGray-900"
                     >
                         تأجيل
                     </button>

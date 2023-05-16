@@ -25,21 +25,25 @@ function ResultComponents({ result }: Props) {
 
     return (
         <div
-            className="p-4 bg-white shadow rounded-xl shadow-orange-900"
+            className="p-4 bg-white shadow rounded-xl shadow-customOrange-900"
             dir="rtl"
         >
             <div className="flex flex-row-reverse justify-between ">
                 <div className="flex flex-col w-1/3 gap-2 divide-y divide-dashed">
                     <div className="flex flex-row-reverse justify-between gap-4 font-semibold">
-                        <div className="text-orange-900">{result.length}</div>
+                        <div className="text-customOrange-900">
+                            {result.length}
+                        </div>
                         <div className="">اللاعبين</div>
                     </div>
                     <div className="flex flex-row-reverse justify-between gap-4 font-semibold">
-                        <div className="text-orange-900">{sportCount}</div>
+                        <div className="text-customOrange-900">
+                            {sportCount}
+                        </div>
                         <div className="">الرياضات</div>
                     </div>
                     <div className="flex flex-row-reverse justify-between gap-4 font-semibold">
-                        <div className="text-orange-900">{total}</div>
+                        <div className="text-customOrange-900">{total}</div>
                         <div className="">الإجمالي</div>
                     </div>
                 </div>
@@ -48,7 +52,7 @@ function ResultComponents({ result }: Props) {
             {result.map((player) => (
                 <div key={player.id} className="flex flex-col ">
                     <div className="py-4 ">
-                        <div className="text-xl font-extrabold text-orange-900">
+                        <div className="text-xl font-extrabold text-customOrange-900">
                             {" "}
                             〽 {player.name}
                         </div>
@@ -57,7 +61,7 @@ function ResultComponents({ result }: Props) {
                         {player.sports.map((sport) => (
                             <div
                                 key={sport.id}
-                                className="flex items-center justify-between gap-2 p-2 bg-gray-100 shadow rounded-xl"
+                                className="flex items-center justify-between gap-2 p-2 bg-customGray-100 shadow rounded-xl"
                             >
                                 <div className="font-extrabold">
                                     {sport.title}
@@ -67,8 +71,8 @@ function ResultComponents({ result }: Props) {
                                         id={`tooltip-anchor-discount-${player.id}-${sport.id}`}
                                         className={`py-4  shadow rounded-full ${
                                             sport.totalDiscount
-                                                ? "text-orange-900 bg-orange-100 shadow-orange-900"
-                                                : "text-gray-900 bg-gray-100"
+                                                ? "text-customOrange-900 bg-customOrange-100 shadow-customOrange-900"
+                                                : "text-customGray-900 bg-customGray-100"
                                         }`}
                                     >
                                         <div className="-ml-1 text-sm font-extrabold -rotate-90 whitespace-nowrap">
@@ -79,15 +83,15 @@ function ResultComponents({ result }: Props) {
                                         id={`tooltip-anchor-penalty-${player.id}-${sport.id}`}
                                         className={` py-4 shadow rounded-full ${
                                             sport.totalPenalty
-                                                ? "text-orange-900 bg-orange-100 shadow-orange-900"
-                                                : "text-gray-900 bg-gray-100"
+                                                ? "text-customOrange-900 bg-customOrange-100 shadow-customOrange-900"
+                                                : "text-customGray-900 bg-customGray-100"
                                         }`}
                                     >
                                         <div className="-ml-1 text-sm font-extrabold -rotate-90 whitespace-nowrap">
                                             غرامه
                                         </div>
                                     </div>
-                                    <div className="text-lg font-bold text-orange-900">
+                                    <div className="text-lg font-bold text-customOrange-900">
                                         {sport.price}
                                     </div>
                                 </div>

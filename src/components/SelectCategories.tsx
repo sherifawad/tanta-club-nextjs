@@ -16,7 +16,7 @@ export default function SelectCategories({
         <Select
             classNames={{
                 control: () =>
-                    "flex !shadow-none !border !rounded-full gap-x-2 !bg-gray-100 !text-black font-semibold  !border-gray-100 ",
+                    "flex !shadow-none !border !rounded-full gap-x-2 !bg-customGray-100 !text-black font-semibold  !border-customGray-100 ",
                 container: () => "w-full",
             }}
             isDisabled={false}

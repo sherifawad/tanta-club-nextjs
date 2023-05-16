@@ -33,12 +33,12 @@ function PopUp({
                         className="grid grid-cols-3 gap-2 border border-black rounded-xl"
                         dir="rtl"
                     >
-                        <div className="p-2 text-sm text-gray-900 bg-gray-100 rounded-r-xl ">
+                        <div className="p-2 text-sm text-customGray-900 bg-customGray-100 rounded-r-xl ">
                             اسم اللاعب
                         </div>
                         <input
                             dir="rtl"
-                            className="text-xl placeholder-gray-900 outline-none rounded-xl"
+                            className="text-xl placeholder-customGray-900 outline-none rounded-xl"
                             onChange={onChange}
                             placeholder="اي اسم"
                             value={playerName}

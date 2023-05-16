@@ -33,7 +33,7 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
     }, [players]);
 
     return (
-        <div className="grid grid-rows-[60px_1fr_120px] bg-white border border-gray-100 rounded-lg shadow md:min-w-[20rem] w-60 sm:max-h-[90vh] max-h-[60vh] min-h-[60vh]">
+        <div className="grid grid-rows-[60px_1fr_120px] bg-white border border-customGray-100 rounded-lg shadow md:min-w-[20rem] w-60 sm:max-h-[90vh] max-h-[60vh] min-h-[60vh]">
             <div className="p-4">
                 <CustomButton
                     onClick={newPlayer}
@@ -54,25 +54,25 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
                             key={player.id}
                             className="flex flex-col items-center py-4 "
                         >
-                            <div className="flex flex-row-reverse justify-center w-2/3 gap-2 bg-orange-100 rounded-full">
+                            <div className="flex flex-row-reverse justify-center w-2/3 gap-2 bg-customOrange-100 rounded-full">
                                 <div className="w-2/3 m-auto text-lg font-bold text-black">
                                     {player?.name}
                                 </div>
                                 <button
                                     onClick={() => deletePlayer(player)}
-                                    className="w-1/3 px-2 text-orange-900 hover:text-black"
+                                    className="w-1/3 px-2 text-customOrange-900 hover:text-black"
                                 >
                                     <AiFillDelete />
                                 </button>
                             </div>
-                            <div className="w-full p-4 divide-y divide-gray-900 divide-dashed">
+                            <div className="w-full p-4 divide-y divide-customGray-900 divide-dashed">
                                 {player?.sports?.map((sport) => (
                                     <div
                                         key={sport.id}
                                         className="grid grid-cols-[auto_1fr_auto] gap-2 items-center justify-between py-4 w-full"
                                     >
                                         <div className="">
-                                            <div className="flex text-base font-semibold text-orange-900">
+                                            <div className="flex text-base font-semibold text-customOrange-900">
                                                 <span className="-mt-1">
                                                     ج_
                                                 </span>
@@ -113,11 +113,15 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
             <div dir="rtl" className="p-4 shadow-2xl">
                 <div className="flex flex-col gap-2 divide-y divide-dashed">
                     <div className="flex justify-between font-semibold">
-                        <div className="text-orange-900">{players?.length}</div>
+                        <div className="text-customOrange-900">
+                            {players?.length}
+                        </div>
                         <div className="">Players</div>
                     </div>
                     <div className="flex justify-between font-semibold">
-                        <div className="text-orange-900">{sportCount}</div>
+                        <div className="text-customOrange-900">
+                            {sportCount}
+                        </div>
                         <div className="">Sports</div>
                     </div>
                 </div>

@@ -1,19 +1,19 @@
 import React, { ChangeEvent } from "react";
 
 type Props = {
-	value: string;
-	onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    value: string;
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
 function Search({ value, onChange }: Props) {
-	return (
-		<div dir="rtl" className="flex flex-col w-full">
-			<div
-				className="bg-white items-center justify-between w-full flex rounded-full shadow shadow-orange-900 p-2 mb-5 sticky"
-				style={{ top: "5px" }}
-			>
-				{/* <div>
-					<div className="p-2 mr-1 rounded-full hover:bg-gray-100 cursor-pointer">
+    return (
+        <div dir="rtl" className="flex flex-col w-full">
+            <div
+                className="bg-white items-center justify-between w-full flex rounded-full shadow shadow-customOrange-900 p-2 mb-5 sticky"
+                style={{ top: "5px" }}
+            >
+                {/* <div>
+					<div className="p-2 mr-1 rounded-full hover:bg-customGray-100 cursor-pointer">
 						<svg
 							className="h-6 w-6 text-gray-500"
 							xmlns="http://www.w3.org/2000/svg"
@@ -29,15 +29,15 @@ function Search({ value, onChange }: Props) {
 					</div>
 				</div> */}
 
-				<input
-					className="font-bold uppercase rounded-full w-full py-4 px-4 text-black bg-gray-100 leading-tight focus:outline-none focus:shadow-outline lg:text-sm text-xs"
-					type="text"
-					placeholder="ابحث"
-					value={value}
-					onChange={(e) => onChange(e)}
-				/>
+                <input
+                    className="font-bold uppercase rounded-full w-full py-4 px-4 text-black bg-customGray-100 leading-tight focus:outline-none focus:shadow-outline lg:text-sm text-xs"
+                    type="text"
+                    placeholder="ابحث"
+                    value={value}
+                    onChange={(e) => onChange(e)}
+                />
 
-				{/* <div className="bg-gray-900 p-2 hover:bg-orange-900 cursor-pointer mx-2 rounded-full">
+                {/* <div className="bg-customGray-900 p-2 hover:bg-customOrange-900 cursor-pointer mx-2 rounded-full">
 					<svg
 						className="w-6 h-6 text-white"
 						xmlns="http://www.w3.org/2000/svg"
@@ -51,9 +51,9 @@ function Search({ value, onChange }: Props) {
 						/>
 					</svg>
 				</div> */}
-			</div>
-		</div>
-	);
+            </div>
+        </div>
+    );
 }
 
 export default Search;
