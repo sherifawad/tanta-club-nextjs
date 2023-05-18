@@ -7,7 +7,7 @@ import { Role } from "types";
 declare module "next-auth" {
     interface Session extends DefaultSession {
         user: {
-            id: string;
+            id: number;
             role: Role;
         } & DefaultSession["user"];
     }
@@ -22,22 +22,27 @@ declare module "next-auth" {
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
 export const authOptions: NextAuthOptions = {
+    session: {
+        strategy: "jwt",
+        maxAge: 7 * 60 * 60, // 7 hours
+    },
     // https://next-auth.js.org/configuration/providers/oauth
     providers: [
         CredentialsProvider({
             // The name to display on the sign in form (e.g. 'Sign in with...')
-            name: "Credentials",
+            name: "credentials",
+            id: "username-login",
             // The credentials is used to generate a suitable form on the sign in page.
             // You can specify whatever fields you are expecting to be submitted.
             // e.g. domain, username, password, 2FA token, etc.
             // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
-                username: {
-                    label: "الاسم",
-                    type: "text",
-                    placeholder: "اسم المستخدم",
-                },
-                password: { label: "كلمة السر", type: "password" },
+                // username: {
+                //     label: "الاسم",
+                //     type: "text",
+                //     placeholder: "اسم المستخدم",
+                // },
+                // password: { label: "كلمة السر", type: "password" },
             },
             async authorize(credentials, req) {
                 // You need to provide your own logic here that takes the credentials
@@ -51,7 +56,13 @@ export const authOptions: NextAuthOptions = {
                     username: string;
                     password: string;
                 };
-                const user = usersRepo.find((x) => x.name === username);
+
+                const user = await usersRepo.find(
+                    (x) =>
+                        x.name.toLocaleLowerCase() ===
+                        username.toLocaleLowerCase()
+                );
+
                 if (user == null || !user.enabled) {
                     return null;
                 }
@@ -65,7 +76,6 @@ export const authOptions: NextAuthOptions = {
                 if (!isPasswordMatch) {
                     return null;
                 }
-
                 return {
                     id: user.id,
                     name: user.name,
@@ -75,14 +85,23 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        session: ({ session, user }) => ({
-            ...session,
-            user: {
-                ...session.user,
-                id: user.id,
-                role: user.role,
-            },
-        }),
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.role = user.role;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            return {
+                ...session,
+                user: {
+                    ...session.user,
+                    id: token ? token.id : undefined,
+                    role: token ? token.role : undefined,
+                },
+            };
+        },
     },
 };
 

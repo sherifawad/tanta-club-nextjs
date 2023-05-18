@@ -1,9 +1,18 @@
 import { deleteCookies, parseCookies } from "@/lib/cookies";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Dialog, Transition } from "@headlessui/react";
-import { Queue, QueueStatus } from "types";
-import { stringTrim } from "@/lib/utils";
+import { Dialog, Tab, Transition } from "@headlessui/react";
+import { Queue, QueueStatus, Role } from "types";
+import { classNames, stringTrim } from "@/lib/utils";
+import { hashPassword } from "@/lib/hash";
+import axios from "axios";
+import { getCookie, getCookies } from "cookies-next";
+import { getToken } from "next-auth/jwt";
+import { getSession, useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+
+const secret = process.env.NEXTAUTH_SECRET;
 
 export async function getServerSideProps({
     req,
@@ -13,7 +22,7 @@ export async function getServerSideProps({
     res: NextApiResponse;
 }) {
     const { QUEUE } = parseCookies(req);
-    const data = await fetch("http://localhost:3000/api/hello", {
+    const data = await fetch("http://localhost:3000/api/queue", {
         method: "POST",
         body:
             QUEUE != null && QUEUE.length > 1
@@ -92,7 +101,7 @@ function POPUPQueue({ closeModal, isOpen, clickHandler }: POPUPQueueProps) {
                                                 رقم العضوية
                                             </label>
                                         </div>
-                                        <div className="flex items-center justify-center gap-3 px-3 py-2 bg-customGray-100 rounded-full overflow-x-clip">
+                                        <div className="flex items-center justify-center gap-3 px-3 py-2 rounded-full bg-customGray-100 overflow-x-clip">
                                             <input
                                                 className="[appearance:textfield] outline-none bg-customGray-100 w-full sm:px-4 placeholder:text-center"
                                                 name="year"
@@ -144,14 +153,14 @@ function POPUPQueue({ closeModal, isOpen, clickHandler }: POPUPQueueProps) {
                                         <div className="flex items-center justify-end flex-grow gap-2">
                                             <button
                                                 type="button"
-                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium text-customOrange-900 bg-customOrange-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium border border-transparent rounded-md text-customOrange-900 bg-customOrange-100 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                                 onClick={GetQueueNumber}
                                             >
                                                 احصل على رقم
                                             </button>
                                             <button
                                                 type="button"
-                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium text-customGray-900 bg-customGray-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium border border-transparent rounded-md text-customGray-900 bg-customGray-100 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                                 onClick={closeModal}
                                             >
                                                 إلغاء
@@ -178,6 +187,8 @@ function POPUPQueue({ closeModal, isOpen, clickHandler }: POPUPQueueProps) {
 //     return myDocument;
 // };
 
+const TABS = ["جديد", "الحالي"] as const;
+
 export default function QueuePage({
     current = 0,
     queueCookie,
@@ -185,6 +196,7 @@ export default function QueuePage({
     current: number;
     queueCookie: Queue | undefined;
 }) {
+    const { data: Session, status } = useSession();
     const [queueNumber, setQueueNumberState] = useState<Queue | undefined>(
         queueCookie
     );
@@ -197,7 +209,7 @@ export default function QueuePage({
     const [openModel, setOpenModel] = useState(false);
 
     async function getQueue(code: string, force: boolean = false) {
-        const data = await fetch("http://localhost:3000/api/hello", {
+        const data = await fetch("http://localhost:3000/api/queue", {
             method: "POST",
             body: JSON.stringify({ id: undefined, code, force }),
         });
@@ -210,109 +222,166 @@ export default function QueuePage({
     }
     async function completeQueue(id: number | undefined, status: QueueStatus) {
         if (!id || id === null) return;
-        const data = await fetch("http://localhost:3000/api/hello", {
+        const data = await fetch("http://localhost:3000/api/queue", {
             method: "PUT",
             body: JSON.stringify({ id, status }),
+            credentials: "include",
         });
         const { queue }: { queue: Queue } = await data.json();
         setCurrentQueue(queue);
     }
 
     async function getCurrentQueue() {
-        const data = await fetch("http://localhost:3000/api/hello", {
+        const data = await fetch("http://localhost:3000/api/queue", {
             method: "POST",
         });
+
         const { queue, current }: { queue: Queue; current: number } =
             await data.json();
         setCurrentQueue(queue);
     }
 
     return (
-        <div className="container grid min-h-screen mx-auto">
+        <div className="container grid mx-auto">
             <POPUPQueue
                 isOpen={openModel}
                 closeModal={() => setOpenModel(false)}
                 clickHandler={getQueue}
             />
 
-            <section className="flex flex-col gap-4  p-4 bg-white border border-customGray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-customOrange-900">
-                <div className="flex flex-col items-center gap-2 border-b border-dashed">
-                    <span className="text-lg font-bold text-customOrange-900">
-                        الحالي
-                    </span>
-                    <p className="pb-2 text-3xl">{currentNumber}</p>
-                </div>
-                <div className="flex flex-col items-center gap-2 border-b border-dashed">
-                    <span className="text-lg font-bold text-customOrange-900">
-                        رقمك
-                    </span>
-                    <p className="text-3xl">{queueNumber?.id}</p>
-                    <p className="pb-2 text-lg text-customGray-900">
-                        {queueNumber?.status}
-                    </p>
-                </div>
-                <button
-                    onClick={() => setOpenModel(true)}
-                    className="py-2 text-customOrange-900 bg-customOrange-100 rounded-full shadow shadow-customGray-900"
-                >
-                    احصل على دور
-                </button>
-            </section>
-            <section className="flex flex-col gap-4  p-4 bg-white border border-customGray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-customOrange-900">
-                <button
-                    onClick={getCurrentQueue}
-                    className="py-2 text-customOrange-900 bg-customOrange-100 rounded-full shadow shadow-customGray-900"
-                >
-                    الحالي
-                </button>
-                <div className="flex flex-col items-center gap-2 border-b border-dashed">
-                    <p className="pb-2 text-3xl">{currentQueue?.id}</p>
-                    <div className="flex items-center justify-center gap-2">
-                        <p className="pb-2 text-3xl">
-                            {currentQueue?.code.split(",")[0]}
-                        </p>
-                        <span className="pb-2 text-3xl">/</span>
-                        <p className="pb-2 text-3xl">
-                            {currentQueue?.code.split(",")[1]}
-                        </p>
-                    </div>
-                    <p className="pb-2 text-lg text-customGray-900">
-                        {currentQueue?.status}
-                    </p>
-                </div>
-                <div className="flex items-center justify-around w-full gap-2">
-                    <button
-                        onClick={() =>
-                            completeQueue(
-                                currentQueue?.id,
-                                QueueStatus.COMPLETED
-                            )
-                        }
-                        className="p-2 text-customOrange-900 bg-customOrange-100 rounded-md shadow shadow-customGray-900"
-                    >
-                        تم
-                    </button>
-                    <button
-                        onClick={() =>
-                            completeQueue(currentQueue?.id, QueueStatus.MISSED)
-                        }
-                        className="p-2 text-customOrange-900 bg-customOrange-100 rounded-md shadow shadow-customGray-900"
-                    >
-                        لم يحضر
-                    </button>
-                    <button
-                        onClick={() =>
-                            completeQueue(
-                                currentQueue?.id,
-                                QueueStatus.POSTPONE
-                            )
-                        }
-                        className="p-2 text-customOrange-900 bg-customOrange-100 rounded-md shadow shadow-customGray-900"
-                    >
-                        تأجيل
-                    </button>
-                </div>
-            </section>
+            <div className="max-w-md px-2 py-16 mx-auto ">
+                <Tab.Group>
+                    <Tab.List className="flex items-center justify-between gap-4 p-1 space-x-1 ">
+                        {TABS.map((tab, idx) => (
+                            <Tab
+                                key={idx}
+                                disabled={
+                                    idx === 1 &&
+                                    (status !== "authenticated" ||
+                                        (status === "authenticated" &&
+                                            Session.user.role === Role.CLIENT))
+                                }
+                                className={({ selected }) =>
+                                    classNames(
+                                        "w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-customOrange-900",
+                                        "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2",
+                                        selected
+                                            ? "bg-white shadow shadow-customOrange-900"
+                                            : "bg-customGray-900 text-white hover:bg-customGray-100 hover:text-white"
+                                    )
+                                }
+                            >
+                                {tab}
+                            </Tab>
+                        ))}
+                    </Tab.List>
+                    <Tab.Panels className="mt-2">
+                        <Tab.Panel
+                            className={classNames(
+                                "rounded-xl  p-3",
+                                "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                            )}
+                        >
+                            <section className="flex flex-col gap-4  p-4 bg-white border border-customGray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-customOrange-900">
+                                <div className="flex flex-col items-center gap-2 border-b border-dashed">
+                                    <span className="text-lg font-bold text-customOrange-900">
+                                        الحالي
+                                    </span>
+                                    <p className="pb-2 text-3xl">
+                                        {currentNumber}
+                                    </p>
+                                </div>
+                                <div className="flex flex-col items-center gap-2 border-b border-dashed">
+                                    <span className="text-lg font-bold text-customOrange-900">
+                                        رقمك
+                                    </span>
+                                    <p className="text-3xl">
+                                        {queueNumber?.id}
+                                    </p>
+                                    <p className="pb-2 text-lg text-customGray-900">
+                                        {queueNumber?.status}
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => setOpenModel(true)}
+                                    className="py-2 rounded-full shadow text-customOrange-900 bg-customOrange-100 shadow-customGray-900"
+                                >
+                                    احصل على دور
+                                </button>
+                            </section>
+                        </Tab.Panel>
+                        <Tab.Panel
+                            className={classNames(
+                                "rounded-xl p-3",
+                                "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                            )}
+                        >
+                            <section className="flex flex-col gap-4  p-4 bg-white border border-customGray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-customOrange-900">
+                                <button
+                                    onClick={getCurrentQueue}
+                                    className="py-2 rounded-full shadow text-customOrange-900 bg-customOrange-100 shadow-customGray-900"
+                                >
+                                    الحالي
+                                </button>
+                                <div className="flex flex-col items-center gap-2 border-b border-dashed">
+                                    <p className="pb-2 text-3xl">
+                                        {currentQueue?.id}
+                                    </p>
+                                    <div className="flex items-center justify-center gap-2">
+                                        <p className="pb-2 text-3xl">
+                                            {currentQueue?.code.split(",")[0]}
+                                        </p>
+                                        <span className="pb-2 text-3xl">/</span>
+                                        <p className="pb-2 text-3xl">
+                                            {currentQueue?.code.split(",")[1]}
+                                        </p>
+                                    </div>
+                                    <p className="pb-2 text-lg text-customGray-900">
+                                        {currentQueue?.status}
+                                    </p>
+                                </div>
+                                <div className="flex items-center justify-around w-full gap-2">
+                                    <button
+                                        disabled={!currentQueue}
+                                        onClick={() =>
+                                            completeQueue(
+                                                currentQueue?.id,
+                                                QueueStatus.COMPLETED
+                                            )
+                                        }
+                                        className="p-2 min-w-[4rem] rounded-md shadow text-customOrange-900 bg-customOrange-100 shadow-customGray-900 disabled:bg-customGray-900 disabled:text-white"
+                                    >
+                                        تم
+                                    </button>
+                                    <button
+                                        disabled={!currentQueue}
+                                        onClick={() =>
+                                            completeQueue(
+                                                currentQueue?.id,
+                                                QueueStatus.MISSED
+                                            )
+                                        }
+                                        className="p-2 min-w-[4rem] rounded-md shadow text-customOrange-900 bg-customOrange-100 shadow-customGray-900 disabled:bg-customGray-900 disabled:text-white"
+                                    >
+                                        لم يحضر
+                                    </button>
+                                    {/* <button
+                                onClick={() =>
+                                    completeQueue(
+                                        currentQueue?.id,
+                                        QueueStatus.POSTPONE
+                                    )
+                                }
+                                className="p-2 rounded-md shadow text-customOrange-900 bg-customOrange-100 shadow-customGray-900"
+                            >
+                                تأجيل
+                            </button> */}
+                                </div>
+                            </section>
+                        </Tab.Panel>
+                    </Tab.Panels>
+                </Tab.Group>
+            </div>
         </div>
     );
 }

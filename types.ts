@@ -106,6 +106,7 @@ export type User = {
 // https://github.com/microsoft/TypeScript/issues/3192#issuecomment-261720275
 
 export enum Role {
+    OWNER = "OWNER",
     ADMIN = "ADMIN",
     USER = "USER",
     CLIENT = "CLIENT",

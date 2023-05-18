@@ -4,7 +4,7 @@ export default function Document() {
     return (
         <Html lang="ar" dir="rtl">
             <Head />
-            <body>
+            <body className="flex flex-col min-h-full bg-customOrange-100">
                 <Main />
                 <NextScript />
             </body>

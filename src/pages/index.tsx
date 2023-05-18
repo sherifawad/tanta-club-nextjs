@@ -36,6 +36,14 @@ import { discountsRepo } from "lib/discounts-repo";
 import { penaltiesRepo } from "lib/penalties-repo";
 import SelectCategories from "@/components/SelectCategories";
 import { arrayToReactSelectOption } from "@/lib/utils";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { getToken } from "next-auth/jwt";
+import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]";
+
+const secret = process.env.NEXTAUTH_SECRET;
 
 export async function getStaticProps() {
     try {
@@ -439,7 +447,7 @@ export default function Home({
                 />
                 <link rel="icon" href="/part_alternation_mark_color.svg" />
             </Head>
-            <div className="min-h-full mx-auto bg-customOrange-100">
+            <div className="container mx-auto">
                 <ToastContainer />
                 <PopUp
                     onChange={(e) => setPlayerName(e.target.value)}
@@ -474,7 +482,7 @@ export default function Home({
                                     onClick={calculationHandler}
                                 >
                                     <FcCalculator className="text-3xl " />
-                                    <div className="text-lg font-extrabold text-customOrange-900 cursor-pointer">
+                                    <div className="text-lg font-extrabold cursor-pointer text-customOrange-900">
                                         احسب
                                     </div>
                                 </button>

@@ -1,17 +1,29 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { setCookie } from "@/lib/cookies";
+// import { getSession } from "@/lib/hash";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Queue, QueueStatus } from "types";
+import { getServerSession } from "next-auth";
+import { getSession } from "next-auth/react";
+import { Queue, QueueStatus, Role } from "types";
+import { authOptions } from "./auth/[...nextauth]";
+import { getToken } from "next-auth/jwt";
+import axios from "axios";
+import { getCookie } from "cookies-next";
+import { getCurrentUser } from "@/lib/session";
+
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 type Data = {
     current: number;
     queue?: Queue;
+    message?: string;
 };
 
 const queueList: Queue[] = [];
 let current = 1;
 
-export default function handler(
+export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
@@ -57,6 +69,20 @@ export default function handler(
             queue: queueList.findLast((x) => x.id === current),
         });
     } else if (req.method === "PUT") {
+        const user = await getCurrentUser({ req, res });
+        if (!user || user == null) {
+            return res.status(401).send({
+                current,
+                message:
+                    "You must be signed in to view the protected content on this page.",
+            });
+        }
+        if (user.role === Role.CLIENT) {
+            return res.status(401).send({
+                current,
+                message: "Un-Authorized",
+            });
+        }
         const { id, status } = req.body
             ? JSON.parse(req.body)
             : { id: undefined, status: QueueStatus };

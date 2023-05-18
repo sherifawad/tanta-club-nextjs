@@ -10,7 +10,7 @@ export default async function handler(
         const newUser = req.body;
 
         // Check if user exists
-        const userExists = usersRepo.find((x) => x.name === newUser.name);
+        const userExists = await usersRepo.find((x) => x.name === newUser.name);
         if (userExists) {
             res.status(422).json({
                 success: false,
@@ -24,7 +24,7 @@ export default async function handler(
         newUser.password = await hashPassword(newUser.password);
 
         // Store new user
-        const storeUser = usersRepo.create(newUser);
+        const storeUser = await usersRepo.create(newUser);
 
         res.status(201).json({
             success: true,

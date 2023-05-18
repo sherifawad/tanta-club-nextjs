@@ -1,6 +1,13 @@
+import axios from "axios";
+import { getCookie } from "cookies-next";
 import { sportsRepo } from "lib/sports-repo";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { getToken } from "next-auth/jwt";
+import { getSession } from "next-auth/react";
+import { authOptions } from "./auth/[...nextauth]";
 
+const secret = process.env.NEXTAUTH_SECRET;
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
