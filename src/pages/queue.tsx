@@ -4,16 +4,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Dialog, Tab, Transition } from "@headlessui/react";
 import { Queue, QueueStatus, Role } from "types";
 import { classNames, stringTrim } from "@/lib/utils";
-import { hashPassword } from "@/lib/hash";
-import axios from "axios";
-import { getCookie, getCookies } from "cookies-next";
-import { getToken } from "next-auth/jwt";
-import { getSession, useSession } from "next-auth/react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
-import { useRouter } from "next/router";
-
-const secret = process.env.NEXTAUTH_SECRET;
+import { useSession } from "next-auth/react";
 
 export async function getServerSideProps({
     req,

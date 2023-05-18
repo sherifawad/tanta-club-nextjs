@@ -465,7 +465,7 @@ export default function Home({
                     >
                         <div className="flex flex-col w-full px-8 mx-auto">
                             {/* fixed */}
-                            <div className="sm:relative fixed z-50 flex items-center self-center min-w-[60%] gap-2">
+                            <div className="sm:relative fixed z-40 flex items-center self-center min-w-[60%] gap-2">
                                 {/* searchBar */}
                                 <div className="flex-grow">
                                     <Search

@@ -9,10 +9,10 @@
     {
         "name": "ahmed",
         "role": "USER",
-        "password": "$2a$12$p4NRnKwc2iejaXAlEnyryeOX95gQV6O3T3qUyzTOuf5k4KXezaaU6",
+        "password": "$2a$12$LxXfsIl5XFwTsSqtP.c4H.ngAom6qk48EuWGTuYi3ZXbbah8Sr9f.",
         "id": 5966,
         "createdAt": "2023-05-18T15:32:13.249Z",
-        "updatedAt": "2023-05-18T15:32:13.249Z",
+        "updatedAt": "2023-05-18T17:49:18.543Z",
         "enabled": true
     },
     {

@@ -1,6 +1,5 @@
 import { getCurrentUser } from "@/lib/session";
-import { isIterable } from "@/lib/utils";
-import { hashPassword } from "lib/hash";
+import { hashPassword, isPasswordValid } from "lib/hash";
 import { usersRepo } from "lib/users-repo";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Role, User } from "types";
@@ -65,6 +64,62 @@ export default async function handler(
             success: true,
             message: "User signed up successfuly",
             storeUser,
+        });
+    } else if (req.method === "PUT") {
+        const user = await getCurrentUser({ req, res });
+        if (!user || user == null) {
+            return res.status(401).send({
+                message:
+                    "You must be signed in to view the protected content on this page.",
+            });
+        }
+
+        const {
+            id,
+            oldPassword,
+            newPassword,
+        }: { id?: number; oldPassword?: string; newPassword?: string } =
+            JSON.parse(req.body);
+        if (
+            !id ||
+            id === null ||
+            !oldPassword ||
+            oldPassword === null ||
+            !newPassword ||
+            newPassword === null
+        ) {
+            return res.status(403).json({
+                message: "error parameter is required",
+            });
+        }
+
+        const userExists = await usersRepo.getById(id);
+        if (!userExists) {
+            return res.status(422).json({
+                success: false,
+                message: "No user exists!",
+            });
+        }
+
+        const isPasswordMatch = await isPasswordValid(
+            oldPassword,
+            userExists.password
+        );
+
+        if (!isPasswordMatch) {
+            return res.status(422).json({
+                success: false,
+                message: "mismatch!",
+            });
+        }
+        const hashedPassword = await hashPassword(newPassword);
+
+        await usersRepo.update(id, {
+            password: hashedPassword,
+        } as User);
+
+        return res.status(200).json({
+            success: true,
         });
     } else {
         return res

@@ -68,20 +68,8 @@ export default function Auth() {
             };
 
             const name = target.name.value; // typechecks!
-            console.log(
-                "🚀 ~ file: auth.tsx:71 ~ handleSubmitSignUp ~ name:",
-                name
-            );
             const password = target.password.value; // typechecks!
-            console.log(
-                "🚀 ~ file: auth.tsx:73 ~ handleSubmitSignUp ~ password:",
-                password
-            );
             const role = target.role.value; // typechecks!
-            console.log(
-                "🚀 ~ file: auth.tsx:75 ~ handleSubmitSignUp ~ role:",
-                role
-            );
             if (
                 !name ||
                 name.length < 0 ||

@@ -1,15 +1,22 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { userAgent } from "next/server";
-import { Fragment } from "react";
+import { Fragment, SyntheticEvent, useState } from "react";
 import { TbDots } from "react-icons/tb";
 import { Role } from "types";
 
-export default function Header() {
+const Header = () => {
     const { data: Session, status } = useSession();
+    const [openModel, setOpenModel] = useState(false);
     return (
         <header className="border-b min-h-[4rem] shadow shadow-customOrange-900 flex items-center ">
+            <POPUPPassword
+                Session={Session}
+                status={status}
+                isOpen={openModel}
+                closeModal={() => setOpenModel(false)}
+            />
             <nav className="container flex items-center justify-between px-2 mx-auto">
                 <Link
                     href="/"
@@ -66,6 +73,24 @@ export default function Header() {
                                             )}
                                         </Menu.Item>
                                     ) : null}
+                                    {status === "authenticated" ? (
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <button
+                                                    onClick={() =>
+                                                        setOpenModel(true)
+                                                    }
+                                                    className={`${
+                                                        active
+                                                            ? "bg-customOrange-100 text-customOrange-900"
+                                                            : "text-gray-900"
+                                                    } group flex w-full items-center px-2 py-2 text-sm justify-center `}
+                                                >
+                                                    نغيير{" "}
+                                                </button>
+                                            )}
+                                        </Menu.Item>
+                                    ) : null}
                                     {status !== "authenticated" ||
                                     (status === "authenticated" &&
                                         (Session.user.role === Role.OWNER ||
@@ -108,4 +133,155 @@ export default function Header() {
             </nav>
         </header>
     );
+};
+
+type POPUPQueueProps = {
+    closeModal: () => void;
+    isOpen: boolean;
+    Session: Session | null;
+    status: "authenticated" | "loading" | "unauthenticated";
+};
+
+function POPUPPassword({
+    closeModal,
+    isOpen,
+    Session,
+    status,
+}: POPUPQueueProps) {
+    const [pending, setPending] = useState(false);
+    const [error, setError] = useState("");
+
+    const handleSubmitPasswordChange = async (e: SyntheticEvent) => {
+        try {
+            e.preventDefault();
+            if (pending) return;
+            if (status !== "authenticated") return;
+            setPending(true);
+            const target = e.target as typeof e.target & {
+                oldPassword: { value: string };
+                newPassword: { value: string };
+            };
+            const oldPassword = target.oldPassword.value; // typechecks!
+            const newPassword = target.newPassword.value; // typechecks!
+            if (
+                !oldPassword ||
+                oldPassword.length < 5 ||
+                !newPassword ||
+                newPassword.length < 5
+            ) {
+                setError(" الرقم السري قصير يجب أم يزيد عن 5");
+                return;
+            }
+
+            const res = await fetch("http://localhost:3000/api/signup", {
+                method: "PUT",
+                body: JSON.stringify({
+                    id: Session?.user.id,
+                    oldPassword,
+                    newPassword,
+                }),
+                credentials: "include",
+            });
+            const message = await res.json();
+            if (res.status === 200) {
+                setError("");
+                closeModal();
+            } else {
+                setError(message.message);
+            }
+        } catch (error) {
+            setError((error as any).message);
+        } finally {
+            setPending(false);
+        }
+    };
+
+    return (
+        <>
+            <Transition appear show={isOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50 " onClose={() => {}}>
+                    <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                    >
+                        <div className="fixed inset-0 bg-black bg-opacity-25" />
+                    </Transition.Child>
+
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex items-center justify-center min-h-full p-4 text-center">
+                            <Transition.Child
+                                as={Fragment}
+                                enter="ease-out duration-300"
+                                enterFrom="opacity-0 scale-95"
+                                enterTo="opacity-100 scale-100"
+                                leave="ease-in duration-200"
+                                leaveFrom="opacity-100 scale-100"
+                                leaveTo="opacity-0 scale-95"
+                            >
+                                <Dialog.Panel className="w-full max-w-md p-6 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                                    <Dialog.Title
+                                        as="h3"
+                                        className="text-lg font-medium leading-6 text-customGray-900 text-start"
+                                    >
+                                        نغيير كلمة السر
+                                    </Dialog.Title>
+                                    <form
+                                        onSubmit={handleSubmitPasswordChange}
+                                        className="text-center"
+                                    >
+                                        <div className="p-2 text-center text-red-400 rounded text-md">
+                                            {error}
+                                        </div>
+                                        <div className="py-2 text-left">
+                                            <input
+                                                type="oldPassword"
+                                                name="oldPassword"
+                                                className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
+                                                placeholder="رقم السر القديم"
+                                                onChange={() => setError("")}
+                                            />
+                                        </div>
+                                        <div className="py-2 text-left">
+                                            <input
+                                                name="newPassword"
+                                                type="newPassword"
+                                                className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
+                                                placeholder="الرقم السري الجديد"
+                                                onChange={() => setError("")}
+                                            />
+                                        </div>
+                                        <div className="flex items-center justify-end flex-grow gap-2 py-2">
+                                            <button
+                                                disabled={
+                                                    status !== "authenticated"
+                                                }
+                                                type="submit"
+                                                className="block w-full p-2 font-bold tracking-wider text-white bg-orange-500 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 hover:bg-orange-600 disabled:bg-customGray-100"
+                                            >
+                                                تعيير
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="inline-flex justify-center px-4 py-2 text-sm font-medium border border-transparent rounded-md text-customGray-900 bg-customGray-100 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                                onClick={closeModal}
+                                            >
+                                                إلغاء
+                                            </button>
+                                        </div>
+                                    </form>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
+        </>
+    );
 }
+
+export default Header;
