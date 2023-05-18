@@ -3,7 +3,7 @@ import { stat } from "fs";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useState } from "react";
-import { Role } from "types";
+import { Role, User } from "types";
 
 function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
@@ -43,6 +43,63 @@ export default function Auth() {
                 setError("");
             }
             if (res?.url) router.push(res.url);
+        } catch (error) {
+            setError((error as any).message);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+    const handleSubmitSignUp = async (e: SyntheticEvent) => {
+        try {
+            e.preventDefault();
+            if (submitting) return;
+            if (
+                status !== "authenticated" ||
+                (status === "authenticated" &&
+                    Session.user.role !== Role.ADMIN &&
+                    Session.user.role !== Role.OWNER)
+            )
+                return;
+            setSubmitting(true);
+            const target = e.target as typeof e.target & {
+                name: { value: string };
+                password: { value: string };
+                role: { value: string };
+            };
+
+            const name = target.name.value; // typechecks!
+            console.log(
+                "🚀 ~ file: auth.tsx:71 ~ handleSubmitSignUp ~ name:",
+                name
+            );
+            const password = target.password.value; // typechecks!
+            console.log(
+                "🚀 ~ file: auth.tsx:73 ~ handleSubmitSignUp ~ password:",
+                password
+            );
+            const role = target.role.value; // typechecks!
+            console.log(
+                "🚀 ~ file: auth.tsx:75 ~ handleSubmitSignUp ~ role:",
+                role
+            );
+            if (
+                !name ||
+                name.length < 0 ||
+                !password ||
+                password.length < 0 ||
+                !role ||
+                !(role in Role) ||
+                role.length < 0
+            )
+                return;
+
+            const data = await fetch("http://localhost:3000/api/signup", {
+                method: "POST",
+                body: JSON.stringify({ name, password, role }),
+                credentials: "include",
+            });
+            const { storeUser, message }: { storeUser: User; message: string } =
+                await data.json();
         } catch (error) {
             setError((error as any).message);
         } finally {
@@ -140,7 +197,7 @@ export default function Auth() {
                         )}
                     >
                         <form
-                            // onSubmit={handleSubmitSignUp}
+                            onSubmit={handleSubmitSignUp}
                             className="text-center"
                         >
                             <h1 className="w-full mb-8 text-3xl font-bold tracking-wider text-gray-600">

@@ -66,29 +66,40 @@ export default function Header() {
                                             )}
                                         </Menu.Item>
                                     ) : null}
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <Link
-                                                href={
-                                                    status === "authenticated"
-                                                        ? Session.user.role ===
-                                                              Role.OWNER ||
-                                                          Session.user.role ===
-                                                              Role.ADMIN
-                                                            ? "/auth?tab=signup"
-                                                            : "."
-                                                        : "/auth?tab=login"
-                                                }
-                                                className={`${
-                                                    active
-                                                        ? "bg-customOrange-100 text-customOrange-900"
-                                                        : "text-gray-900"
-                                                } group flex w-full items-center rounded-md px-2 py-2 text-sm justify-center`}
-                                            >
-                                                جديد
-                                            </Link>
-                                        )}
-                                    </Menu.Item>
+                                    {status !== "authenticated" ||
+                                    (status === "authenticated" &&
+                                        (Session.user.role === Role.OWNER ||
+                                            Session.user.role ===
+                                                Role.ADMIN)) ? (
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <Link
+                                                    href={
+                                                        status ===
+                                                        "authenticated"
+                                                            ? Session.user
+                                                                  .role ===
+                                                                  Role.OWNER ||
+                                                              Session.user
+                                                                  .role ===
+                                                                  Role.ADMIN
+                                                                ? "/auth?tab=signup"
+                                                                : "."
+                                                            : "/auth?tab=login"
+                                                    }
+                                                    className={`${
+                                                        active
+                                                            ? "bg-customOrange-100 text-customOrange-900"
+                                                            : "text-gray-900"
+                                                    } group flex w-full items-center rounded-md px-2 py-2 text-sm justify-center`}
+                                                >
+                                                    {status === "authenticated"
+                                                        ? "جديد"
+                                                        : "دخول"}
+                                                </Link>
+                                            )}
+                                        </Menu.Item>
+                                    ) : null}
                                 </Menu.Items>
                             </Transition>
                         </Menu>

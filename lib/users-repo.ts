@@ -30,6 +30,8 @@ async function create(user: User) {
     user.createdAt = new Date().toISOString();
     user.updatedAt = new Date().toISOString();
 
+    user.enabled = true;
+
     // add and save user
     users.push(user);
     await saveData(users);
