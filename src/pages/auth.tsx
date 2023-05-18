@@ -2,7 +2,7 @@ import { Tab } from "@headlessui/react";
 import { stat } from "fs";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { Role } from "types";
 
 function classNames(...classes: any) {
@@ -10,13 +10,13 @@ function classNames(...classes: any) {
 }
 
 export default function Auth() {
+    const router = useRouter();
+    const { tab = "login" } = router.query;
     const { data: Session, status } = useSession();
     let [categories] = useState(["دخول", "تسجيل"]);
     const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
-
-    const router = useRouter();
-
+    const [selectedIndex, setSelectedIndex] = useState(0);
     const handleSubmitLogIn = async (e: SyntheticEvent) => {
         try {
             e.preventDefault();
@@ -50,19 +50,28 @@ export default function Auth() {
         }
     };
 
+    useEffect(() => {
+        setSelectedIndex(tab === "signup" ? 1 : 0);
+    }, [tab]);
+
     return (
         <div className="max-w-md px-2 py-16 mx-auto ">
-            <Tab.Group>
+            <Tab.Group
+                selectedIndex={selectedIndex}
+                onChange={setSelectedIndex}
+            >
                 <Tab.List className="flex items-center justify-between gap-4 p-1 space-x-1 ">
                     {categories.map((category, idx) => (
                         <Tab
                             key={idx}
                             disabled={
-                                idx === 1 &&
-                                (status !== "authenticated" ||
-                                    (status === "authenticated" &&
-                                        Session.user.role !== Role.OWNER &&
-                                        Session.user.role !== Role.ADMIN))
+                                (idx === 1 &&
+                                    (status !== "authenticated" ||
+                                        (status === "authenticated" &&
+                                            Session.user.role !== Role.OWNER &&
+                                            Session.user.role !==
+                                                Role.ADMIN))) ||
+                                (idx === 0 && status === "authenticated")
                             }
                             className={({ selected }) =>
                                 classNames(
@@ -82,7 +91,7 @@ export default function Auth() {
                     <Tab.Panel
                         className={classNames(
                             "rounded-xl  p-3",
-                            "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                            "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none"
                         )}
                     >
                         <form
@@ -127,7 +136,7 @@ export default function Auth() {
                     <Tab.Panel
                         className={classNames(
                             "rounded-xl p-3",
-                            "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                            "ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none"
                         )}
                     >
                         <form

@@ -11,6 +11,7 @@ import { getToken } from "next-auth/jwt";
 import { getSession, useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { useRouter } from "next/router";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
@@ -35,7 +36,10 @@ export async function getServerSideProps({
     });
     const { current, queue } = await data.json();
     return {
-        props: { current: current ?? null, queueCookie: queue ?? null }, // will be passed to the page component as props
+        props: {
+            current: current ?? null,
+            queueCookie: queue ?? null,
+        }, // will be passed to the page component as props
     };
 }
 type POPUPQueueProps = {
