@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Fragment, SyntheticEvent, useState } from "react";
 import { TbDots } from "react-icons/tb";
+import { ToastContainer, toast } from "react-toastify";
 import { Role } from "types";
 
 const Header = () => {
@@ -11,6 +12,7 @@ const Header = () => {
     const [openModel, setOpenModel] = useState(false);
     return (
         <header className="border-b min-h-[4rem] shadow shadow-customOrange-900 flex items-center ">
+            <ToastContainer />
             <POPUPPassword
                 Session={Session}
                 status={status}
@@ -125,6 +127,24 @@ const Header = () => {
                                             )}
                                         </Menu.Item>
                                     ) : null}
+                                    {status === "authenticated" &&
+                                    (Session.user.role === Role.OWNER ||
+                                        Session.user.role === Role.ADMIN) ? (
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <Link
+                                                    href="/edit"
+                                                    className={`${
+                                                        active
+                                                            ? "bg-customOrange-100 text-customOrange-900"
+                                                            : "text-gray-900"
+                                                    } group flex w-full items-center rounded-md px-2 py-2 text-sm justify-center`}
+                                                >
+                                                    بيانات
+                                                </Link>
+                                            )}
+                                        </Menu.Item>
+                                    ) : null}
                                 </Menu.Items>
                             </Transition>
                         </Menu>
@@ -193,6 +213,16 @@ function POPUPPassword({
             setError((error as any).message);
         } finally {
             setPending(false);
+            toast.success(`تم تغيير كلمة السر `, {
+                position: "top-right",
+                autoClose: 500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
         }
     };
 
@@ -263,7 +293,7 @@ function POPUPPassword({
                                                 type="submit"
                                                 className="block w-full p-2 font-bold tracking-wider text-white bg-orange-500 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 hover:bg-orange-600 disabled:bg-customGray-100"
                                             >
-                                                تعيير
+                                                تغيير
                                             </button>
                                             <button
                                                 type="button"

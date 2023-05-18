@@ -1,14 +1,6 @@
 import Head from "next/head";
 import { Category, Discount, Penalty, Sport } from "types";
-import {
-    ChangeEvent,
-    useCallback,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { moreThanTwoPlayers, swimmingDiscount } from "lib/calc";
 import { splitPrivateSwimming } from "helpers/sportsUtils";
 import { BiFootball } from "react-icons/bi";
@@ -34,16 +26,8 @@ import { sportsRepo } from "lib/sports-repo";
 import { categoriesRepo } from "lib/categories-repo";
 import { discountsRepo } from "lib/discounts-repo";
 import { penaltiesRepo } from "lib/penalties-repo";
-import SelectCategories from "@/components/SelectCategories";
 import { arrayToReactSelectOption } from "@/lib/utils";
-import axios from "axios";
-import { getCookie } from "cookies-next";
-import { getToken } from "next-auth/jwt";
-import { getSession } from "next-auth/react";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]";
-
-const secret = process.env.NEXTAUTH_SECRET;
+import SingleSelect from "@/components/SingleSelect";
 
 export async function getStaticProps() {
     try {
@@ -500,7 +484,7 @@ export default function Home({
                                     </div>
 
                                     <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-customOrange-900">
-                                        <SelectCategories
+                                        <SingleSelect
                                             options={
                                                 arrayToReactSelectOption(
                                                     "name",
@@ -510,6 +494,7 @@ export default function Home({
                                             }
                                             onChange={onSelectedCategoryChange}
                                             value={selectedCategoryId}
+                                            name="category"
                                         />
                                     </div>
                                 </div>
