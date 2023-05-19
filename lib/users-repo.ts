@@ -8,12 +8,11 @@ import path from "path";
 const jsonDirectory = path.join(process.cwd(), "data");
 
 const Users = (async function Users() {
-    console.log("🚀 ~ file: users-repo.ts:11 ~ Users ~ Users:", Users);
     return JSON.parse(await fs.readFile(jsonDirectory + "/users.json", "utf8"));
 })() as unknown as Promise<User[]>;
 
 export const usersRepo = {
-    getAll: async () => await Users,
+    getAll: async () => (await Users).map(({ password, ...rest }) => rest),
     getById: async (id: number) => (await Users).find((x) => x.id === id),
     find: async (x: (x: User) => boolean) => (await Users).find(x),
     create,

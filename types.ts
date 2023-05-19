@@ -74,10 +74,8 @@ export type Penalty = {
     note: string | null;
     type: DiscountType;
     repeated: RepetitionType | null;
-    startDay: number | null;
-    startMonth: number | null;
-    endDay: number | null;
-    endMonth: number | null;
+    start: number | null;
+    end: number | null;
     step: number;
     minimum: number;
     Maximum: number;

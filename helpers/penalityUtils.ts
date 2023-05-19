@@ -4,19 +4,32 @@ export const penaltyTimeValid = (penalty: Penalty) => {
     if (!penalty) return false;
     const currentDay = new Date().getDate();
     const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
     let valid = false;
-    if (penalty.startDay) {
-        valid = penalty.startDay <= currentDay ? true : false;
+    if (penalty.repeated === RepetitionType.DAILY) {
+        if (penalty.start) {
+            valid = penalty.start <= currentDay ? true : false;
+        }
+        if (penalty.end) {
+            valid = penalty.end >= currentDay ? true : false;
+        }
     }
-    if (penalty.endDay) {
-        valid = penalty.endDay >= currentDay ? true : false;
+    if (penalty.repeated === RepetitionType.MONTHLY) {
+        if (penalty.start) {
+            valid = penalty.start <= currentMonth ? true : false;
+        }
+        if (penalty.end) {
+            valid = penalty.end >= currentMonth ? true : false;
+        }
+    } else {
+        if (penalty.start) {
+            valid = penalty.start <= currentYear ? true : false;
+        }
+        if (penalty.end) {
+            valid = penalty.end >= currentYear ? true : false;
+        }
     }
-    if (penalty.startMonth) {
-        valid = penalty.startMonth <= currentMonth ? true : false;
-    }
-    if (penalty.endMonth) {
-        valid = penalty.endMonth >= currentMonth ? true : false;
-    }
+
     return valid;
 };
 
@@ -39,14 +52,14 @@ export const calcPenalty = (penalty: Penalty | undefined) => {
         switch (<RepetitionType>penalty.repeated) {
             case RepetitionType.DAILY: {
                 const currentDay = new Date().getDate();
-                const steps = currentDay + 1 - (penalty.startDay ?? currentDay);
+                const steps = currentDay + 1 - (penalty.start ?? currentDay);
                 totalPenalty = penaltyStep(penalty, steps);
                 break;
             }
             case RepetitionType.MONTHLY: {
                 const currentMonth = new Date().getMonth();
                 const steps =
-                    currentMonth + 1 - (penalty.startMonth ?? currentMonth);
+                    currentMonth + 1 - (penalty.start ?? currentMonth);
                 totalPenalty = penaltyStep(penalty, steps);
                 break;
             }

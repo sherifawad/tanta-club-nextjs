@@ -8,6 +8,6 @@
         "name": "swimmingDelayPenalty",
         "title": "غرامة تأخير دفع سباحة",
         "repeated": "DAILY",
-        "startDay": 11
+        "start": 11
     }
 ]

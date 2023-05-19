@@ -4,14 +4,22 @@ import { categoriesRepo } from "@/lib/categories-repo";
 import { discountsRepo } from "@/lib/discounts-repo";
 import { penaltiesRepo } from "@/lib/penalties-repo";
 import { sportsRepo } from "@/lib/sports-repo";
+import { usersRepo } from "@/lib/users-repo";
 import { arrayToReactSelectOption } from "@/lib/utils";
 import type { Session } from "next-auth";
 import { useSession } from "next-auth/react";
-import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
+import {
+    ChangeEvent,
+    Dispatch,
+    SetStateAction,
+    SyntheticEvent,
+    useState,
+} from "react";
 import {
     Category,
     Discount,
     DiscountType,
+    IReactSelectOption,
     Penalty,
     RepetitionType,
     Role,
@@ -26,6 +34,7 @@ type EditProps = {
     discounts: Discount[] | null;
     penalties: Penalty[] | null;
     sports: Sport[] | null;
+    users: User[] | null;
 };
 type BasicEditProps = {
     status: "authenticated" | "loading" | "unauthenticated";
@@ -34,7 +43,13 @@ type BasicEditProps = {
     Session: Session | null;
 };
 
-const Edit = ({ categories, discounts, penalties, sports }: EditProps) => {
+const Edit = ({
+    categories,
+    discounts,
+    penalties,
+    sports,
+    users,
+}: EditProps) => {
     const [selectedTab, setSelectedTab] =
         useState<(typeof TABS)[number]>("رياضة");
     const { data: Session, status } = useSession();
@@ -72,6 +87,7 @@ const Edit = ({ categories, discounts, penalties, sports }: EditProps) => {
                     discounts,
                     penalties,
                     sports,
+                    users,
                 })}
             </div>
         </div>
@@ -88,6 +104,7 @@ function renderSwitch({
     discounts,
     penalties,
     sports,
+    users,
 }: BasicEditProps & EditProps & { selectedTab: (typeof TABS)[number] }) {
     switch (selectedTab) {
         case "رياضة":
@@ -110,6 +127,7 @@ function renderSwitch({
                     setSubmitting={setSubmitting}
                     Session={Session}
                     status={status}
+                    users={users}
                 />
             );
         case "خصم":
@@ -152,8 +170,31 @@ function UserEdit({
     setSubmitting,
     Session,
     status,
-}: BasicEditProps) {
+    users,
+}: BasicEditProps & { users: User[] | null }) {
     const [error, setError] = useState("");
+    const [selectValue, setSelectValue] = useState<any>(null);
+    const defaultValues = {
+        id: 0,
+        name: "",
+        role: Role.CLIENT,
+        enabled: true,
+        password: "",
+    } as User;
+    const [data, setData] = useState<User>(defaultValues);
+
+    const handleSelectChange = (id: number) => {
+        const findData = users?.find((x) => x.id === id);
+        if (!findData || findData === null) return;
+        setSelectValue(findData.id);
+        setData({ ...findData });
+    };
+    // handle on change according to input name and setState
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    };
     const handleSubmitSignUp = async (e: SyntheticEvent) => {
         try {
             e.preventDefault();
@@ -202,10 +243,41 @@ function UserEdit({
 
     return (
         <div className="">
-            <form onSubmit={handleSubmitSignUp} className="text-center">
+            <form
+                onSubmit={handleSubmitSignUp}
+                className="text-center max-w-[20rem] min-w-[18rem] mx-auto"
+            >
                 <h1 className="w-full mb-8 text-3xl font-bold tracking-wider text-gray-600">
-                    تسجيل مستخدم جديد
+                    مستخدم
                 </h1>
+                <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-customOrange-900">
+                    <button
+                        type="button"
+                        className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
+                        onClick={() => {
+                            setData(defaultValues);
+                            setSelectValue(null);
+                            setError("");
+                        }}
+                    >
+                        جديد
+                        <span className="font-bold text-customOrange-900">
+                            +
+                        </span>
+                    </button>
+                    <SingleSelect
+                        options={
+                            arrayToReactSelectOption(
+                                "name",
+                                "id",
+                                users ?? []
+                            ) ?? []
+                        }
+                        onChange={handleSelectChange}
+                        value={selectValue}
+                        name="discount"
+                    />
+                </div>
                 <div className="p-2 text-center text-red-400 rounded text-md">
                     {error}
                 </div>
@@ -215,7 +287,11 @@ function UserEdit({
                         name="name"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الاسم"
-                        onChange={() => setError("")}
+                        value={data.name ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
@@ -224,11 +300,20 @@ function UserEdit({
                         type="password"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الرقم السري"
-                        onChange={() => setError("")}
+                        value={data.password ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
                     <select
+                        value={data.role ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                         className="block w-full px-4 py-2 text-gray-400 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700"
                         name="role"
                     >
@@ -245,6 +330,13 @@ function UserEdit({
                         >
                             ادمن
                         </option>
+                        <option
+                            disabled={Session?.user.role != Role.OWNER}
+                            className="block w-full px-4 py-2 bg-gray-100"
+                            value={Role.OWNER}
+                        >
+                            مالك
+                        </option>
                     </select>
                 </div>
                 <div className="py-2">
@@ -252,7 +344,7 @@ function UserEdit({
                         type="submit"
                         className="block w-full p-2 font-bold tracking-wider text-white bg-orange-500 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 hover:bg-orange-600"
                     >
-                        تسجيل
+                        {!data.id || data.id == null ? "تسجيل" : "تعديل"}
                     </button>
                 </div>
             </form>
@@ -267,8 +359,9 @@ function DiscountEdit({
     status,
     discounts,
 }: BasicEditProps & { discounts: Discount[] | null }) {
-    const [error, setError] = useState("");
-    const [data, setData] = useState<Discount>({
+    const [discountError, setDiscountError] = useState("");
+    const [selectValue, setSelectValue] = useState<any>(null);
+    const defaultValues = {
         id: 0,
         type: DiscountType.PERCENTAGE,
         title: "",
@@ -276,74 +369,90 @@ function DiscountEdit({
         Maximum: 0,
         step: 0,
         name: "",
-    } as Discount);
+    } as Discount;
+    const [data, setData] = useState<Discount>(defaultValues);
 
     const handleSelectChange = (id: number) => {
         const findData = discounts?.find((x) => x.id === id);
         if (!findData || findData === null) return;
+        setSelectValue(findData.id);
         setData({ ...findData });
     };
 
     // handle on change according to input name and setState
-    const handleChange = (e: any) => {
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
         setData({ ...data, [e.target.name]: e.target.value });
     };
-    const handleSubmitDiscount = async (e: SyntheticEvent) => {
-        try {
-            e.preventDefault();
-            if (submitting) return;
-            if (
-                status !== "authenticated" ||
-                (status === "authenticated" &&
-                    Session?.user.role !== Role.ADMIN &&
-                    Session?.user.role !== Role.OWNER)
-            )
-                return;
-            setSubmitting(true);
-            const target = e.target as typeof e.target & {
-                name: { value: string };
-                password: { value: string };
-                role: { value: string };
-            };
+    // const handleSubmitDiscount = async (e: SyntheticEvent) => {
+    //     try {
+    //         e.preventDefault();
+    //         if (submitting) return;
+    //         if (
+    //             status !== "authenticated" ||
+    //             (status === "authenticated" &&
+    //                 Session?.user.role !== Role.ADMIN &&
+    //                 Session?.user.role !== Role.OWNER)
+    //         )
+    //             return;
+    //         setSubmitting(true);
+    //         const target = e.target as typeof e.target & {
+    //             name: { value: string };
+    //             role: { value: string };
+    //         };
 
-            const name = target.name.value; // typechecks!
-            const password = target.password.value; // typechecks!
-            const role = target.role.value; // typechecks!
-            if (
-                !name ||
-                name.length < 0 ||
-                !password ||
-                password.length < 0 ||
-                !role ||
-                !(role in Role) ||
-                role.length < 0
-            )
-                return;
+    //         const name = target.name.value; // typechecks!
+    //         const role = target.role.value; // typechecks!
+    //         if (
+    //             !name ||
+    //             name.length < 0 ||
+    //             !password ||
+    //             password.length < 0 ||
+    //             !role ||
+    //             !(role in Role) ||
+    //             role.length < 0
+    //         )
+    //             return;
 
-            const data = await fetch("http://localhost:3000/api/signup", {
-                method: "POST",
-                body: JSON.stringify({ name, password, role }),
-                credentials: "include",
-            });
-            const { storeUser, message }: { storeUser: User; message: string } =
-                await data.json();
-        } catch (error) {
-            setError((error as any).message);
-        } finally {
-            setSubmitting(false);
-        }
-    };
+    //         const data = await fetch("http://localhost:3000/api/signup", {
+    //             method: "POST",
+    //             body: JSON.stringify({ name, role }),
+    //             credentials: "include",
+    //         });
+    //         const { storeUser, message }: { storeUser: User; message: string } =
+    //             await data.json();
+    //     } catch (error) {
+    //         setDiscountError((error as any).message);
+    //     } finally {
+    //         setSubmitting(false);
+    //     }
+    // };
 
     return (
-        <div className="w-full">
+        <div className="">
             <form
-                onSubmit={handleSubmitDiscount}
-                className="text-center max-w-[20rem] mx-auto"
+                // onSubmit={handleSubmitDiscount}
+                className="text-center max-w-[20rem] min-w-[18rem] mx-auto"
             >
                 <h1 className="w-full mb-8 text-3xl font-bold tracking-wider text-gray-600">
                     خصم
                 </h1>
                 <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-customOrange-900">
+                    <button
+                        type="button"
+                        className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
+                        onClick={() => {
+                            setData(defaultValues);
+                            setSelectValue(null);
+                            setDiscountError("");
+                        }}
+                    >
+                        جديد
+                        <span className="font-bold text-customOrange-900">
+                            +
+                        </span>
+                    </button>
                     <SingleSelect
                         options={
                             arrayToReactSelectOption(
@@ -353,11 +462,12 @@ function DiscountEdit({
                             ) ?? []
                         }
                         onChange={handleSelectChange}
+                        value={selectValue}
                         name="discount"
                     />
                 </div>
                 <div className="p-2 text-center text-red-400 rounded text-md">
-                    {error}
+                    {discountError}
                 </div>
                 <div className="py-2 text-left">
                     <input
@@ -368,7 +478,7 @@ function DiscountEdit({
                         value={data.title ?? ""}
                         onChange={(e) => {
                             handleChange(e);
-                            setError("");
+                            setDiscountError("");
                         }}
                     />
                 </div>
@@ -381,7 +491,7 @@ function DiscountEdit({
                         value={data.name}
                         onChange={(e) => {
                             handleChange(e);
-                            setError("");
+                            setDiscountError("");
                         }}
                     />
                 </div>
@@ -394,7 +504,7 @@ function DiscountEdit({
                         value={data.minimum}
                         onChange={(e) => {
                             handleChange(e);
-                            setError("");
+                            setDiscountError("");
                         }}
                     />
                 </div>
@@ -407,7 +517,7 @@ function DiscountEdit({
                         value={data.Maximum}
                         onChange={(e) => {
                             handleChange(e);
-                            setError("");
+                            setDiscountError("");
                         }}
                     />
                 </div>
@@ -420,7 +530,7 @@ function DiscountEdit({
                         value={data.step}
                         onChange={(e) => {
                             handleChange(e);
-                            setError("");
+                            setDiscountError("");
                         }}
                     />
                 </div>
@@ -429,7 +539,7 @@ function DiscountEdit({
                         value={data.type}
                         onChange={(e) => {
                             handleChange(e);
-                            setError("");
+                            setDiscountError("");
                         }}
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg placeholder:text-gray-400 focus:outline-none focus:border-gray-700"
                         name="type"
@@ -453,7 +563,7 @@ function DiscountEdit({
                         type="submit"
                         className="block w-full p-2 font-bold tracking-wider text-white bg-orange-500 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 hover:bg-orange-600"
                     >
-                        تسجيل
+                        {!data.id || data.id == null ? "تسجيل" : "تعديل"}
                     </button>
                 </div>
             </form>
@@ -469,6 +579,34 @@ function PenaltyEdit({
     penalties,
 }: BasicEditProps & { penalties: Penalty[] | null }) {
     const [error, setError] = useState("");
+    const [selectValue, setSelectValue] = useState<any>(null);
+    const defaultValues = {
+        id: 0,
+        repeated: RepetitionType.DAILY,
+        type: DiscountType.FIXED,
+        title: "",
+        minimum: 0,
+        Maximum: 0,
+        step: 0,
+        name: "",
+        start: 0,
+        end: 0,
+    } as Penalty;
+    const [data, setData] = useState<Penalty>(defaultValues);
+
+    const handleSelectChange = (id: number) => {
+        const findData = penalties?.find((x) => x.id === id);
+        if (!findData || findData === null) return;
+        setSelectValue(findData.id);
+        setData({ ...findData });
+    };
+
+    // handle on change according to input name and setState
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    };
     const handleSubmitPenalty = async (e: SyntheticEvent) => {
         try {
             e.preventDefault();
@@ -517,10 +655,41 @@ function PenaltyEdit({
 
     return (
         <div className="">
-            <form onSubmit={handleSubmitPenalty} className="text-center">
+            <form
+                onSubmit={handleSubmitPenalty}
+                className="text-center max-w-[20rem] min-w-[18rem] mx-auto"
+            >
                 <h1 className="w-full mb-8 text-3xl font-bold tracking-wider text-gray-600">
                     غرامه
                 </h1>
+                <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-customOrange-900">
+                    <button
+                        type="button"
+                        className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
+                        onClick={() => {
+                            setData(defaultValues);
+                            setSelectValue(null);
+                            setError("");
+                        }}
+                    >
+                        جديد
+                        <span className="font-bold text-customOrange-900">
+                            +
+                        </span>
+                    </button>
+                    <SingleSelect
+                        options={
+                            arrayToReactSelectOption(
+                                "title",
+                                "id",
+                                penalties ?? []
+                            ) ?? []
+                        }
+                        onChange={handleSelectChange}
+                        value={selectValue}
+                        name="penalty"
+                    />
+                </div>
                 <div className="p-2 text-center text-red-400 rounded text-md">
                     {error}
                 </div>
@@ -530,7 +699,11 @@ function PenaltyEdit({
                         name="title"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الاسم بالعربي"
-                        onChange={() => setError("")}
+                        value={data.title ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
@@ -539,7 +712,11 @@ function PenaltyEdit({
                         name="name"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الاسم بالانجليزي"
-                        onChange={() => setError("")}
+                        value={data.name ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
@@ -548,7 +725,11 @@ function PenaltyEdit({
                         type="number"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الحد الادنى"
-                        onChange={() => setError("")}
+                        value={data.minimum ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
@@ -557,7 +738,11 @@ function PenaltyEdit({
                         type="number"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الحد الاقصى"
-                        onChange={() => setError("")}
+                        value={data.Maximum ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
@@ -566,11 +751,20 @@ function PenaltyEdit({
                         type="number"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="معدل الخصم"
-                        onChange={() => setError("")}
+                        value={data.step ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
                     <select
+                        value={data.type ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg placeholder:text-gray-400 focus:outline-none focus:border-gray-700"
                         name="type"
                     >
@@ -591,6 +785,11 @@ function PenaltyEdit({
                 </div>
                 <div className="py-2 text-left">
                     <select
+                        value={data.repeated ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg placeholder:text-gray-400 focus:outline-none focus:border-gray-700"
                         name="repeat"
                     >
@@ -616,11 +815,28 @@ function PenaltyEdit({
                 </div>
                 <div className="py-2 text-left">
                     <input
-                        name="startDay"
-                        type="date"
+                        name="start"
+                        type="number"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
-                        placeholder="بداية الخصم"
-                        onChange={() => setError("")}
+                        placeholder="بداية الغرامة"
+                        value={data.start ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
+                    />
+                </div>
+                <div className="py-2 text-left">
+                    <input
+                        name="end"
+                        type="number"
+                        className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
+                        placeholder="نهاية الغرامة"
+                        value={data.end ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2">
@@ -628,7 +844,7 @@ function PenaltyEdit({
                         type="submit"
                         className="block w-full p-2 font-bold tracking-wider text-white bg-orange-500 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 hover:bg-orange-600"
                     >
-                        تسجيل
+                        {!data.id || data.id == null ? "تسجيل" : "تعديل"}
                     </button>
                 </div>
             </form>
@@ -644,6 +860,27 @@ function CategoryEdit({
     categories,
 }: BasicEditProps & { categories: Category[] | null }) {
     const [error, setError] = useState("");
+    const [selectValue, setSelectValue] = useState<any>(null);
+    const defaultValues = {
+        id: 0,
+        title: "",
+        name: "",
+    } as Category;
+    const [data, setData] = useState<Category>(defaultValues);
+
+    const handleSelectChange = (id: number) => {
+        const findData = categories?.find((x) => x.id === id);
+        if (!findData || findData === null) return;
+        setSelectValue(findData.id);
+        setData({ ...findData });
+    };
+
+    // handle on change according to input name and setState
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    };
     const handleSubmitCategory = async (e: SyntheticEvent) => {
         try {
             e.preventDefault();
@@ -692,10 +929,42 @@ function CategoryEdit({
 
     return (
         <div className="">
-            <form onSubmit={handleSubmitCategory} className="text-center">
+            <form
+                onSubmit={handleSubmitCategory}
+                className="text-center max-w-[20rem] min-w-[18rem] mx-auto"
+            >
                 <h1 className="w-full mb-8 text-3xl font-bold tracking-wider text-gray-600">
                     فئة الرياضة
                 </h1>
+
+                <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-customOrange-900">
+                    <button
+                        type="button"
+                        className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
+                        onClick={() => {
+                            setData(defaultValues);
+                            setSelectValue(null);
+                            setError("");
+                        }}
+                    >
+                        جديد
+                        <span className="font-bold text-customOrange-900">
+                            +
+                        </span>
+                    </button>
+                    <SingleSelect
+                        options={
+                            arrayToReactSelectOption(
+                                "title",
+                                "id",
+                                categories ?? []
+                            ) ?? []
+                        }
+                        onChange={handleSelectChange}
+                        value={selectValue}
+                        name="category"
+                    />
+                </div>
                 <div className="p-2 text-center text-red-400 rounded text-md">
                     {error}
                 </div>
@@ -705,7 +974,11 @@ function CategoryEdit({
                         name="title"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الاسم بالعربي"
-                        onChange={() => setError("")}
+                        value={data.title ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
@@ -714,7 +987,11 @@ function CategoryEdit({
                         name="name"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الاسم بالانجليزي"
-                        onChange={() => setError("")}
+                        value={data.name ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2">
@@ -722,7 +999,7 @@ function CategoryEdit({
                         type="submit"
                         className="block w-full p-2 font-bold tracking-wider text-white bg-orange-500 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 hover:bg-orange-600"
                     >
-                        تسجيل
+                        {!data.id || data.id == null ? "تسجيل" : "تعديل"}
                     </button>
                 </div>
             </form>
@@ -739,8 +1016,37 @@ function SportEdit({
     discounts,
     penalties,
     sports,
-}: BasicEditProps & EditProps) {
+}: BasicEditProps & Omit<EditProps, "users">) {
     const [error, setError] = useState("");
+    const [selectValue, setSelectValue] = useState<any>(null);
+    const defaultValues = {
+        id: 0,
+        name: "",
+        title: "",
+        price: 0,
+    } as Sport;
+    const [data, setData] = useState<Sport>(defaultValues);
+    const [penaltyId, setPenaltyId] = useState(0);
+    const [categoryId, setCategoryId] = useState(0);
+    const [discountList, setDiscountList] = useState<number[] | null>(null);
+
+    const handleSelectChange = (id: number) => {
+        const findData = sports?.find((x) => x.id === id);
+        if (!findData || findData === null) return;
+        setSelectValue(findData.id);
+        setData({ ...findData });
+        setCategoryId(findData.categoryId);
+        setPenaltyId(findData.penaltyId ?? 0);
+        setDiscountList((findData.discounts ?? []).map((d) => d.id));
+    };
+
+    // handle on change according to input name and setState
+    const handleChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        console.log("🚀 ~ file: edit.tsx:1043 ~ e:", e);
+        setData({ ...data, [e.target.name]: e.target.value });
+    };
     const handleSubmitSport = async (e: SyntheticEvent) => {
         try {
             e.preventDefault();
@@ -789,12 +1095,45 @@ function SportEdit({
 
     return (
         <div className="">
-            <form onSubmit={handleSubmitSport} className="text-center">
+            <form
+                onSubmit={handleSubmitSport}
+                className="text-center max-w-[20rem] min-w-[18rem] mx-auto"
+            >
                 <h1 className="w-full mb-8 text-3xl font-bold tracking-wider text-gray-600">
                     الرياضة
                 </h1>
-                <Search onChange={() => {}} value={""} />
 
+                <div className="z-30 flex items-center justify-between w-full p-2 bg-white rounded-full shadow shadow-customOrange-900">
+                    <button
+                        type="button"
+                        className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
+                        onClick={() => {
+                            setData(defaultValues);
+                            setSelectValue(null);
+                            setCategoryId(0);
+                            setPenaltyId(0);
+                            setDiscountList(null);
+                            setError("");
+                        }}
+                    >
+                        جديد
+                        <span className="font-bold text-customOrange-900">
+                            +
+                        </span>
+                    </button>
+                    <SingleSelect
+                        options={
+                            arrayToReactSelectOption(
+                                "title",
+                                "id",
+                                sports ?? []
+                            ) ?? []
+                        }
+                        onChange={handleSelectChange}
+                        value={selectValue}
+                        name="sport"
+                    />
+                </div>
                 <div className="p-2 text-center text-red-400 rounded text-md">
                     {error}
                 </div>
@@ -804,7 +1143,11 @@ function SportEdit({
                         name="title"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الاسم بالعربي"
-                        onChange={() => setError("")}
+                        value={data.title ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
@@ -813,7 +1156,11 @@ function SportEdit({
                         name="name"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="الاسم بالانجليزي"
-                        onChange={() => setError("")}
+                        value={data.name ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
                     />
                 </div>
                 <div className="py-2 text-left">
@@ -822,7 +1169,64 @@ function SportEdit({
                         name="price"
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 "
                         placeholder="السعر"
-                        onChange={() => setError("")}
+                        value={data.price ?? ""}
+                        onChange={(e) => {
+                            handleChange(e);
+                            setError("");
+                        }}
+                    />
+                </div>
+                <div className="py-2 text-right">
+                    <SingleSelect
+                        options={
+                            arrayToReactSelectOption(
+                                "title",
+                                "id",
+                                categories ?? []
+                            ) ?? []
+                        }
+                        value={categoryId ?? ""}
+                        onChange={(e) => {
+                            setCategoryId(e);
+                            setError("");
+                        }}
+                        name="categoryId"
+                    />
+                </div>
+                <div className="py-2 text-right">
+                    <SingleSelect
+                        options={
+                            arrayToReactSelectOption(
+                                "title",
+                                "id",
+                                penalties ?? []
+                            ) ?? []
+                        }
+                        value={penaltyId ?? ""}
+                        onChange={(e) => {
+                            setPenaltyId(e);
+                            setError("");
+                        }}
+                        name="penaltyId"
+                    />
+                </div>
+                <div className="py-2 text-right">
+                    <SingleSelect
+                        options={
+                            arrayToReactSelectOption(
+                                "title",
+                                "id",
+                                discounts ?? []
+                            ) ?? []
+                        }
+                        isMulti
+                        value={discountList ?? ""}
+                        onChange={(e) => {
+                            setDiscountList(e);
+                            setError("");
+                        }}
+                        name="discounts"
+                        controlClassName="!rounded-3xl"
                     />
                 </div>
                 <div className="py-2">
@@ -830,7 +1234,7 @@ function SportEdit({
                         type="submit"
                         className="block w-full p-2 font-bold tracking-wider text-white bg-orange-500 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700 hover:bg-orange-600"
                     >
-                        تسجيل
+                        {!data.id || data.id == null ? "تسجيل" : "تعديل"}
                     </button>
                 </div>
             </form>
@@ -844,12 +1248,14 @@ export async function getServerSideProps() {
         const sports = sportsRepo.getAll();
         const discounts = discountsRepo.getAll();
         const penalties = penaltiesRepo.getAll();
+        const users = await usersRepo.getAll();
         return {
             props: {
                 categories: categories ? categories : null,
                 discounts: discounts ? discounts : null,
                 penalties: penalties ? penalties : null,
                 sports: sports ? sports : null,
+                users: users ? users : null,
             },
         };
     } catch (error) {
