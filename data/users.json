@@ -12,16 +12,16 @@
         "password": "$2a$12$LxXfsIl5XFwTsSqtP.c4H.ngAom6qk48EuWGTuYi3ZXbbah8Sr9f.",
         "id": 5966,
         "createdAt": "2023-05-18T15:32:13.249Z",
-        "updatedAt": "2023-05-18T17:49:18.543Z",
+        "updatedAt": "2023-05-20T23:02:49.062Z",
         "enabled": true
     },
     {
         "name": "ali",
         "role": "ADMIN",
-        "password": "$2a$12$F8J3pGuDzR25pIx9zXqKI.3Mn7EU4ebnXnDS.qj77ETNbVlYPhbWG",
+        "password": "$2a$12$QpFlVEBRFxzHYT2N7VdMW.GaZTzvuEFFpZvGH1XBigx/Bo3ix6uIK",
         "id": 5967,
         "createdAt": "2023-05-18T15:44:05.225Z",
-        "updatedAt": "2023-05-18T15:44:05.225Z",
+        "updatedAt": "2023-05-20T22:50:40.210Z",
         "enabled": true
     },
     {
@@ -32,5 +32,14 @@
         "createdAt": "2023-05-20T00:38:38.224Z",
         "updatedAt": "2023-05-20T00:38:38.224Z",
         "enabled": true
+    },
+    {
+        "name": "nehal",
+        "role": "CLIENT",
+        "password": "$2a$12$QNVOHaVv54TrH5bA4LTiNunQU/oZHIBHpjE.a85g498aXipkvBZ5W",
+        "enabled": true,
+        "id": 5969,
+        "createdAt": "2023-05-20T23:03:20.755Z",
+        "updatedAt": "2023-05-20T23:03:20.755Z"
     }
 ]

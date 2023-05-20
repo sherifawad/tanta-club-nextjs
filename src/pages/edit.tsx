@@ -191,7 +191,6 @@ function UserEdit({
         id: 0,
         name: "",
         role: Role.CLIENT,
-        enabled: true,
         password: "",
     } as User;
     const [data, setData] = useState<User>(defaultValues);
@@ -210,6 +209,14 @@ function UserEdit({
     ) => {
         setData({ ...data, [e.target.name]: e.target.value });
     };
+
+    const reset = () => {
+        setData(defaultValues);
+        setSelectValue(null);
+        setUserIsEnabled(true);
+        setError("");
+    };
+
     const handleSubmitSignUp = async (e: SyntheticEvent) => {
         try {
             e.preventDefault();
@@ -222,33 +229,35 @@ function UserEdit({
             )
                 return;
             setSubmitting(true);
-            const target = e.target as typeof e.target & {
-                name: { value: string };
-                password: { value: string };
-                role: { value: string };
-            };
-
-            const name = target.name.value; // typechecks!
-            const password = target.password.value; // typechecks!
-            const role = target.role.value; // typechecks!
             if (
-                !name ||
-                name.length < 0 ||
-                !password ||
-                password.length < 0 ||
-                !role ||
-                !(role in Role) ||
-                role.length < 0
-            )
-                return;
+                !data.name ||
+                data.name.length < 0 ||
+                (data.id === 0 &&
+                    (!data.password || data.password.length < 0)) ||
+                !data.role ||
+                !(data.role in Role) ||
+                data.role.length < 0
+            ) {
+                console.log(
+                    "🚀 ~ file: edit.tsx:257 ~ handleSubmitSignUp ~ data:",
+                    data
+                );
 
-            const data = await fetch("http://localhost:3000/api/signup", {
-                method: "POST",
-                body: JSON.stringify({ name, password, role }),
+                return;
+            }
+
+            const result = await fetch("http://localhost:3000/api/signup", {
+                method: data.id ? "PUT" : "POST",
+                body: JSON.stringify({ ...data, enabled: userIsEnabled }),
                 credentials: "include",
             });
             const { storeUser, message }: { storeUser: User; message: string } =
-                await data.json();
+                await result.json();
+            console.log(
+                "🚀 ~ file: edit.tsx:242 ~ handleSubmitSignUp ~ message:",
+                message
+            );
+            reset();
         } catch (error) {
             setError((error as any).message);
         } finally {
@@ -269,11 +278,7 @@ function UserEdit({
                     <button
                         type="button"
                         className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
-                        onClick={() => {
-                            setData(defaultValues);
-                            setSelectValue(null);
-                            setError("");
-                        }}
+                        onClick={reset}
                     >
                         جديد
                         <span className="font-bold text-customOrange-900">
@@ -329,7 +334,7 @@ function UserEdit({
                             handleChange(e);
                             setError("");
                         }}
-                        className="block w-full px-4 py-2 text-gray-400 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700"
+                        className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700"
                         name="role"
                     >
                         <option

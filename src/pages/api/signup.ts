@@ -14,7 +14,7 @@ export default async function handler(
             return res
                 .status(400)
                 .json({ success: false, message: "Invalid method" });
-        const { name, password, role }: User = JSON.parse(newUser);
+        const { name, password, role, enabled }: User = JSON.parse(newUser);
         if (
             !name ||
             name.length < 0 ||
@@ -35,7 +35,12 @@ export default async function handler(
                     "You must be signed in to view the protected content on this page.",
             });
         }
-        if (user.role === Role.CLIENT) {
+        if (
+            user.role === Role.CLIENT ||
+            user.role === Role.USER ||
+            (user.role === Role.ADMIN &&
+                (role === Role.ADMIN || role === Role.OWNER))
+        ) {
             return res.status(401).send({
                 message: "Un-Authorized",
             });
@@ -58,6 +63,7 @@ export default async function handler(
             name,
             role,
             password: hashedPassword,
+            enabled,
         } as User);
 
         return res.status(201).json({
@@ -65,7 +71,7 @@ export default async function handler(
             message: "User signed up successfuly",
             storeUser,
         });
-    } else if (req.method === "PUT") {
+    } else if (req.method === "PATCH") {
         const user = await getCurrentUser({ req, res });
         if (!user || user == null) {
             return res.status(401).send({
@@ -120,6 +126,51 @@ export default async function handler(
 
         return res.status(200).json({
             success: true,
+        });
+    } else if (req.method === "PUT") {
+        const user = await getCurrentUser({ req, res });
+        if (!user || user == null) {
+            return res.status(401).send({
+                message:
+                    "You must be signed in to view the protected content on this page.",
+            });
+        }
+
+        const { id, password, role, enabled, name }: User = JSON.parse(
+            req.body
+        );
+
+        const userExists = await usersRepo.getById(id);
+        if (!userExists) {
+            return res.status(422).json({
+                success: false,
+                message: "No user exists!",
+            });
+        }
+
+        if (
+            user.role === Role.CLIENT ||
+            user.role === Role.USER ||
+            (user.role === Role.ADMIN &&
+                (role === Role.ADMIN || role === Role.OWNER))
+        ) {
+            return res.status(401).send({
+                message: "Un-Authorized",
+            });
+        }
+        const userUpdated = {
+            name,
+            enabled,
+            role,
+            password: password
+                ? await hashPassword(password)
+                : userExists.password,
+        } as User;
+        await usersRepo.update(id, { ...userUpdated });
+
+        return res.status(200).json({
+            success: true,
+            message: "user updated successfully",
         });
     } else {
         return res

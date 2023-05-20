@@ -194,7 +194,7 @@ function POPUPPassword({
             }
 
             const res = await fetch("http://localhost:3000/api/signup", {
-                method: "PUT",
+                method: "PATCH",
                 body: JSON.stringify({
                     id: Session?.user.id,
                     oldPassword,

@@ -3,6 +3,7 @@ import NextAuth, { DefaultSession, NextAuthOptions } from "next-auth";
 import { usersRepo } from "lib/users-repo";
 import { isPasswordValid } from "lib/hash";
 import { Role } from "types";
+import { z } from "zod";
 
 declare module "next-auth" {
     interface Session extends DefaultSession {
@@ -60,7 +61,7 @@ export const authOptions: NextAuthOptions = {
                 const user = await usersRepo.find(
                     (x) =>
                         x.name.toLocaleLowerCase() ===
-                        username.toLocaleLowerCase()
+                            username.toLocaleLowerCase() && x.enabled
                 );
 
                 if (user == null || !user.enabled) {
