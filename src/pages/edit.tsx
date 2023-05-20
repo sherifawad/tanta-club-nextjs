@@ -6,7 +6,8 @@ import { penaltiesRepo } from "@/lib/penalties-repo";
 import { sportsRepo } from "@/lib/sports-repo";
 import { usersRepo } from "@/lib/users-repo";
 import { arrayToReactSelectOption } from "@/lib/utils";
-import type { Session } from "next-auth";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getServerSession, type Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import {
     ChangeEvent,
@@ -19,13 +20,13 @@ import {
     Category,
     Discount,
     DiscountType,
-    IReactSelectOption,
     Penalty,
     RepetitionType,
     Role,
     Sport,
     User,
 } from "types";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 const TABS = ["رياضة", "نوع", "غرامه", "خصم", "مستخدم"] as const;
 
@@ -54,6 +55,18 @@ const Edit = ({
         useState<(typeof TABS)[number]>("رياضة");
     const { data: Session, status } = useSession();
     const [submitting, setSubmitting] = useState(false);
+    if (
+        status !== "authenticated" ||
+        (status === "authenticated" &&
+            Session.user.role !== Role.OWNER &&
+            Session.user.role !== Role.ADMIN)
+    ) {
+        return (
+            <h1 className="grid min-h-[50vh] place-content-center place-items-center">
+                <p className="text-xl font-bold">غير مصرح</p>
+            </h1>
+        );
+    }
 
     return (
         <div className="container flex flex-col min-h-screen mx-auto">
@@ -182,12 +195,14 @@ function UserEdit({
         password: "",
     } as User;
     const [data, setData] = useState<User>(defaultValues);
+    const [userIsEnabled, setUserIsEnabled] = useState(true);
 
     const handleSelectChange = (id: number) => {
         const findData = users?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
+        setUserIsEnabled(findData.enabled);
     };
     // handle on change according to input name and setState
     const handleChange = (
@@ -338,6 +353,16 @@ function UserEdit({
                             مالك
                         </option>
                     </select>
+                </div>
+                <div className="flex items-center gap-2 py-2">
+                    <input
+                        className="mt-2 accent-customOrange-900"
+                        type="checkbox"
+                        name="hidden"
+                        checked={userIsEnabled}
+                        onChange={(e) => setUserIsEnabled(e.target.checked)}
+                    />
+                    <span className="">مفعل</span>
                 </div>
                 <div className="py-2">
                     <button
@@ -867,12 +892,14 @@ function CategoryEdit({
         name: "",
     } as Category;
     const [data, setData] = useState<Category>(defaultValues);
+    const [categoryIsHidden, setCategoryIsHidden] = useState(false);
 
     const handleSelectChange = (id: number) => {
         const findData = categories?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
+        setCategoryIsHidden(findData.hidden);
     };
 
     // handle on change according to input name and setState
@@ -994,6 +1021,17 @@ function CategoryEdit({
                         }}
                     />
                 </div>
+
+                <div className="flex items-center gap-2 py-2">
+                    <input
+                        className="mt-2 accent-customOrange-900"
+                        type="checkbox"
+                        name="hidden"
+                        checked={!categoryIsHidden}
+                        onChange={(e) => setCategoryIsHidden(!e.target.checked)}
+                    />
+                    <span className="">مفعل</span>
+                </div>
                 <div className="py-2">
                     <button
                         type="submit"
@@ -1026,6 +1064,7 @@ function SportEdit({
         price: 0,
     } as Sport;
     const [data, setData] = useState<Sport>(defaultValues);
+    const [sportIsHidden, setSportIsHidden] = useState(false);
     const [penaltyId, setPenaltyId] = useState(0);
     const [categoryId, setCategoryId] = useState(0);
     const [discountList, setDiscountList] = useState<number[] | null>(null);
@@ -1035,6 +1074,7 @@ function SportEdit({
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
+        setSportIsHidden(findData.hidden);
         setCategoryId(findData.categoryId);
         setPenaltyId(findData.penaltyId ?? 0);
         setDiscountList((findData.discounts ?? []).map((d) => d.id));
@@ -1229,6 +1269,16 @@ function SportEdit({
                         controlClassName="!rounded-3xl"
                     />
                 </div>
+                <div className="flex items-center gap-2 py-2">
+                    <input
+                        className="mt-2 accent-customOrange-900"
+                        type="checkbox"
+                        name="hidden"
+                        checked={!sportIsHidden}
+                        onChange={(e) => setSportIsHidden(!e.target.checked)}
+                    />
+                    <span className="">مفعل</span>
+                </div>
                 <div className="py-2">
                     <button
                         type="submit"
@@ -1242,13 +1292,37 @@ function SportEdit({
     );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({
+    req,
+    res,
+}: GetServerSidePropsContext) {
     try {
+        const session = await getServerSession(req, res, authOptions);
+        if (
+            !session ||
+            (session &&
+                session.user.role !== Role.OWNER &&
+                session.user.role !== Role.ADMIN)
+        ) {
+            return {
+                redirect: {
+                    permanent: false,
+                    destination: "/",
+                },
+            };
+        }
         const categories = categoriesRepo.getAll();
         const sports = sportsRepo.getAll();
         const discounts = discountsRepo.getAll();
         const penalties = penaltiesRepo.getAll();
-        const users = await usersRepo.getAll();
+        const usersList = await usersRepo.getAll();
+        const users = usersList
+            ? session.user.role === Role.OWNER
+                ? usersList.filter((x) => x.role !== Role.OWNER)
+                : usersList.filter(
+                      (x) => x.role !== Role.OWNER && x.role !== Role.ADMIN
+                  )
+            : null;
         return {
             props: {
                 categories: categories ? categories : null,

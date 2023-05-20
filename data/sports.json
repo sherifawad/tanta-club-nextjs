@@ -981,7 +981,7 @@
         "title": "سلاح شهري",
         "price": 200,
         "categoryId": 20,
-        "hidden": true,
+        "hidden": false,
         "discounts": [
             {
                 "id": 3
