@@ -34,18 +34,20 @@ async function create(user: User) {
     // add and save user
     users.push(user);
     await saveData(users);
+    return user;
 }
 
 async function update(id: number, params: { [x in keyof User]: User[x] }) {
     const users = await Users;
     const user = users.find((x) => x.id === id);
-    if (user == null) return;
+    if (!user || user == null) return;
     // set date updated
     user.updatedAt = new Date().toISOString();
 
     // update and save
     Object.assign(user, params);
     await saveData(users);
+    return user;
 }
 
 // prefixed with underscore '_' because 'delete' is a reserved word in javascript

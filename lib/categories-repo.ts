@@ -1,20 +1,31 @@
 import { Category } from "types";
-import fs from "fs";
+
+import { promises as fs } from "fs";
+import path from "path";
 
 // categories in JSON file for simplicity, store in a db for production applications
-let categories = require("data/categories.json") as Category[];
+// let categories = require("data/categories.json") as Category[];
+
+const jsonDirectory = path.join(process.cwd(), "data");
+
+const Categories = (async function Categories() {
+    return JSON.parse(
+        await fs.readFile(jsonDirectory + "/categories.json", "utf8")
+    );
+})() as unknown as Promise<Category[]>;
 
 export const categoriesRepo = {
-    getAll: () => categories,
-    getById: (id: number) => categories.find((x) => x.id === id),
-    find: (x: (x: Category) => boolean) => categories.find(x),
+    getAll: async () => await Categories,
+    getById: async (id: number) => (await Categories).find((x) => x.id === id),
+    find: async (x: (x: Category) => boolean) => (await Categories).find(x),
     create,
     update,
     delete: _delete,
 };
 
-function create(category: Category) {
-    // generate new category id
+async function create(category: Category) {
+    const categories = await Categories;
+
     category.id = categories.length
         ? Math.max(...categories.map((x) => x.id)) + 1
         : 1;
@@ -25,34 +36,41 @@ function create(category: Category) {
 
     // add and save category
     categories.push(category);
-    saveData();
+    await saveData(categories);
+    return category;
 }
 
-function update(id: number, params: { [x in keyof Category]: Category[x] }) {
-    const category = categories.find((x) => x.id === id) as
-        | Category
-        | undefined;
-    if (category == null) return;
+async function update(
+    id: number,
+    params: { [x in keyof Category]: Category[x] }
+) {
+    const categories = await Categories;
+
+    const category = categories.find((x) => x.id === id);
+    if (!category || category == null) return;
 
     // set date updated
     category.updatedAt = new Date().toISOString();
 
     // update and save
     Object.assign(category, params);
-    saveData();
+    await saveData(categories);
+    return category;
 }
 
 // prefixed with underscore '_' because 'delete' is a reserved word in javascript
-function _delete(id: number) {
+async function _delete(id: number) {
+    let categories = await Categories;
+
     // filter out deleted category and save
     categories = categories.filter((x) => x.id !== id);
-    saveData();
+    await saveData(categories);
 }
 
 // private helper functions
 
-function saveData() {
-    fs.writeFileSync(
+async function saveData(categories: Category[]) {
+    await fs.writeFile(
         "data/categories.json",
         JSON.stringify(categories, null, 4)
     );

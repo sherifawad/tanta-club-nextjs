@@ -148,6 +148,15 @@ export default async function handler(
             });
         }
 
+        const userNameExist = await usersRepo.find((x) => x.name === name);
+        if (userNameExist && userNameExist.id !== id) {
+            return res.status(422).json({
+                success: false,
+                message: "A user with the same name already exists!",
+                categoryExist: true,
+            });
+        }
+
         if (
             user.role === Role.CLIENT ||
             user.role === Role.USER ||

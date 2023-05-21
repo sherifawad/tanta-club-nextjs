@@ -29,9 +29,13 @@ import { penaltiesRepo } from "lib/penalties-repo";
 import { arrayToReactSelectOption } from "@/lib/utils";
 import SingleSelect from "@/components/SingleSelect";
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     try {
-        const categories = categoriesRepo.getAll();
+        const categoriesList = await categoriesRepo.getAll();
+
+        const categories = categoriesList
+            ? categoriesList.filter((x) => x.hidden === false)
+            : null;
         const sports = sportsRepo.getAll();
         const discounts = discountsRepo.getAll();
         const penalties = penaltiesRepo.getAll();

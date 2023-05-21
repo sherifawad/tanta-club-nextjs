@@ -27,6 +27,7 @@ import {
     User,
 } from "types";
 import { authOptions } from "./api/auth/[...nextauth]";
+import { title } from "process";
 
 const TABS = ["رياضة", "نوع", "غرامه", "خصم", "مستخدم"] as const;
 
@@ -185,6 +186,7 @@ function UserEdit({
     status,
     users,
 }: BasicEditProps & { users: User[] | null }) {
+    const [usersList, setUsersList] = useState(users ?? []);
     const [error, setError] = useState("");
     const [selectValue, setSelectValue] = useState<any>(null);
     const defaultValues = {
@@ -207,7 +209,7 @@ function UserEdit({
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value });
+        setData({ ...data, [e.target.name]: e.target.value.trim() });
     };
 
     const reset = () => {
@@ -238,11 +240,6 @@ function UserEdit({
                 !(data.role in Role) ||
                 data.role.length < 0
             ) {
-                console.log(
-                    "🚀 ~ file: edit.tsx:257 ~ handleSubmitSignUp ~ data:",
-                    data
-                );
-
                 return;
             }
 
@@ -251,13 +248,31 @@ function UserEdit({
                 body: JSON.stringify({ ...data, enabled: userIsEnabled }),
                 credentials: "include",
             });
-            const { storeUser, message }: { storeUser: User; message: string } =
-                await result.json();
-            console.log(
-                "🚀 ~ file: edit.tsx:242 ~ handleSubmitSignUp ~ message:",
-                message
-            );
-            reset();
+            const {
+                storeUser,
+                message,
+                success,
+            }: {
+                success: boolean;
+                storeUser: User;
+                message: string;
+            } = await result.json();
+            if (success) {
+                if (storeUser) {
+                    setUsersList((prev) => [...prev, storeUser]);
+                } else {
+                    setUsersList((prev) =>
+                        prev?.map((user) => {
+                            if (user.id === data.id) {
+                                return { ...data, enabled: userIsEnabled };
+                            } else {
+                                return user;
+                            }
+                        })
+                    );
+                }
+                reset();
+            }
         } catch (error) {
             setError((error as any).message);
         } finally {
@@ -287,11 +302,8 @@ function UserEdit({
                     </button>
                     <SingleSelect
                         options={
-                            arrayToReactSelectOption(
-                                "name",
-                                "id",
-                                users ?? []
-                            ) ?? []
+                            arrayToReactSelectOption("name", "id", usersList) ??
+                            []
                         }
                         onChange={handleSelectChange}
                         value={selectValue}
@@ -889,6 +901,7 @@ function CategoryEdit({
     status,
     categories,
 }: BasicEditProps & { categories: Category[] | null }) {
+    const [categoryList, setCategoryList] = useState(categories ?? []);
     const [error, setError] = useState("");
     const [selectValue, setSelectValue] = useState<any>(null);
     const defaultValues = {
@@ -899,8 +912,14 @@ function CategoryEdit({
     const [data, setData] = useState<Category>(defaultValues);
     const [categoryIsHidden, setCategoryIsHidden] = useState(false);
 
+    const reset = () => {
+        setData(defaultValues);
+        setSelectValue(null);
+        setCategoryIsHidden(false);
+        setError("");
+    };
     const handleSelectChange = (id: number) => {
-        const findData = categories?.find((x) => x.id === id);
+        const findData = categoryList?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
@@ -911,7 +930,7 @@ function CategoryEdit({
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value });
+        setData({ ...data, [e.target.name]: e.target.value.trim() });
     };
     const handleSubmitCategory = async (e: SyntheticEvent) => {
         try {
@@ -922,36 +941,51 @@ function CategoryEdit({
                 (status === "authenticated" &&
                     Session?.user.role !== Role.ADMIN &&
                     Session?.user.role !== Role.OWNER)
-            )
+            ) {
                 return;
+            }
             setSubmitting(true);
-            const target = e.target as typeof e.target & {
-                name: { value: string };
-                password: { value: string };
-                role: { value: string };
-            };
-
-            const name = target.name.value; // typechecks!
-            const password = target.password.value; // typechecks!
-            const role = target.role.value; // typechecks!
             if (
-                !name ||
-                name.length < 0 ||
-                !password ||
-                password.length < 0 ||
-                !role ||
-                !(role in Role) ||
-                role.length < 0
+                !data.name ||
+                data.name.length < 0 ||
+                !data.title ||
+                data.title.length < 0
             )
                 return;
 
-            const data = await fetch("http://localhost:3000/api/signup", {
-                method: "POST",
-                body: JSON.stringify({ name, password, role }),
-                credentials: "include",
-            });
-            const { storeUser, message }: { storeUser: User; message: string } =
-                await data.json();
+            const response = await fetch(
+                "http://localhost:3000/api/categories",
+                {
+                    method: data.id ? "PUT" : "POST",
+                    body: JSON.stringify({ ...data, hidden: categoryIsHidden }),
+                    credentials: "include",
+                }
+            );
+            const {
+                message,
+                success,
+                storeCategory,
+            }: {
+                success: boolean;
+                message: string;
+                storeCategory: Category | undefined;
+            } = await response.json();
+            if (success) {
+                if (storeCategory) {
+                    setCategoryList((prev) => [...prev, storeCategory]);
+                } else {
+                    setCategoryList((prev) =>
+                        prev?.map((cat) => {
+                            if (cat.id === data.id) {
+                                return { ...data, hidden: categoryIsHidden };
+                            } else {
+                                return cat;
+                            }
+                        })
+                    );
+                }
+                reset();
+            }
         } catch (error) {
             setError((error as any).message);
         } finally {
@@ -973,11 +1007,7 @@ function CategoryEdit({
                     <button
                         type="button"
                         className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
-                        onClick={() => {
-                            setData(defaultValues);
-                            setSelectValue(null);
-                            setError("");
-                        }}
+                        onClick={reset}
                     >
                         جديد
                         <span className="font-bold text-customOrange-900">
@@ -989,7 +1019,7 @@ function CategoryEdit({
                             arrayToReactSelectOption(
                                 "title",
                                 "id",
-                                categories ?? []
+                                categoryList
                             ) ?? []
                         }
                         onChange={handleSelectChange}
@@ -1316,7 +1346,7 @@ export async function getServerSideProps({
                 },
             };
         }
-        const categories = categoriesRepo.getAll();
+        const categories = await categoriesRepo.getAll();
         const sports = sportsRepo.getAll();
         const discounts = discountsRepo.getAll();
         const penalties = penaltiesRepo.getAll();
