@@ -401,7 +401,10 @@ function DiscountEdit({
     status,
     discounts,
 }: BasicEditProps & { discounts: Discount[] | null }) {
-    const [discountError, setDiscountError] = useState("");
+    const [discountsList, setDiscountsList] = useState(discounts ?? []);
+    const [error, setError] = useState("");
+    const [enabled, setEnabled] = useState(true);
+
     const [selectValue, setSelectValue] = useState<any>(null);
     const defaultValues = {
         id: 0,
@@ -413,68 +416,97 @@ function DiscountEdit({
         name: "",
     } as Discount;
     const [data, setData] = useState<Discount>(defaultValues);
-
+    const reset = () => {
+        setData(defaultValues);
+        setSelectValue(null);
+        setEnabled(true);
+        setError("");
+    };
     const handleSelectChange = (id: number) => {
         const findData = discounts?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
+
+        setEnabled(findData.enabled);
     };
 
     // handle on change according to input name and setState
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value });
+        setData({ ...data, [e.target.name]: e.target.value.trim() });
     };
-    // const handleSubmitDiscount = async (e: SyntheticEvent) => {
-    //     try {
-    //         e.preventDefault();
-    //         if (submitting) return;
-    //         if (
-    //             status !== "authenticated" ||
-    //             (status === "authenticated" &&
-    //                 Session?.user.role !== Role.ADMIN &&
-    //                 Session?.user.role !== Role.OWNER)
-    //         )
-    //             return;
-    //         setSubmitting(true);
-    //         const target = e.target as typeof e.target & {
-    //             name: { value: string };
-    //             role: { value: string };
-    //         };
+    const handleSubmitDiscount = async (e: SyntheticEvent) => {
+        try {
+            e.preventDefault();
+            if (submitting) return;
+            if (
+                status !== "authenticated" ||
+                (status === "authenticated" &&
+                    Session?.user.role !== Role.ADMIN &&
+                    Session?.user.role !== Role.OWNER)
+            )
+                return;
+            setSubmitting(true);
+            if (
+                !data.name ||
+                data.name.length < 0 ||
+                !data.title ||
+                data.title.length < 0 ||
+                !data.type ||
+                !(data.type in DiscountType) ||
+                data.type.length < 0 ||
+                data.minimum === 0 ||
+                data.Maximum === 0
+            )
+                return;
 
-    //         const name = target.name.value; // typechecks!
-    //         const role = target.role.value; // typechecks!
-    //         if (
-    //             !name ||
-    //             name.length < 0 ||
-    //             !password ||
-    //             password.length < 0 ||
-    //             !role ||
-    //             !(role in Role) ||
-    //             role.length < 0
-    //         )
-    //             return;
+            const response = await fetch(
+                "http://localhost:3000/api/discounts",
+                {
+                    method: data.id ? "PUT" : "POST",
+                    body: JSON.stringify({ ...data, enabled }),
+                    credentials: "include",
+                }
+            );
+            const {
+                storeDiscount,
+                message,
+                success,
+            }: {
+                success: boolean;
+                storeDiscount: Discount;
+                message: string;
+            } = await response.json();
 
-    //         const data = await fetch("http://localhost:3000/api/signup", {
-    //             method: "POST",
-    //             body: JSON.stringify({ name, role }),
-    //             credentials: "include",
-    //         });
-    //         const { storeUser, message }: { storeUser: User; message: string } =
-    //             await data.json();
-    //     } catch (error) {
-    //         setDiscountError((error as any).message);
-    //     } finally {
-    //         setSubmitting(false);
-    //     }
-    // };
+            if (success) {
+                if (storeDiscount) {
+                    setDiscountsList((prev) => [...prev, storeDiscount]);
+                } else {
+                    setDiscountsList((prev) =>
+                        prev?.map((discount) => {
+                            if (discount.id === data.id) {
+                                return { ...data, enabled };
+                            } else {
+                                return discount;
+                            }
+                        })
+                    );
+                }
+                reset();
+            }
+        } catch (error) {
+            setError((error as any).message);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
         <div className="">
             <form
-                // onSubmit={handleSubmitDiscount}
+                onSubmit={handleSubmitDiscount}
                 className="text-center max-w-[20rem] min-w-[18rem] mx-auto"
             >
                 <h1 className="w-full mb-8 text-3xl font-bold tracking-wider text-gray-600">
@@ -484,11 +516,7 @@ function DiscountEdit({
                     <button
                         type="button"
                         className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
-                        onClick={() => {
-                            setData(defaultValues);
-                            setSelectValue(null);
-                            setDiscountError("");
-                        }}
+                        onClick={reset}
                     >
                         جديد
                         <span className="font-bold text-customOrange-900">
@@ -500,7 +528,7 @@ function DiscountEdit({
                             arrayToReactSelectOption(
                                 "title",
                                 "id",
-                                discounts ?? []
+                                discountsList ?? []
                             ) ?? []
                         }
                         onChange={handleSelectChange}
@@ -509,7 +537,7 @@ function DiscountEdit({
                     />
                 </div>
                 <div className="p-2 text-center text-red-400 rounded text-md">
-                    {discountError}
+                    {error}
                 </div>
                 <div className="py-2 text-left">
                     <input
@@ -520,7 +548,7 @@ function DiscountEdit({
                         value={data.title ?? ""}
                         onChange={(e) => {
                             handleChange(e);
-                            setDiscountError("");
+                            setError("");
                         }}
                     />
                 </div>
@@ -533,7 +561,7 @@ function DiscountEdit({
                         value={data.name}
                         onChange={(e) => {
                             handleChange(e);
-                            setDiscountError("");
+                            setError("");
                         }}
                     />
                 </div>
@@ -546,7 +574,7 @@ function DiscountEdit({
                         value={data.minimum}
                         onChange={(e) => {
                             handleChange(e);
-                            setDiscountError("");
+                            setError("");
                         }}
                     />
                 </div>
@@ -559,7 +587,7 @@ function DiscountEdit({
                         value={data.Maximum}
                         onChange={(e) => {
                             handleChange(e);
-                            setDiscountError("");
+                            setError("");
                         }}
                     />
                 </div>
@@ -572,7 +600,7 @@ function DiscountEdit({
                         value={data.step}
                         onChange={(e) => {
                             handleChange(e);
-                            setDiscountError("");
+                            setError("");
                         }}
                     />
                 </div>
@@ -581,7 +609,7 @@ function DiscountEdit({
                         value={data.type}
                         onChange={(e) => {
                             handleChange(e);
-                            setDiscountError("");
+                            setError("");
                         }}
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg placeholder:text-gray-400 focus:outline-none focus:border-gray-700"
                         name="type"
@@ -599,6 +627,16 @@ function DiscountEdit({
                             خصم نسبة
                         </option>
                     </select>
+                </div>
+                <div className="flex items-center gap-2 py-2">
+                    <input
+                        className="mt-2 accent-customOrange-900"
+                        type="checkbox"
+                        name="hidden"
+                        checked={enabled}
+                        onChange={(e) => setEnabled(e.target.checked)}
+                    />
+                    <span className="">مفعل</span>
                 </div>
                 <div className="py-2">
                     <button
@@ -620,6 +658,9 @@ function PenaltyEdit({
     status,
     penalties,
 }: BasicEditProps & { penalties: Penalty[] | null }) {
+    const [penaltiesList, setPenaltiesList] = useState(penalties ?? []);
+    const [enabled, setEnabled] = useState(true);
+
     const [error, setError] = useState("");
     const [selectValue, setSelectValue] = useState<any>(null);
     const defaultValues = {
@@ -636,18 +677,25 @@ function PenaltyEdit({
     } as Penalty;
     const [data, setData] = useState<Penalty>(defaultValues);
 
+    const reset = () => {
+        setData(defaultValues);
+        setSelectValue(null);
+        setEnabled(true);
+        setError("");
+    };
     const handleSelectChange = (id: number) => {
         const findData = penalties?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
+        setEnabled(findData.enabled);
     };
 
     // handle on change according to input name and setState
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value });
+        setData({ ...data, [e.target.name]: e.target.value.trim() });
     };
     const handleSubmitPenalty = async (e: SyntheticEvent) => {
         try {
@@ -661,33 +709,57 @@ function PenaltyEdit({
             )
                 return;
             setSubmitting(true);
-            const target = e.target as typeof e.target & {
-                name: { value: string };
-                password: { value: string };
-                role: { value: string };
-            };
-
-            const name = target.name.value; // typechecks!
-            const password = target.password.value; // typechecks!
-            const role = target.role.value; // typechecks!
             if (
-                !name ||
-                name.length < 0 ||
-                !password ||
-                password.length < 0 ||
-                !role ||
-                !(role in Role) ||
-                role.length < 0
+                !data.name ||
+                data.name.length < 0 ||
+                !data.title ||
+                data.title.length < 0 ||
+                !data.repeated ||
+                !(data.repeated in RepetitionType) ||
+                data.repeated.length < 0 ||
+                !data.type ||
+                !(data.type in DiscountType) ||
+                data.type.length < 0 ||
+                data.minimum === 0 ||
+                data.Maximum === 0 ||
+                data.start === 0
             )
                 return;
 
-            const data = await fetch("http://localhost:3000/api/signup", {
-                method: "POST",
-                body: JSON.stringify({ name, password, role }),
-                credentials: "include",
-            });
-            const { storeUser, message }: { storeUser: User; message: string } =
-                await data.json();
+            const response = await fetch(
+                "http://localhost:3000/api/penalties",
+                {
+                    method: data.id ? "PUT" : "POST",
+                    body: JSON.stringify({ ...data, enabled }),
+                    credentials: "include",
+                }
+            );
+            const {
+                storePenalty,
+                message,
+                success,
+            }: {
+                success: boolean;
+                storePenalty: Penalty;
+                message: string;
+            } = await response.json();
+
+            if (success) {
+                if (storePenalty) {
+                    setPenaltiesList((prev) => [...prev, storePenalty]);
+                } else {
+                    setPenaltiesList((prev) =>
+                        prev?.map((penalty) => {
+                            if (penalty.id === data.id) {
+                                return { ...data, enabled };
+                            } else {
+                                return penalty;
+                            }
+                        })
+                    );
+                }
+                reset();
+            }
         } catch (error) {
             setError((error as any).message);
         } finally {
@@ -708,11 +780,7 @@ function PenaltyEdit({
                     <button
                         type="button"
                         className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
-                        onClick={() => {
-                            setData(defaultValues);
-                            setSelectValue(null);
-                            setError("");
-                        }}
+                        onClick={reset}
                     >
                         جديد
                         <span className="font-bold text-customOrange-900">
@@ -724,7 +792,7 @@ function PenaltyEdit({
                             arrayToReactSelectOption(
                                 "title",
                                 "id",
-                                penalties ?? []
+                                penaltiesList
                             ) ?? []
                         }
                         onChange={handleSelectChange}
@@ -880,6 +948,17 @@ function PenaltyEdit({
                             setError("");
                         }}
                     />
+                </div>
+
+                <div className="flex items-center gap-2 py-2">
+                    <input
+                        className="mt-2 accent-customOrange-900"
+                        type="checkbox"
+                        name="hidden"
+                        checked={enabled}
+                        onChange={(e) => setEnabled(e.target.checked)}
+                    />
+                    <span className="">مفعل</span>
                 </div>
                 <div className="py-2">
                     <button
@@ -1090,6 +1169,7 @@ function SportEdit({
     penalties,
     sports,
 }: BasicEditProps & Omit<EditProps, "users">) {
+    const [sportsList, setSportsList] = useState(sports ?? []);
     const [error, setError] = useState("");
     const [selectValue, setSelectValue] = useState<any>(null);
     const defaultValues = {
@@ -1119,8 +1199,17 @@ function SportEdit({
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        console.log("🚀 ~ file: edit.tsx:1043 ~ e:", e);
-        setData({ ...data, [e.target.name]: e.target.value });
+        setData({ ...data, [e.target.name]: e.target.value.trim() });
+    };
+
+    const reset = () => {
+        setData(defaultValues);
+        setSelectValue(null);
+        setSportIsHidden(false);
+        setError("");
+        setCategoryId(0);
+        setPenaltyId(0);
+        setDiscountList(null);
     };
     const handleSubmitSport = async (e: SyntheticEvent) => {
         try {
@@ -1134,33 +1223,61 @@ function SportEdit({
             )
                 return;
             setSubmitting(true);
-            const target = e.target as typeof e.target & {
-                name: { value: string };
-                password: { value: string };
-                role: { value: string };
-            };
-
-            const name = target.name.value; // typechecks!
-            const password = target.password.value; // typechecks!
-            const role = target.role.value; // typechecks!
             if (
-                !name ||
-                name.length < 0 ||
-                !password ||
-                password.length < 0 ||
-                !role ||
-                !(role in Role) ||
-                role.length < 0
+                !data.name ||
+                data.name.length < 0 ||
+                !data.title ||
+                data.title.length < 0 ||
+                data.categoryId === 0 ||
+                data.price === 0
             )
                 return;
 
-            const data = await fetch("http://localhost:3000/api/signup", {
-                method: "POST",
-                body: JSON.stringify({ name, password, role }),
+            const response = await fetch("http://localhost:3000/api/sports", {
+                method: data.id ? "PUT" : "POST",
+                body: JSON.stringify({
+                    ...data,
+                    hidden: sportIsHidden,
+                    categoryId,
+                    penaltyId,
+                    discounts: discountList,
+                }),
                 credentials: "include",
             });
-            const { storeUser, message }: { storeUser: User; message: string } =
-                await data.json();
+            const {
+                storeSport,
+                message,
+                success,
+            }: {
+                success: boolean;
+                storeSport: Sport;
+                message: string;
+            } = await response.json();
+
+            if (success) {
+                if (storeSport) {
+                    setSportsList((prev) => [...prev, storeSport]);
+                } else {
+                    setSportsList((prev) =>
+                        prev?.map((sport) => {
+                            if (sport.id === data.id) {
+                                return {
+                                    ...data,
+                                    hidden: sportIsHidden,
+                                    categoryId,
+                                    penaltyId,
+                                    discounts: discountList?.map(
+                                        (discountId) => ({ id: discountId })
+                                    ),
+                                };
+                            } else {
+                                return sport;
+                            }
+                        })
+                    );
+                }
+                reset();
+            }
         } catch (error) {
             setError((error as any).message);
         } finally {
@@ -1182,14 +1299,7 @@ function SportEdit({
                     <button
                         type="button"
                         className="flex gap-2 pl-2 mx-2 border-l-2 border-l-customGray-900 whitespace-nowrap"
-                        onClick={() => {
-                            setData(defaultValues);
-                            setSelectValue(null);
-                            setCategoryId(0);
-                            setPenaltyId(0);
-                            setDiscountList(null);
-                            setError("");
-                        }}
+                        onClick={reset}
                     >
                         جديد
                         <span className="font-bold text-customOrange-900">
@@ -1201,7 +1311,7 @@ function SportEdit({
                             arrayToReactSelectOption(
                                 "title",
                                 "id",
-                                sports ?? []
+                                sportsList ?? []
                             ) ?? []
                         }
                         onChange={handleSelectChange}

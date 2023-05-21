@@ -61,6 +61,7 @@ export type Discount = {
     endMonth: number | null;
     createdAt: string;
     updatedAt: string;
+    enabled: boolean;
 };
 
 /**
@@ -81,6 +82,7 @@ export type Penalty = {
     Maximum: number;
     createdAt: string;
     updatedAt: string;
+    enabled: boolean;
 };
 /**
  * Model User

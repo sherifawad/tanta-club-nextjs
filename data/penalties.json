@@ -8,6 +8,7 @@
         "name": "swimmingDelayPenalty",
         "title": "غرامة تأخير دفع سباحة",
         "repeated": "DAILY",
-        "start": 11
+        "start": 11,
+        "enabled": true
     }
 ]
