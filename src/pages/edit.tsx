@@ -1457,9 +1457,9 @@ export async function getServerSideProps({
             };
         }
         const categories = await categoriesRepo.getAll();
-        const sports = sportsRepo.getAll();
-        const discounts = discountsRepo.getAll();
-        const penalties = penaltiesRepo.getAll();
+        const sports = await sportsRepo.getAll();
+        const discounts = await discountsRepo.getAll();
+        const penalties = await penaltiesRepo.getAll();
         const usersList = await usersRepo.getAll();
         const users = usersList
             ? session.user.role === Role.OWNER

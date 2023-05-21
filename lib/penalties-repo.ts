@@ -1,19 +1,30 @@
 import { Penalty } from "types";
-import fs from "fs";
+
+import { promises as fs } from "fs";
+import path from "path";
 
 // penalties in JSON file for simplicity, store in a db for production applications
-let penalties = require("data/penalties.json") as Penalty[];
+// let penalties = require("data/penalties.json") as Penalty[];
+
+const jsonDirectory = path.join(process.cwd(), "data");
+
+const Penalties = (async function Penalties() {
+    return JSON.parse(
+        await fs.readFile(jsonDirectory + "/penalties.json", "utf8")
+    );
+})() as unknown as Promise<Penalty[]>;
 
 export const penaltiesRepo = {
-    getAll: () => penalties,
-    getById: (id: number) => penalties.find((x) => x.id === id),
-    find: (x: (x: Penalty) => boolean) => penalties.find(x),
+    getAll: async () => await Penalties,
+    getById: async (id: number) => (await Penalties).find((x) => x.id === id),
+    find: async (x: (x: Penalty) => boolean) => (await Penalties).find(x),
     create,
     update,
     delete: _delete,
 };
 
-function create(penalty: Penalty) {
+async function create(penalty: Penalty) {
+    const penalties = await Penalties;
     // generate new penalty id
     penalty.id = penalties.length
         ? Math.max(...penalties.map((x) => x.id)) + 1
@@ -25,10 +36,15 @@ function create(penalty: Penalty) {
 
     // add and save penalty
     penalties.push(penalty);
-    saveData();
+    await saveData(penalties);
+    return penalty;
 }
 
-function update(id: number, params: { [x in keyof Penalty]: Penalty[x] }) {
+async function update(
+    id: number,
+    params: { [x in keyof Penalty]: Penalty[x] }
+) {
+    const penalties = await Penalties;
     const penalty = penalties.find((x) => x.id === id) as Penalty | undefined;
     if (penalty == null) return;
 
@@ -37,18 +53,23 @@ function update(id: number, params: { [x in keyof Penalty]: Penalty[x] }) {
 
     // update and save
     Object.assign(penalty, params);
-    saveData();
+    await saveData(penalties);
+    return penalty;
 }
 
 // prefixed with underscore '_' because 'delete' is a reserved word in javascript
-function _delete(id: number) {
+async function _delete(id: number) {
+    let penalties = await Penalties;
     // filter out deleted penalty and save
     penalties = penalties.filter((x) => x.id !== id);
-    saveData();
+    await saveData(penalties);
 }
 
 // private helper functions
 
-function saveData() {
-    fs.writeFileSync("data/penalties.json", JSON.stringify(penalties, null, 4));
+async function saveData(penalties: Penalty[]) {
+    await fs.writeFile(
+        "data/penalties.json",
+        JSON.stringify(penalties, null, 4)
+    );
 }

@@ -1,49 +1,55 @@
 import { Discount, Sport } from "types";
-import fs from "fs";
+import { promises as fs } from "fs";
+import path from "path";
 import { categoriesRepo } from "./categories-repo";
 import { penaltiesRepo } from "./penalties-repo";
 import { discountsRepo } from "./discounts-repo";
 
 // sports in JSON file for simplicity, store in a db for production applications
-let sports = require("data/sports.json") as Sport[];
+// let sports = require("data/sports.json") as Sport[];
+
+const jsonDirectory = path.join(process.cwd(), "data");
+
+const Sports = (async function Sports() {
+    return JSON.parse(
+        await fs.readFile(jsonDirectory + "/categories.json", "utf8")
+    );
+})() as unknown as Promise<Sport[]>;
 
 export const sportsRepo = {
-    getAll: () =>
-        sports.map((sport) => {
+    getAll: async () =>
+        (await Sports).map(async (sport) => {
             if (sport.penaltyId) {
-                sport.penalty = penaltiesRepo.getById(sport.penaltyId);
+                sport.penalty = await penaltiesRepo.getById(sport.penaltyId);
             }
             if (sport.discounts != null && sport.discounts.length > 0) {
                 let discountList: Discount[] = [];
-                sport.discounts.forEach((discount) => {
-                    discountList.push(discountsRepo.getById(discount.id)!);
+                sport.discounts.forEach(async (discount) => {
+                    const discountExist = await discountsRepo.getById(
+                        discount?.id
+                    );
+                    if (discountExist) {
+                        discountList.push(discountExist);
+                    }
                 });
                 sport.discounts = discountList;
             }
             return sport;
         }),
-    getById: (id: number) => sports.find((x) => x.id === id),
-    find: (x: (x: Sport) => boolean) => sports.find(x),
+    getById: async (id: number) => (await Sports).find((x) => x.id === id),
+    find: async (x: (x: Sport) => boolean) => (await Sports).find(x),
     create,
     update,
     delete: _delete,
 };
 
-function create(sport: Sport) {
-    // check for categoryId is existing
-    const getCategory = categoriesRepo.getById(sport.categoryId);
-    if (getCategory == null) return;
-    // check for penaltyId is existing
-    if (sport.penaltyId != null) {
-        const getPenalty = penaltiesRepo.getById(sport.penaltyId);
-        if (getPenalty == null) return;
-    }
-    if (sport.discounts != null && sport.discounts.length > 0) {
-        const allExists = sport.discounts.every(
-            (discount) => discountsRepo.getById(discount.id) != null
-        );
-        if (allExists) return;
-    }
+async function create(sport: Sport) {
+    const sports = await Sports;
+
+    const connectedSport = await connectSportToExistingData(sport);
+    if (connectedSport == null) return;
+    sport = connectedSport;
+
     // generate new sport id
     sport.id = sports.length ? Math.max(...sports.map((x) => x.id)) + 1 : 1;
 
@@ -53,30 +59,59 @@ function create(sport: Sport) {
 
     // add and save sport
     sports.push(sport);
-    saveData();
+    await saveData(sports);
+    return sport;
 }
 
-function update(id: number, params: { [x in keyof Sport]: Sport[x] }) {
-    const sport = sports.find((x) => x.id === id) as Sport | undefined;
+async function update(id: number, params: { [x in keyof Sport]: Sport[x] }) {
+    const sports = await Sports;
+
+    let sport = sports.find((x) => x.id === id) as Sport | undefined;
     if (sport == null) return;
+
+    const connectedSport = await connectSportToExistingData(sport);
+    if (connectedSport == null) return;
+    sport = connectedSport;
 
     // set date updated
     sport.updatedAt = new Date().toISOString();
 
     // update and save
     Object.assign(sport, params);
-    saveData();
+    await saveData(sports);
+    return sport;
 }
 
 // prefixed with underscore '_' because 'delete' is a reserved word in javascript
-function _delete(id: number) {
+async function _delete(id: number) {
+    let sports = await Sports;
+
     // filter out deleted sport and save
     sports = sports.filter((x) => x.id !== id);
-    saveData();
+    await saveData(sports);
+}
+
+async function connectSportToExistingData(sport: Sport) {
+    // check for categoryId is existing
+    const getCategory = await categoriesRepo.getById(sport.categoryId);
+    if (getCategory == null) return null;
+    // check for penaltyId is existing
+    if (sport.penaltyId != null) {
+        const getPenalty = await penaltiesRepo.getById(sport.penaltyId);
+        if (getPenalty == null) return null;
+    }
+    if (sport.discounts != null && sport.discounts.length > 0) {
+        const allExists = sport.discounts.every(
+            async (discount) =>
+                (await discountsRepo.getById(discount.id)) != null
+        );
+        if (!allExists) return null;
+    }
+    return sport;
 }
 
 // private helper functions
 
-function saveData() {
-    fs.writeFileSync("data/sports.json", JSON.stringify(sports, null, 4));
+async function saveData(sports: Sport[]) {
+    fs.writeFile("data/sports.json", JSON.stringify(sports, null, 4));
 }
