@@ -1,3 +1,4 @@
+import { getBaseUrl } from "@/lib/utils";
 import { Dialog, Menu, Transition } from "@headlessui/react";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
@@ -193,7 +194,7 @@ function POPUPPassword({
                 return;
             }
 
-            const res = await fetch("http://localhost:3000/api/signup", {
+            const res = await fetch(`${getBaseUrl()}/api/signup`, {
                 method: "PATCH",
                 body: JSON.stringify({
                     id: Session?.user.id,
