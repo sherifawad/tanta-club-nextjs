@@ -3,6 +3,16 @@ import { error } from "console";
 import { categoriesRepo } from "lib/categories-repo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Category, Role } from "types";
+import { promises as fs } from "fs";
+import path from "path";
+import { dataFolder } from "@/lib/utils";
+
+// categories in JSON file for simplicity, store in a db for production applications
+// let categories = require("data/categories.json") as Category[];
+
+// const jsonDirectory = path.join(process.cwd(), "data");
+// const jsonDirectory = path.join(process.cwd(), "tmp", "data");
+const dataFilePath = path.join(dataFolder(), "categories.json");
 
 export default async function handler(
     req: NextApiRequest,
@@ -90,11 +100,20 @@ export default async function handler(
                     categoryExist: true,
                 });
             }
-            await categoriesRepo.update(id, {
+            const categories = await categoriesRepo.update(id, {
                 name,
                 title,
                 hidden,
             } as Category);
+
+            await fs.writeFile(
+                `${dataFilePath}`,
+                JSON.stringify(categories, null, 4),
+                {
+                    encoding: "utf8",
+                    flag: "w",
+                }
+            );
 
             return res.status(200).json({
                 success: true,

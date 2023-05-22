@@ -55,6 +55,6 @@ export function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
 export function dataFolder() {
-    // return path.join(process.cwd(), "public", "data");
-    return path.join(tmpdir(), "data");
+    return path.join(process.cwd(), "data");
+    // return path.join(tmpdir(), "data");
 }

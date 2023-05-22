@@ -56,8 +56,8 @@ async function update(
 
     // update and save
     Object.assign(category, params);
-    await saveData(categories);
-    return category;
+    // await saveData(categories);
+    return categories;
 }
 
 // prefixed with underscore '_' because 'delete' is a reserved word in javascript

@@ -32,7 +32,8 @@ import SingleSelect from "@/components/SingleSelect";
 export async function getServerSideProps() {
     try {
         await fetch(`${getBaseUrl()}/api/temp`, {
-            method: "DELETE",
+            method: "PATCH",
+            body: null,
         });
         const categoriesList = await categoriesRepo.getAll();
 
@@ -51,6 +52,14 @@ export async function getServerSideProps() {
             },
         };
     } catch (error) {
+        console.log(
+            "🚀 ~ file: index.tsx:54 ~ getServerSideProps ~ error:",
+            error
+        );
+        await fetch(`${getBaseUrl()}/api/temp`, {
+            method: "PATCH",
+            body: null,
+        });
         return {
             props: {},
         };
