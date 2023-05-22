@@ -8,7 +8,7 @@ import { discountsRepo } from "./discounts-repo";
 // sports in JSON file for simplicity, store in a db for production applications
 // let sports = require("data/sports.json") as Sport[];
 
-const jsonDirectory = path.join(process.cwd(), "tmp", "data");
+const jsonDirectory = path.join(process.cwd(), "tmp");
 
 const Sports = (async function Sports() {
     return JSON.parse(

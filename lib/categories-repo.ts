@@ -7,7 +7,7 @@ import path from "path";
 // let categories = require("data/categories.json") as Category[];
 
 // const jsonDirectory = path.join(process.cwd(), "data");
-const jsonDirectory = path.join(process.cwd(), "tmp", "data");
+const jsonDirectory = path.join(process.cwd(), "tmp");
 
 const Categories = (async function Categories() {
     return JSON.parse(

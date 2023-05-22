@@ -6,7 +6,7 @@ import path from "path";
 // penalties in JSON file for simplicity, store in a db for production applications
 // let penalties = require("data/penalties.json") as Penalty[];
 
-const jsonDirectory = path.join(process.cwd(), "tmp", "data");
+const jsonDirectory = path.join(process.cwd(), "tmp");
 
 const Penalties = (async function Penalties() {
     return JSON.parse(

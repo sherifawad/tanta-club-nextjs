@@ -5,7 +5,7 @@ import path from "path";
 // discounts in JSON file for simplicity, store in a db for production applications
 // let discounts = require("data/discounts.json") as Discount[];
 
-const jsonDirectory = path.join(process.cwd(), "tmp", "data");
+const jsonDirectory = path.join(process.cwd(), "tmp");
 
 const Discounts = (async function Discounts() {
     return JSON.parse(

@@ -5,7 +5,7 @@ import path from "path";
 // users in JSON file for simplicity, store in a db for production applications
 // let users = require("data/users.json") as User[];
 
-const jsonDirectory = path.join(process.cwd(), "tmp", "data");
+const jsonDirectory = path.join(process.cwd(), "tmp");
 
 const Users = (async function Users() {
     return JSON.parse(await fs.readFile(jsonDirectory + "/users.json", "utf8"));
