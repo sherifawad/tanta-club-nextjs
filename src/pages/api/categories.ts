@@ -6,6 +6,7 @@ import { Category, Role } from "types";
 import { promises as fs } from "fs";
 import path from "path";
 import { dataFolder } from "@/lib/utils";
+import { tmpdir } from "os";
 
 // categories in JSON file for simplicity, store in a db for production applications
 // let categories = require("data/categories.json") as Category[];
@@ -105,9 +106,8 @@ export default async function handler(
                 title,
                 hidden,
             } as Category);
-            await fs.rm(dataFilePath, { force: true });
             await fs.writeFile(
-                `${dataFilePath}`,
+                `${tmpdir()}/data/categories.json`,
                 JSON.stringify(categories, null, 4),
                 {
                     encoding: "utf8",
