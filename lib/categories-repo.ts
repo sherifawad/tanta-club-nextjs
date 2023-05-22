@@ -13,10 +13,6 @@ import { dataFolder } from "./utils";
 const dataFilePath = path.join(dataFolder(), "categories.json");
 
 const Categories = (async function Categories() {
-    console.log(
-        "🚀 ~ file: categories-repo.ts:16 ~ Categories ~ dataFilePath:",
-        dataFilePath
-    );
     return JSON.parse(await fs.readFile(dataFilePath, "utf8"));
 })() as unknown as Promise<Category[]>;
 
@@ -76,10 +72,6 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(categories: Category[]) {
-    console.log(
-        "🚀 ~ file: categories-repo.ts:76 ~ saveData ~ dataFilePath:",
-        dataFilePath
-    );
     // await fs.unlink(`${dataFilePath}`);
 
     await fs.writeFile(`${dataFilePath}`, JSON.stringify(categories, null, 4), {

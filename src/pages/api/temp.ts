@@ -9,6 +9,7 @@ export default async function handler(
 ) {
     try {
         if (req.method === "DELETE") {
+            console.log("🚀 ~ file: temp.ts:12 ~ DELETE:");
             await fs.access(
                 path.join(tmpdir(), "data", "categories.json"),
                 fs.constants.F_OK
