@@ -1,6 +1,6 @@
 import path from "path";
 import { IReactSelectOption } from "../types";
-import { accessSync, constants } from "fs";
+import { accessSync, constants, mkdirSync } from "fs";
 import { tmpdir } from "os";
 
 export const stringTrim = (str: string): string =>
@@ -62,6 +62,7 @@ export function dataFolder() {
         return path.join(tmpdir(), "data");
     } catch (error) {
         console.log("🚀 ~ file: utils.ts:63 ~ dataFolder ~ error:", error);
+        mkdirSync(path.join(tmpdir(), "data"), { recursive: true });
         return path.join(process.cwd(), "data");
     }
 }
