@@ -3,13 +3,14 @@ import { Category } from "types";
 import { promises as fs } from "fs";
 import path from "path";
 import { tmpdir } from "os";
+import { dataFolder } from "./utils";
 
 // categories in JSON file for simplicity, store in a db for production applications
 // let categories = require("data/categories.json") as Category[];
 
 // const jsonDirectory = path.join(process.cwd(), "data");
 // const jsonDirectory = path.join(process.cwd(), "tmp", "data");
-const dataFilePath = path.join(dataFolder, "categories.json");
+const dataFilePath = path.join(dataFolder(), "categories.json");
 
 const Categories = (async function Categories() {
     console.log(
