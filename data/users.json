@@ -50,5 +50,14 @@
         "id": 5970,
         "createdAt": "2023-05-22T02:19:21.541Z",
         "updatedAt": "2023-05-22T02:19:21.541Z"
+    },
+    {
+        "name": "newuser",
+        "role": "CLIENT",
+        "password": "$2a$12$5BTMIEJnzeGutJp6J.z.sOfzdjTpIPLIsxJjDFB4Unon0bG1IzVlO",
+        "enabled": true,
+        "id": 5971,
+        "createdAt": "2023-05-22T02:40:46.380Z",
+        "updatedAt": "2023-05-22T02:40:46.380Z"
     }
 ]

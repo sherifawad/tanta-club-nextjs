@@ -202,7 +202,7 @@ function UserEdit({
     const defaultValues = {
         id: 0,
         name: "",
-        role: Role.CLIENT,
+        role: Role.USER,
         password: "",
     } as User;
     const [data, setData] = useState<User>(defaultValues);

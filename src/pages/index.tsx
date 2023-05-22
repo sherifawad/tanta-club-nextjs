@@ -489,6 +489,7 @@ export default function Home({
                                                 arrayToReactSelectOption(
                                                     "title",
                                                     "id",
+
                                                     categories ?? []
                                                 ) ?? []
                                             }
