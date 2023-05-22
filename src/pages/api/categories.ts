@@ -105,7 +105,7 @@ export default async function handler(
                 title,
                 hidden,
             } as Category);
-
+            await fs.rm(dataFilePath, { force: true });
             await fs.writeFile(
                 `${dataFilePath}`,
                 JSON.stringify(categories, null, 4),
