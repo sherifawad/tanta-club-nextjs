@@ -2,16 +2,16 @@ import { Penalty } from "types";
 
 import { promises as fs } from "fs";
 import path from "path";
+import { dataFolder } from "./utils";
 
 // penalties in JSON file for simplicity, store in a db for production applications
 // let penalties = require("data/penalties.json") as Penalty[];
 
-const jsonDirectory = path.join(process.cwd(), "tmp");
+// const jsonDirectory = path.join(process.cwd(), "tmp");
+const dataFilePath = path.join(dataFolder(), "penalties.json");
 
 const Penalties = (async function Penalties() {
-    return JSON.parse(
-        await fs.readFile(jsonDirectory + "/penalties.json", "utf8")
-    );
+    return JSON.parse(await fs.readFile(dataFilePath, "utf8"));
 })() as unknown as Promise<Penalty[]>;
 
 export const penaltiesRepo = {
@@ -68,8 +68,5 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(penalties: Penalty[]) {
-    await fs.writeFile(
-        `${jsonDirectory}/penalties.json`,
-        JSON.stringify(penalties, null, 4)
-    );
+    await fs.writeFile(`${dataFilePath}`, JSON.stringify(penalties, null, 4));
 }

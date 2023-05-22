@@ -1,16 +1,16 @@
 import { Discount } from "types";
 import { promises as fs } from "fs";
 import path from "path";
+import { dataFolder } from "./utils";
 
 // discounts in JSON file for simplicity, store in a db for production applications
 // let discounts = require("data/discounts.json") as Discount[];
 
-const jsonDirectory = path.join(process.cwd(), "tmp");
+// const jsonDirectory = path.join(process.cwd(), "tmp");
+const dataFilePath = path.join(dataFolder(), "discounts.json");
 
 const Discounts = (async function Discounts() {
-    return JSON.parse(
-        await fs.readFile(jsonDirectory + "/discounts.json", "utf8")
-    );
+    return JSON.parse(await fs.readFile(dataFilePath, "utf8"));
 })() as unknown as Promise<Discount[]>;
 
 export const discountsRepo = {
@@ -68,8 +68,5 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(discounts: Discount[]) {
-    fs.writeFile(
-        `${jsonDirectory}/discounts.json`,
-        JSON.stringify(discounts, null, 4)
-    );
+    fs.writeFile(`${dataFilePath}`, JSON.stringify(discounts, null, 4));
 }

@@ -4,16 +4,16 @@ import path from "path";
 import { categoriesRepo } from "./categories-repo";
 import { penaltiesRepo } from "./penalties-repo";
 import { discountsRepo } from "./discounts-repo";
+import { dataFolder } from "./utils";
 
 // sports in JSON file for simplicity, store in a db for production applications
 // let sports = require("data/sports.json") as Sport[];
 
-const jsonDirectory = path.join(process.cwd(), "tmp");
+// const jsonDirectory = path.join(process.cwd(), "tmp");
+const dataFilePath = path.join(dataFolder(), "sports.json");
 
 const Sports = (async function Sports() {
-    return JSON.parse(
-        await fs.readFile(jsonDirectory + "/sports.json", "utf8")
-    );
+    return JSON.parse(await fs.readFile(dataFilePath, "utf8"));
 })() as unknown as Promise<Sport[]>;
 
 export const sportsRepo = {
@@ -126,8 +126,5 @@ async function connectSportToExistingData(sport: Sport) {
 // private helper functions
 
 async function saveData(sports: Sport[]) {
-    fs.writeFile(
-        `${jsonDirectory}/sports.json`,
-        JSON.stringify(sports, null, 4)
-    );
+    fs.writeFile(`${dataFilePath}`, JSON.stringify(sports, null, 4));
 }

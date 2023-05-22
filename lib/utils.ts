@@ -1,4 +1,6 @@
+import path from "path";
 import { IReactSelectOption } from "../types";
+import { tmpdir } from "os";
 
 export const stringTrim = (str: string): string =>
     str.replace(/\s\s+/g, " ").trim();
@@ -51,4 +53,7 @@ export const getBaseUrl = () => {
 
 export function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
+}
+export function dataFolder() {
+    return path.join(tmpdir(), "data");
 }

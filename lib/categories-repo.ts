@@ -9,7 +9,7 @@ import { tmpdir } from "os";
 
 // const jsonDirectory = path.join(process.cwd(), "data");
 // const jsonDirectory = path.join(process.cwd(), "tmp", "data");
-const dataFilePath = path.join(tmpdir(), "data", "categories.json");
+const dataFilePath = path.join(dataFolder, "categories.json");
 
 const Categories = (async function Categories() {
     console.log(

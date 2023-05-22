@@ -1,14 +1,16 @@
 import { User } from "types";
 import { promises as fs } from "fs";
 import path from "path";
+import { dataFolder } from "./utils";
 
 // users in JSON file for simplicity, store in a db for production applications
 // let users = require("data/users.json") as User[];
 
-const jsonDirectory = path.join(process.cwd(), "tmp");
+// const jsonDirectory = path.join(process.cwd(), "tmp");
+const dataFilePath = path.join(dataFolder(), "users.json");
 
 const Users = (async function Users() {
-    return JSON.parse(await fs.readFile(jsonDirectory + "/users.json", "utf8"));
+    return JSON.parse(await fs.readFile(dataFilePath, "utf8"));
 })() as unknown as Promise<User[]>;
 
 export const usersRepo = {
@@ -61,8 +63,5 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(users: User[]) {
-    await fs.writeFile(
-        `${jsonDirectory}/users.json`,
-        JSON.stringify(users, null, 4)
-    );
+    await fs.writeFile(`${dataFilePath}`, JSON.stringify(users, null, 4));
 }
