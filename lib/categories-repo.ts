@@ -2,6 +2,7 @@ import { Category } from "types";
 
 import { promises as fs } from "fs";
 import path from "path";
+import { tmpdir } from "os";
 
 // categories in JSON file for simplicity, store in a db for production applications
 // let categories = require("data/categories.json") as Category[];
@@ -72,7 +73,7 @@ async function _delete(id: number) {
 
 async function saveData(categories: Category[]) {
     await fs.writeFile(
-        `${jsonDirectory}/categories.json`,
+        `${tmpdir()}/categories.json`,
         JSON.stringify(categories, null, 4)
     );
 }
