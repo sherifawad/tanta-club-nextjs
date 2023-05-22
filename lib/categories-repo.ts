@@ -72,7 +72,7 @@ async function _delete(id: number) {
 
 async function saveData(categories: Category[]) {
     await fs.writeFile(
-        `${jsonDirectory}/categories.json`,
+        `/tmp/categories.json`,
         JSON.stringify(categories, null, 4)
     );
 }
