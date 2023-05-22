@@ -8,12 +8,15 @@ import { tmpdir } from "os";
 // let categories = require("data/categories.json") as Category[];
 
 // const jsonDirectory = path.join(process.cwd(), "data");
-const jsonDirectory = path.join(process.cwd(), "public", "data");
+// const jsonDirectory = path.join(process.cwd(), "tmp", "data");
+const dataFilePath = path.join(tmpdir(), "data", "categories.json");
 
 const Categories = (async function Categories() {
-    return JSON.parse(
-        await fs.readFile(jsonDirectory + "/categories.json", "utf8")
+    console.log(
+        "🚀 ~ file: categories-repo.ts:16 ~ Categories ~ dataFilePath:",
+        dataFilePath
     );
+    return JSON.parse(await fs.readFile(dataFilePath, "utf8"));
 })() as unknown as Promise<Category[]>;
 
 export const categoriesRepo = {
@@ -72,8 +75,9 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(categories: Category[]) {
-    await fs.writeFile(
-        `${tmpdir()}/categories.json`,
-        JSON.stringify(categories, null, 4)
+    console.log(
+        "🚀 ~ file: categories-repo.ts:76 ~ saveData ~ dataFilePath:",
+        dataFilePath
     );
+    await fs.writeFile(`${dataFilePath}`, JSON.stringify(categories, null, 4));
 }
