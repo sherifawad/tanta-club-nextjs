@@ -7,7 +7,7 @@ import type { Session } from "next-auth";
 import Header from "@/components/Header";
 import { tmpdir } from "os";
 
-fs.copyFile(path.join(process.cwd(), "data"), tmpdir());
+// fs.cp(path.join(process.cwd(), "data"), path.join(tmpdir()));
 
 // Use of the <SessionProvider> is mandatory to allow components that call
 // `useSession()` anywhere in your application to access the `session` object.
