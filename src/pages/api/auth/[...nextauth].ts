@@ -52,36 +52,43 @@ export const authOptions: NextAuthOptions = {
                 // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
                 // You can also use the `req` object to obtain additional parameters
                 // (i.e., the request IP address)
+                try {
+                    const { username, password } = credentials as {
+                        username: string;
+                        password: string;
+                    };
 
-                const { username, password } = credentials as {
-                    username: string;
-                    password: string;
-                };
+                    const user = await usersRepo.find(
+                        (x) =>
+                            x.name.toLocaleLowerCase() ===
+                                username.toLocaleLowerCase() && x.enabled
+                    );
 
-                const user = await usersRepo.find(
-                    (x) =>
-                        x.name.toLocaleLowerCase() ===
-                            username.toLocaleLowerCase() && x.enabled
-                );
+                    if (user == null || !user.enabled) {
+                        return null;
+                    }
 
-                if (user == null || !user.enabled) {
+                    // Validate password
+                    const isPasswordMatch = await isPasswordValid(
+                        password,
+                        user.password
+                    );
+
+                    if (!isPasswordMatch) {
+                        return null;
+                    }
+                    return {
+                        id: user.id,
+                        name: user.name,
+                        role: user.role,
+                    };
+                } catch (error) {
+                    console.log(
+                        "🚀 ~ file: [...nextauth].ts:58 ~ authorize ~ error:",
+                        error
+                    );
                     return null;
                 }
-
-                // Validate password
-                const isPasswordMatch = await isPasswordValid(
-                    password,
-                    user.password
-                );
-
-                if (!isPasswordMatch) {
-                    return null;
-                }
-                return {
-                    id: user.id,
-                    name: user.name,
-                    role: user.role,
-                };
             },
         }),
     ],
