@@ -7,7 +7,7 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "prepare": "cp -R /data /var/task/temp"
+        "prepare": "node -e \"const fs = require('fs'); const data = fs.cp('data', 'temp');\""
     },
     "prisma": {
         "schema": "prisma/schema.prisma",
