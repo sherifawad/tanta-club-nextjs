@@ -26,11 +26,14 @@ import { sportsRepo } from "lib/sports-repo";
 import { categoriesRepo } from "lib/categories-repo";
 import { discountsRepo } from "lib/discounts-repo";
 import { penaltiesRepo } from "lib/penalties-repo";
-import { arrayToReactSelectOption } from "@/lib/utils";
+import { arrayToReactSelectOption, getBaseUrl } from "@/lib/utils";
 import SingleSelect from "@/components/SingleSelect";
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
     try {
+        await fetch(`${getBaseUrl()}/api/temp`, {
+            method: "DELETE",
+        });
         const categoriesList = await categoriesRepo.getAll();
 
         const categories = categoriesList
