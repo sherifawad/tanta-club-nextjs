@@ -5,7 +5,7 @@ import path from "path";
 // discounts in JSON file for simplicity, store in a db for production applications
 // let discounts = require("data/discounts.json") as Discount[];
 
-const jsonDirectory = path.join(process.cwd(), "data");
+const jsonDirectory = path.join(process.cwd(), "tmp", "data");
 
 const Discounts = (async function Discounts() {
     return JSON.parse(
@@ -68,5 +68,8 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(discounts: Discount[]) {
-    fs.writeFile("data/discounts.json", JSON.stringify(discounts, null, 4));
+    fs.writeFile(
+        `${jsonDirectory}/discounts.json`,
+        JSON.stringify(discounts, null, 4)
+    );
 }

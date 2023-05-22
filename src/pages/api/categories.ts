@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/session";
+import { error } from "console";
 import { categoriesRepo } from "lib/categories-repo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Category, Role } from "types";
@@ -109,8 +110,9 @@ export default async function handler(
             return res.status(401).send("Unauthorized");
         }
     } catch (err) {
+        console.log("🚀 ~ file: categories.ts:113 ~ err:", err);
         // If there was an error, Next.js will continue
         // to show the last successfully generated page
-        return res.status(500).send("Error revalidating");
+        return res.status(500).send((error as any).message);
     }
 }

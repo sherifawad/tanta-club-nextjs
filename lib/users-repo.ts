@@ -5,7 +5,7 @@ import path from "path";
 // users in JSON file for simplicity, store in a db for production applications
 // let users = require("data/users.json") as User[];
 
-const jsonDirectory = path.join(process.cwd(), "data");
+const jsonDirectory = path.join(process.cwd(), "tmp", "data");
 
 const Users = (async function Users() {
     return JSON.parse(await fs.readFile(jsonDirectory + "/users.json", "utf8"));
@@ -61,5 +61,8 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(users: User[]) {
-    await fs.writeFile("data/users.json", JSON.stringify(users, null, 4));
+    await fs.writeFile(
+        `${jsonDirectory}/users.json`,
+        JSON.stringify(users, null, 4)
+    );
 }
