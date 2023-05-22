@@ -7,7 +7,7 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "prepare": "cp -r /data /temp"
+        "prepare": "cp -R /data /var/task/temp"
     },
     "prisma": {
         "schema": "prisma/schema.prisma",
