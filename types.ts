@@ -22,7 +22,7 @@ export type Sport = {
     hidden: boolean;
     createdAt: string;
     updatedAt: string;
-    categoryId: number;
+    categoryId: number | null;
     penaltyId?: number | null;
     penalty?: Penalty | null;
     discounts?: (Partial<Omit<Discount, "id">> & { id: number }[]) | null;

@@ -14,7 +14,7 @@ export const calcSportPenalty = (
     const penalty = calcPenalty(sport.penalty!);
     return {
         ...sport,
-        price: sport.price + penalty,
+        price: sport.price!! ?? 0 + penalty,
         penalty: penalty === 0 ? undefined : sport.penalty,
         totalPenalty: penalty === 0 ? undefined : penalty,
         discounts: removeDiscount ? undefined : sport.discounts,
@@ -28,7 +28,7 @@ export const calcTotalSportsPenalty = (
         const penalty = calcPenalty(sport.penalty!);
         return {
             ...sport,
-            price: sport.price + penalty,
+            price: sport.price!! + penalty,
             penalty: penalty === 0 ? undefined : sport.penalty,
             totalPenalty: penalty === 0 ? undefined : penalty,
         };
@@ -70,18 +70,18 @@ export const calSportPrice = (
     if (!sport?.discounts || sport?.discounts.length < 1)
         return { ...calcSportPenalty(sport), discounts: undefined };
     let discount = sport.discounts[0];
-    let price = sport.price;
+    let price = sport.price!;
     let penalty = sport.penalty;
     const totalDiscount = discountStep(discount, step);
     if (<DiscountType>discount.type === DiscountType.FIXED) {
-        sport.price -= totalDiscount;
+        sport.price!! -= totalDiscount;
         sport.totalDiscount = totalDiscount;
     } else if (<DiscountType>discount.type === DiscountType.PERCENTAGE) {
-        sport.price = price * (1 - totalDiscount / 100);
+        sport.price!! = price! * (1 - totalDiscount / 100);
         sport.totalDiscount = totalDiscount;
     } else {
         sport.discounts = undefined;
-        sport.price = price;
+        sport.price! != price;
         sport.totalDiscount = undefined;
     }
     if (penalty) {
@@ -90,7 +90,7 @@ export const calSportPrice = (
             sport.penalty = undefined;
             sport.totalPenalty = undefined;
         } else {
-            sport.price += calculatedPenalty;
+            sport.price!! += calculatedPenalty;
             sport.totalPenalty = calculatedPenalty;
         }
     }
@@ -103,11 +103,11 @@ export const sportDiscountSorting = (
 ) => {
     if (!playerSport.discounts) return playerSport;
     const discounts = playerSport.discounts.sort((d1, d2) =>
-        calByDiscountType(d1, playerSport.price, step) <
-        calByDiscountType(d2, playerSport.price, step)
+        calByDiscountType(d1, playerSport.price!, step) <
+        calByDiscountType(d2, playerSport.price!, step)
             ? 1
-            : calByDiscountType(d1, playerSport.price, step) >
-              calByDiscountType(d2, playerSport.price, step)
+            : calByDiscountType(d1, playerSport.price!, step) >
+              calByDiscountType(d2, playerSport.price!, step)
             ? -1
             : 0
     );
@@ -131,11 +131,11 @@ export const playerSportsDiscountSorting = (
 export const maxDiscountSorting = (sports: PlayerSport[], step: number = 0) => {
     const filteredSports = playerSportsDiscountSorting(sports, step);
     return filteredSports.sort((s1, s2) =>
-        calByDiscountType(s1.discounts![0], s1.price, step) <
-        calByDiscountType(s2.discounts![0], s2.price, step)
+        calByDiscountType(s1.discounts![0], s1.price!, step) <
+        calByDiscountType(s2.discounts![0], s2.price!, step)
             ? 1
-            : calByDiscountType(s1.discounts![0], s1.price, step) >
-              calByDiscountType(s2.discounts![0], s2.price, step)
+            : calByDiscountType(s1.discounts![0], s1.price!, step) >
+              calByDiscountType(s2.discounts![0], s2.price!, step)
             ? -1
             : 0
     );
@@ -146,8 +146,11 @@ export const firstSportsWithDiscountBigger = (
     secondSport: PlayerSport,
     step: number = 0
 ) => {
-    return calByDiscountType(firstSport.discounts![0], firstSport.price, step) >
-        calByDiscountType(secondSport.discounts![0], secondSport.price, step)
+    return calByDiscountType(
+        firstSport.discounts![0],
+        firstSport.price!,
+        step
+    ) > calByDiscountType(secondSport.discounts![0], secondSport.price!, step)
         ? true
         : false;
 };

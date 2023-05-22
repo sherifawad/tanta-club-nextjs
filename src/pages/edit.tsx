@@ -27,7 +27,7 @@ import {
     User,
 } from "types";
 import { authOptions } from "./api/auth/[...nextauth]";
-import { title } from "process";
+import { type NextRouter, useRouter } from "next/router";
 
 const TABS = ["رياضة", "نوع", "غرامه", "خصم", "مستخدم"] as const;
 
@@ -43,6 +43,7 @@ type BasicEditProps = {
     submitting: boolean;
     setSubmitting: Dispatch<SetStateAction<boolean>>;
     Session: Session | null;
+    router: NextRouter;
 };
 
 const Edit = ({
@@ -56,6 +57,7 @@ const Edit = ({
         useState<(typeof TABS)[number]>("رياضة");
     const { data: Session, status } = useSession();
     const [submitting, setSubmitting] = useState(false);
+    const router = useRouter();
     if (
         status !== "authenticated" ||
         (status === "authenticated" &&
@@ -102,6 +104,7 @@ const Edit = ({
                     penalties,
                     sports,
                     users,
+                    router,
                 })}
             </div>
         </div>
@@ -119,6 +122,7 @@ function renderSwitch({
     penalties,
     sports,
     users,
+    router,
 }: BasicEditProps & EditProps & { selectedTab: (typeof TABS)[number] }) {
     switch (selectedTab) {
         case "رياضة":
@@ -132,6 +136,7 @@ function renderSwitch({
                     discounts={discounts}
                     penalties={penalties}
                     sports={sports}
+                    router={router}
                 />
             );
         case "مستخدم":
@@ -142,6 +147,7 @@ function renderSwitch({
                     Session={Session}
                     status={status}
                     users={users}
+                    router={router}
                 />
             );
         case "خصم":
@@ -152,6 +158,7 @@ function renderSwitch({
                     Session={Session}
                     status={status}
                     discounts={discounts}
+                    router={router}
                 />
             );
         case "غرامه":
@@ -162,6 +169,7 @@ function renderSwitch({
                     Session={Session}
                     status={status}
                     penalties={penalties}
+                    router={router}
                 />
             );
         case "نوع":
@@ -172,6 +180,7 @@ function renderSwitch({
                     Session={Session}
                     status={status}
                     categories={categories}
+                    router={router}
                 />
             );
         default:
@@ -185,6 +194,7 @@ function UserEdit({
     Session,
     status,
     users,
+    router,
 }: BasicEditProps & { users: User[] | null }) {
     const [usersList, setUsersList] = useState(users ?? []);
     const [error, setError] = useState("");
@@ -199,7 +209,7 @@ function UserEdit({
     const [userIsEnabled, setUserIsEnabled] = useState(true);
 
     const handleSelectChange = (id: number) => {
-        const findData = users?.find((x) => x.id === id);
+        const findData = usersList?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
@@ -272,6 +282,7 @@ function UserEdit({
                     );
                 }
                 reset();
+                router.replace(router.asPath);
             }
         } catch (error) {
             setError((error as any).message);
@@ -400,6 +411,7 @@ function DiscountEdit({
     Session,
     status,
     discounts,
+    router,
 }: BasicEditProps & { discounts: Discount[] | null }) {
     const [discountsList, setDiscountsList] = useState(discounts ?? []);
     const [error, setError] = useState("");
@@ -423,7 +435,7 @@ function DiscountEdit({
         setError("");
     };
     const handleSelectChange = (id: number) => {
-        const findData = discounts?.find((x) => x.id === id);
+        const findData = discountsList?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
@@ -495,6 +507,7 @@ function DiscountEdit({
                     );
                 }
                 reset();
+                router.replace(router.asPath);
             }
         } catch (error) {
             setError((error as any).message);
@@ -657,6 +670,7 @@ function PenaltyEdit({
     Session,
     status,
     penalties,
+    router,
 }: BasicEditProps & { penalties: Penalty[] | null }) {
     const [penaltiesList, setPenaltiesList] = useState(penalties ?? []);
     const [enabled, setEnabled] = useState(true);
@@ -684,7 +698,7 @@ function PenaltyEdit({
         setError("");
     };
     const handleSelectChange = (id: number) => {
-        const findData = penalties?.find((x) => x.id === id);
+        const findData = penaltiesList?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
@@ -759,6 +773,7 @@ function PenaltyEdit({
                     );
                 }
                 reset();
+                router.replace(router.asPath);
             }
         } catch (error) {
             setError((error as any).message);
@@ -979,6 +994,7 @@ function CategoryEdit({
     Session,
     status,
     categories,
+    router,
 }: BasicEditProps & { categories: Category[] | null }) {
     const [categoryList, setCategoryList] = useState(categories ?? []);
     const [error, setError] = useState("");
@@ -1064,6 +1080,7 @@ function CategoryEdit({
                     );
                 }
                 reset();
+                router.replace(router.asPath);
             }
         } catch (error) {
             setError((error as any).message);
@@ -1168,6 +1185,7 @@ function SportEdit({
     discounts,
     penalties,
     sports,
+    router,
 }: BasicEditProps & Omit<EditProps, "users">) {
     const [sportsList, setSportsList] = useState(sports ?? []);
     const [error, setError] = useState("");
@@ -1180,18 +1198,18 @@ function SportEdit({
     } as Sport;
     const [data, setData] = useState<Sport>(defaultValues);
     const [sportIsHidden, setSportIsHidden] = useState(false);
-    const [penaltyId, setPenaltyId] = useState(0);
-    const [categoryId, setCategoryId] = useState(0);
+    const [penaltyId, setPenaltyId] = useState<number | null | undefined>(null);
+    const [categoryId, setCategoryId] = useState<number | null>(null);
     const [discountList, setDiscountList] = useState<number[] | null>(null);
 
     const handleSelectChange = (id: number) => {
-        const findData = sports?.find((x) => x.id === id);
+        const findData = sportsList?.find((x) => x.id === id);
         if (!findData || findData === null) return;
         setSelectValue(findData.id);
         setData({ ...findData });
         setSportIsHidden(findData.hidden);
         setCategoryId(findData.categoryId);
-        setPenaltyId(findData.penaltyId ?? 0);
+        setPenaltyId(findData.penaltyId);
         setDiscountList((findData.discounts ?? []).map((d) => d.id));
     };
 
@@ -1228,7 +1246,8 @@ function SportEdit({
                 data.name.length < 0 ||
                 !data.title ||
                 data.title.length < 0 ||
-                data.categoryId === 0 ||
+                !categoryId ||
+                !data.price ||
                 data.price === 0
             )
                 return;
@@ -1240,7 +1259,12 @@ function SportEdit({
                     hidden: sportIsHidden,
                     categoryId,
                     penaltyId,
-                    discounts: discountList,
+                    discounts:
+                        discountList && discountList.length > 0
+                            ? discountList?.map((discountId) => ({
+                                  id: discountId,
+                              }))
+                            : null,
                 }),
                 credentials: "include",
             });
@@ -1277,6 +1301,7 @@ function SportEdit({
                     );
                 }
                 reset();
+                router.reload();
             }
         } catch (error) {
             setError((error as any).message);

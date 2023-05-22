@@ -18,19 +18,23 @@ export const playersWithMaxDiscountSorting = (
     return players.sort((p1, p2) =>
         calByDiscountType(
             p1.sports[0].discounts![0],
-            p1.sports[0].price,
+            p1.sports[0].price ?? 0,
             step
         ) <
-        calByDiscountType(p2.sports[0].discounts![0], p2.sports[0].price, step)
+        calByDiscountType(
+            p2.sports[0].discounts![0],
+            p2.sports[0].price ?? 0,
+            step
+        )
             ? 1
             : calByDiscountType(
                   p1.sports[0].discounts![0],
-                  p1.sports[0].price,
+                  p1.sports[0].price ?? 0,
                   step
               ) >
               calByDiscountType(
                   p2.sports[0].discounts![0],
-                  p2.sports[0].price,
+                  p2.sports[0].price ?? 0,
                   step
               )
             ? -1

@@ -26,7 +26,7 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
 
         players?.forEach((player) => {
             player.sports.forEach((sport) => {
-                setTotal((prev) => (prev += sport.price));
+                setTotal((prev) => (prev += sport.price!));
                 setSportCount((prev) => prev + 1);
             });
         });
@@ -54,7 +54,7 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
                             key={player.id}
                             className="flex flex-col items-center py-4 "
                         >
-                            <div className="flex flex-row-reverse justify-center w-2/3 gap-2 bg-customOrange-100 rounded-full">
+                            <div className="flex flex-row-reverse justify-center w-2/3 gap-2 rounded-full bg-customOrange-100">
                                 <div className="w-2/3 m-auto text-lg font-bold text-black">
                                     {player?.name}
                                 </div>

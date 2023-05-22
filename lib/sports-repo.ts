@@ -12,13 +12,15 @@ const jsonDirectory = path.join(process.cwd(), "data");
 
 const Sports = (async function Sports() {
     return JSON.parse(
-        await fs.readFile(jsonDirectory + "/categories.json", "utf8")
+        await fs.readFile(jsonDirectory + "/sports.json", "utf8")
     );
 })() as unknown as Promise<Sport[]>;
 
 export const sportsRepo = {
-    getAll: async () =>
-        (await Sports).map(async (sport) => {
+    getAll: async () => {
+        const sports = await Sports;
+        const result = sports.reduce(async (acc, current) => {
+            let sport = current;
             if (sport.penaltyId) {
                 sport.penalty = await penaltiesRepo.getById(sport.penaltyId);
             }
@@ -34,8 +36,11 @@ export const sportsRepo = {
                 });
                 sport.discounts = discountList;
             }
-            return sport;
-        }),
+            return [...(await acc), sport];
+        }, [] as unknown as Promise<Sport[]>);
+
+        return result;
+    },
     getById: async (id: number) => (await Sports).find((x) => x.id === id),
     find: async (x: (x: Sport) => boolean) => (await Sports).find(x),
     create,
@@ -93,19 +98,26 @@ async function _delete(id: number) {
 
 async function connectSportToExistingData(sport: Sport) {
     // check for categoryId is existing
-    const getCategory = await categoriesRepo.getById(sport.categoryId);
+    const getCategory = await categoriesRepo.getById(sport.categoryId ?? 0);
     if (getCategory == null) return null;
     // check for penaltyId is existing
     if (sport.penaltyId != null) {
         const getPenalty = await penaltiesRepo.getById(sport.penaltyId);
-        if (getPenalty == null) return null;
+        if (getPenalty == null) sport.penaltyId = null;
     }
+    const discountsExistList: {
+        id: number;
+    }[] = [];
     if (sport.discounts != null && sport.discounts.length > 0) {
-        const allExists = sport.discounts.every(
-            async (discount) =>
-                (await discountsRepo.getById(discount.id)) != null
-        );
-        if (!allExists) return null;
+        sport.discounts.forEach(async ({ id }) => {
+            const discountExist = await discountsRepo.getById(id);
+            if (discountExist) {
+                discountsExistList.push({ id });
+            }
+        });
+        if (discountsExistList.length > 0) {
+            sport.discounts = discountsExistList;
+        }
     }
     return sport;
 }

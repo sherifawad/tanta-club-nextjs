@@ -10,5 +10,20 @@
         "repeated": "DAILY",
         "start": 11,
         "enabled": true
+    },
+    {
+        "name": "newpenalty",
+        "title": "غرامهجديدة",
+        "type": "FIXED",
+        "repeated": "DAILY",
+        "minimum": "5",
+        "Maximum": "9",
+        "step": "1",
+        "enabled": true,
+        "start": "15",
+        "end": "25",
+        "id": 2,
+        "createdAt": "2023-05-22T01:59:04.186Z",
+        "updatedAt": "2023-05-22T01:59:04.186Z"
     }
 ]

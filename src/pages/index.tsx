@@ -36,14 +36,14 @@ export async function getServerSideProps() {
         const categories = categoriesList
             ? categoriesList.filter((x) => x.hidden === false)
             : null;
-        const sports = sportsRepo.getAll();
-        const discounts = discountsRepo.getAll();
-        const penalties = penaltiesRepo.getAll();
+        const sportsList = await sportsRepo.getAll();
+        const sports =
+            sportsList != null && sportsList.length > 0
+                ? sportsList.filter((x) => x.hidden === false)
+                : null;
         return {
             props: {
                 categories,
-                discounts,
-                penalties,
                 sports,
             },
         };
@@ -56,13 +56,9 @@ export async function getServerSideProps() {
 
 export default function Home({
     categories = [],
-    discounts = [],
-    penalties = [],
     sports = [],
 }: {
     categories: Category[] | null;
-    discounts: Discount[] | null;
-    penalties: Penalty[] | null;
     sports: PlayerSport[] | null;
 }) {
     const fixedButtonRef = useRef<null | HTMLButtonElement>(null);
@@ -491,7 +487,7 @@ export default function Home({
                                         <SingleSelect
                                             options={
                                                 arrayToReactSelectOption(
-                                                    "name",
+                                                    "title",
                                                     "id",
                                                     categories ?? []
                                                 ) ?? []

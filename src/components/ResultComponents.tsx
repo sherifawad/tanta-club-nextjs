@@ -17,7 +17,7 @@ function ResultComponents({ result }: Props) {
 
         result.forEach((player) => {
             player.sports.forEach((sport) => {
-                setTotal((prev) => (prev += sport.price));
+                setTotal((prev) => (prev += sport.price!));
                 setSportCount((prev) => prev + 1);
             });
         });
@@ -61,7 +61,7 @@ function ResultComponents({ result }: Props) {
                         {player.sports.map((sport) => (
                             <div
                                 key={sport.id}
-                                className="flex items-center justify-between gap-2 p-2 bg-customGray-100 shadow rounded-xl"
+                                className="flex items-center justify-between gap-2 p-2 shadow bg-customGray-100 rounded-xl"
                             >
                                 <div className="font-extrabold">
                                     {sport.title}

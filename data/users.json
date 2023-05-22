@@ -41,5 +41,14 @@
         "id": 5969,
         "createdAt": "2023-05-20T23:03:20.755Z",
         "updatedAt": "2023-05-20T23:03:20.755Z"
+    },
+    {
+        "name": "hassan",
+        "role": "CLIENT",
+        "password": "$2a$12$iVNNgTVYVIrdaqsbt3t9OOzexjRbyZVSPqK6qMqwuzNktPr/JY/Mq",
+        "enabled": true,
+        "id": 5970,
+        "createdAt": "2023-05-22T02:19:21.541Z",
+        "updatedAt": "2023-05-22T02:19:21.541Z"
     }
 ]
