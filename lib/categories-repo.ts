@@ -80,5 +80,8 @@ async function saveData(categories: Category[]) {
         "🚀 ~ file: categories-repo.ts:76 ~ saveData ~ dataFilePath:",
         dataFilePath
     );
-    await fs.writeFile(`${dataFilePath}`, JSON.stringify(categories, null, 4));
+    await fs.writeFile(`${dataFilePath}`, JSON.stringify(categories, null, 4), {
+        encoding: "utf8",
+        flag: "w",
+    });
 }
