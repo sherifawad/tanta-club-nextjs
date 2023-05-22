@@ -7,7 +7,7 @@ import { dataFolder } from "./utils";
 // let users = require("data/users.json") as User[];
 
 // const jsonDirectory = path.join(process.cwd(), "tmp");
-const dataFilePath = path.join(dataFolder(), "users.json");
+const dataFilePath = path.join(process.cwd(), "data", "users.json");
 
 const Users = (async function Users() {
     return JSON.parse(await fs.readFile(dataFilePath, "utf8"));
@@ -63,5 +63,8 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(users: User[]) {
-    await fs.writeFile(`${dataFilePath}`, JSON.stringify(users, null, 4));
+    await fs.writeFile(`${dataFilePath}`, JSON.stringify(users, null, 4), {
+        encoding: "utf8",
+        flag: "w",
+    });
 }
