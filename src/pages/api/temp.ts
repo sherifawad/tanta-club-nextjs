@@ -17,10 +17,14 @@ export default async function handler(
         }
         return res.status(500).send("");
     } catch (err) {
-        console.log("🚀 ~ file: temp.ts:20 ~ err:", err);
-        fs.cp("data", tmpdir(), { recursive: true });
-        // If there was an error, Next.js will continue
-        // to show the last successfully generated page
-        return res.status(500).send("");
+        try {
+            fs.mkdir(path.join(process.cwd(), "tmp"), { recursive: true });
+            fs.cp("data", tmpdir(), { recursive: true });
+            // If there was an error, Next.js will continue
+            // to show the last successfully generated page
+        } catch (error) {
+            console.log("🚀 ~ file: temp.ts:26 ~ error:", error);
+            return res.status(500).send("");
+        }
     }
 }
