@@ -29,7 +29,7 @@ import { penaltiesRepo } from "lib/penalties-repo";
 import { arrayToReactSelectOption } from "@/lib/utils";
 import SingleSelect from "@/components/SingleSelect";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
     try {
         const categoriesList = await categoriesRepo.getAll();
 

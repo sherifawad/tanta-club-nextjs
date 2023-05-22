@@ -6,7 +6,8 @@ import path from "path";
 // categories in JSON file for simplicity, store in a db for production applications
 // let categories = require("data/categories.json") as Category[];
 
-const jsonDirectory = path.join(process.cwd(), "data");
+// const jsonDirectory = path.join(process.cwd(), "data");
+const jsonDirectory = path.join(process.cwd(), "tmp", "data");
 
 const Categories = (async function Categories() {
     return JSON.parse(
@@ -71,7 +72,7 @@ async function _delete(id: number) {
 
 async function saveData(categories: Category[]) {
     await fs.writeFile(
-        "data/categories.json",
+        `${jsonDirectory}/categories.json`,
         JSON.stringify(categories, null, 4)
     );
 }
