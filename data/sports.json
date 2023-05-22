@@ -1360,5 +1360,91 @@
         "id": 104,
         "createdAt": "2023-05-22T02:18:34.236Z",
         "updatedAt": "2023-05-22T02:18:34.236Z"
+    },
+    {
+        "name": "newsport1",
+        "title": "رياضةجديدة1",
+        "price": "10",
+        "hidden": false,
+        "categoryId": 22,
+        "penaltyId": 2,
+        "discounts": [
+            {
+                "id": 7
+            },
+            {
+                "id": 4
+            }
+        ],
+        "id": 105,
+        "createdAt": "2023-05-22T15:03:33.859Z",
+        "updatedAt": "2023-05-22T15:03:33.859Z"
+    },
+    {
+        "name": "newsport2",
+        "title": "رياضةجديدة2",
+        "price": "200",
+        "hidden": false,
+        "categoryId": 24,
+        "penaltyId": null,
+        "discounts": [
+            {
+                "id": 3
+            },
+            {
+                "id": 5
+            }
+        ],
+        "id": 106,
+        "createdAt": "2023-05-22T15:06:01.649Z",
+        "updatedAt": "2023-05-22T15:06:01.649Z"
+    },
+    {
+        "name": "newsport3",
+        "title": "رياضةجديدة3",
+        "price": "300",
+        "hidden": false,
+        "categoryId": 24,
+        "penaltyId": 3,
+        "discounts": [
+            {
+                "id": 7
+            }
+        ],
+        "id": 107,
+        "createdAt": "2023-05-22T15:20:09.719Z",
+        "updatedAt": "2023-05-22T15:20:09.719Z"
+    },
+    {
+        "name": "newsport4",
+        "title": "رياضةجديدة4",
+        "price": "400",
+        "hidden": false,
+        "categoryId": 2,
+        "penaltyId": 1,
+        "discounts": [
+            {
+                "id": 6
+            }
+        ],
+        "id": 108,
+        "createdAt": "2023-05-22T15:21:11.534Z",
+        "updatedAt": "2023-05-22T15:21:11.534Z"
+    },
+    {
+        "name": "newsport7",
+        "title": "رياضةجديدة7",
+        "price": "700",
+        "hidden": false,
+        "categoryId": 25,
+        "penaltyId": 1,
+        "discounts": [
+            {
+                "id": 7
+            }
+        ],
+        "id": 109,
+        "createdAt": "2023-05-22T15:29:48.489Z",
+        "updatedAt": "2023-05-22T15:29:48.489Z"
     }
 ]

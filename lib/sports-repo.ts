@@ -17,6 +17,7 @@ const Sports = (async function Sports() {
 })() as unknown as Promise<Sport[]>;
 
 export const sportsRepo = {
+    getSports: async () => await Sports,
     getAll: async () => {
         const sports = await Sports;
         const result = sports.reduce(async (acc, current) => {

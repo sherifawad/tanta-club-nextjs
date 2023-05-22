@@ -5,7 +5,7 @@ import { discountsRepo } from "@/lib/discounts-repo";
 import { penaltiesRepo } from "@/lib/penalties-repo";
 import { sportsRepo } from "@/lib/sports-repo";
 import { usersRepo } from "@/lib/users-repo";
-import { arrayToReactSelectOption } from "@/lib/utils";
+import { arrayToReactSelectOption, getBaseUrl } from "@/lib/utils";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession, type Session } from "next-auth";
 import { useSession } from "next-auth/react";
@@ -84,7 +84,10 @@ const Edit = ({
                                         ? "border-b-4 border-b-customOrange-900 font-bold"
                                         : "border-b-4 border-b-customGray-900"
                                 }`}
-                                onClick={() => setSelectedTab(tab)}
+                                onClick={() => {
+                                    setSelectedTab(tab);
+                                    router.replace(router.asPath);
+                                }}
                             >
                                 {tab}
                             </button>
@@ -253,7 +256,7 @@ function UserEdit({
                 return;
             }
 
-            const result = await fetch("http://localhost:3000/api/signup", {
+            const result = await fetch(`${getBaseUrl()}/api/signup`, {
                 method: data.id ? "PUT" : "POST",
                 body: JSON.stringify({ ...data, enabled: userIsEnabled }),
                 credentials: "include",
@@ -282,7 +285,7 @@ function UserEdit({
                     );
                 }
                 reset();
-                router.replace(router.asPath);
+                //router.replace(router.asPath);
             }
         } catch (error) {
             setError((error as any).message);
@@ -474,14 +477,11 @@ function DiscountEdit({
             )
                 return;
 
-            const response = await fetch(
-                "http://localhost:3000/api/discounts",
-                {
-                    method: data.id ? "PUT" : "POST",
-                    body: JSON.stringify({ ...data, enabled }),
-                    credentials: "include",
-                }
-            );
+            const response = await fetch(`${getBaseUrl()}/api/discounts`, {
+                method: data.id ? "PUT" : "POST",
+                body: JSON.stringify({ ...data, enabled }),
+                credentials: "include",
+            });
             const {
                 storeDiscount,
                 message,
@@ -507,7 +507,7 @@ function DiscountEdit({
                     );
                 }
                 reset();
-                router.replace(router.asPath);
+                //router.replace(router.asPath);
             }
         } catch (error) {
             setError((error as any).message);
@@ -740,14 +740,11 @@ function PenaltyEdit({
             )
                 return;
 
-            const response = await fetch(
-                "http://localhost:3000/api/penalties",
-                {
-                    method: data.id ? "PUT" : "POST",
-                    body: JSON.stringify({ ...data, enabled }),
-                    credentials: "include",
-                }
-            );
+            const response = await fetch(`${getBaseUrl()}/api/penalties`, {
+                method: data.id ? "PUT" : "POST",
+                body: JSON.stringify({ ...data, enabled }),
+                credentials: "include",
+            });
             const {
                 storePenalty,
                 message,
@@ -773,7 +770,7 @@ function PenaltyEdit({
                     );
                 }
                 reset();
-                router.replace(router.asPath);
+                //router.replace(router.asPath);
             }
         } catch (error) {
             setError((error as any).message);
@@ -916,7 +913,7 @@ function PenaltyEdit({
                             setError("");
                         }}
                         className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg placeholder:text-gray-400 focus:outline-none focus:border-gray-700"
-                        name="repeat"
+                        name="repeated"
                     >
                         <option
                             className="block w-full px-4 py-2 bg-gray-100"
@@ -1048,14 +1045,11 @@ function CategoryEdit({
             )
                 return;
 
-            const response = await fetch(
-                "http://localhost:3000/api/categories",
-                {
-                    method: data.id ? "PUT" : "POST",
-                    body: JSON.stringify({ ...data, hidden: categoryIsHidden }),
-                    credentials: "include",
-                }
-            );
+            const response = await fetch(`${getBaseUrl()}/api/categories`, {
+                method: data.id ? "PUT" : "POST",
+                body: JSON.stringify({ ...data, hidden: categoryIsHidden }),
+                credentials: "include",
+            });
             const {
                 message,
                 success,
@@ -1080,7 +1074,7 @@ function CategoryEdit({
                     );
                 }
                 reset();
-                router.replace(router.asPath);
+                //router.replace(router.asPath);
             }
         } catch (error) {
             setError((error as any).message);
@@ -1252,7 +1246,7 @@ function SportEdit({
             )
                 return;
 
-            const response = await fetch("http://localhost:3000/api/sports", {
+            const response = await fetch(`${getBaseUrl()}/api/sports`, {
                 method: data.id ? "PUT" : "POST",
                 body: JSON.stringify({
                     ...data,
@@ -1280,11 +1274,15 @@ function SportEdit({
 
             if (success) {
                 if (storeSport) {
+                    console.log(
+                        "🚀 ~ file: edit.tsx:1286 ~ handleSubmitSport ~ storeSport:",
+                        storeSport
+                    );
                     setSportsList((prev) => [...prev, storeSport]);
                 } else {
                     setSportsList((prev) =>
-                        prev?.map((sport) => {
-                            if (sport.id === data.id) {
+                        prev?.map((s) => {
+                            if (s.id === data.id) {
                                 return {
                                     ...data,
                                     hidden: sportIsHidden,
@@ -1295,13 +1293,15 @@ function SportEdit({
                                     ),
                                 };
                             } else {
-                                return sport;
+                                return s;
                             }
                         })
                     );
                 }
                 reset();
-                router.reload();
+
+                //router.replace(router.asPath);
+                // router.reload();
             }
         } catch (error) {
             setError((error as any).message);
@@ -1336,7 +1336,7 @@ function SportEdit({
                             arrayToReactSelectOption(
                                 "title",
                                 "id",
-                                sportsList ?? []
+                                sportsList
                             ) ?? []
                         }
                         onChange={handleSelectChange}
@@ -1482,7 +1482,7 @@ export async function getServerSideProps({
             };
         }
         const categories = await categoriesRepo.getAll();
-        const sports = await sportsRepo.getAll();
+        const sports = await sportsRepo.getSports();
         const discounts = await discountsRepo.getAll();
         const penalties = await penaltiesRepo.getAll();
         const usersList = await usersRepo.getAll();

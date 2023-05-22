@@ -81,7 +81,7 @@ export default function Auth() {
             )
                 return;
 
-            const data = await fetch("http://localhost:3000/api/signup", {
+            const data = await fetch(`${getBaseUrl()}/api/signup`, {
                 method: "POST",
                 body: JSON.stringify({ name, password, role }),
                 credentials: "include",

@@ -3,7 +3,7 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Dialog, Tab, Transition } from "@headlessui/react";
 import { Queue, QueueStatus, Role } from "types";
-import { classNames, stringTrim } from "@/lib/utils";
+import { classNames, getBaseUrl, stringTrim } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 
 export async function getServerSideProps({
@@ -14,7 +14,7 @@ export async function getServerSideProps({
     res: NextApiResponse;
 }) {
     const { QUEUE } = parseCookies(req);
-    const data = await fetch("http://localhost:3000/api/queue", {
+    const data = await fetch(`${getBaseUrl()}/api/queue`, {
         method: "POST",
         body:
             QUEUE != null && QUEUE.length > 1
@@ -204,7 +204,7 @@ export default function QueuePage({
     const [openModel, setOpenModel] = useState(false);
 
     async function getQueue(code: string, force: boolean = false) {
-        const data = await fetch("http://localhost:3000/api/queue", {
+        const data = await fetch(`${getBaseUrl()}/api/queue`, {
             method: "POST",
             body: JSON.stringify({ id: undefined, code, force }),
         });
@@ -217,7 +217,7 @@ export default function QueuePage({
     }
     async function completeQueue(id: number | undefined, status: QueueStatus) {
         if (!id || id === null) return;
-        const data = await fetch("http://localhost:3000/api/queue", {
+        const data = await fetch(`${getBaseUrl()}/api/queue`, {
             method: "PUT",
             body: JSON.stringify({ id, status }),
             credentials: "include",
@@ -227,7 +227,7 @@ export default function QueuePage({
     }
 
     async function getCurrentQueue() {
-        const data = await fetch("http://localhost:3000/api/queue", {
+        const data = await fetch(`${getBaseUrl()}/api/queue`, {
             method: "POST",
         });
 

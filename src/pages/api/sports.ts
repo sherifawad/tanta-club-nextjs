@@ -60,7 +60,7 @@ export default async function handler(
                 });
             }
             // Store new discount
-            const sportDiscount = await sportsRepo.create({
+            const storeSport = await sportsRepo.create({
                 name,
                 title,
                 price,
@@ -73,7 +73,7 @@ export default async function handler(
             return res.status(201).json({
                 success: true,
                 message: "discount created successfully",
-                sportDiscount,
+                storeSport,
             });
         } else if (req.method === "PUT") {
             const user = await getCurrentUser({ req, res });
