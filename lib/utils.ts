@@ -76,7 +76,7 @@ export function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
 export function dataFolder(fileName: string) {
-    return path.join(process.cwd(), "data", fileName);
+    return path.join(process.cwd(), "public", "data", fileName);
     // const tempPath = path.join(tmpdir(), "data", fileName);
     // try {
     //     createTempDirectory();
