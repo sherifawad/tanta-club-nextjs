@@ -1,6 +1,12 @@
 import path from "path";
 import { IReactSelectOption } from "../types";
-import { accessSync, constants, mkdirSync } from "fs";
+import {
+    accessSync,
+    constants,
+    mkdirSync,
+    readFileSync,
+    writeFileSync,
+} from "fs";
 import { tmpdir } from "os";
 
 export const stringTrim = (str: string): string =>
@@ -56,20 +62,18 @@ export function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
 export function dataFolder(fileName: string) {
+    const tempPath = path.join(tmpdir(), "data", fileName);
+    const originalPath = path.join(process.cwd(), "data", fileName);
     try {
         createTempDirectory();
-        accessSync(path.join(tmpdir(), "data", fileName), constants.F_OK);
-        console.log(
-            "🚀 ~ file: utils.ts:62 ~ dataFolder ~ :",
-            path.join(tmpdir(), "data", fileName)
-        );
-        return path.join(tmpdir(), "data", fileName);
+        accessSync(tempPath, constants.F_OK);
+        return tempPath;
     } catch (error) {
-        console.log("🚀 ~ file: utils.ts:68 ~ dataFolder ~ error:", error);
-        console.log(
-            "🚀 ~ file: utils.ts:62 ~ dataFolder ~ :",
-            path.join(process.cwd(), "data", fileName)
-        );
+        const data = JSON.parse(readFileSync(originalPath, "utf8"));
+        writeFileSync(tempPath, JSON.stringify(data, null, 4), {
+            encoding: "utf8",
+            flag: "w",
+        });
         return path.join(process.cwd(), "data", fileName);
     }
 }

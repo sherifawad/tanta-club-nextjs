@@ -106,7 +106,7 @@ export default async function handler(
                 hidden,
             } as Category);
             await fs.writeFile(
-                `/tmp/data/categories.json`,
+                `${tmpdir()}/data/categories.json`,
                 JSON.stringify(categories, null, 4),
                 {
                     encoding: "utf8",
