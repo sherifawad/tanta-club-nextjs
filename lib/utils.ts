@@ -59,11 +59,16 @@ export const arrayToReactSelectOption = (
 // };
 
 export const getBaseUrl = () => {
-    if (process.env.DEPLOY_ENV === "production")
-        return `https://${process.env.DEPLOY_URL}`;
-    if (process.env.DEPLOY_ENV === "staging ")
-        return `https://${process.env.DEPLOY_URL}`;
-    return "http://localhost:3000";
+    switch (process.env.CONTEXT) {
+        case "production":
+            return `https://${process.env.URL ?? ""}`;
+        case "deploy-preview":
+            return `https://${process.env.DEPLOY_URL ?? ""}`;
+        case "branch-deploy":
+            return `https://${process.env.DEPLOY_PRIME_URL ?? ""}`;
+        default:
+            return "http://localhost:3000";
+    }
 };
 
 export function classNames(...classes: any) {
