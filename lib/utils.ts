@@ -50,11 +50,19 @@ export const arrayToReactSelectOption = (
     );
 };
 
+// export const getBaseUrl = () => {
+//     if (process.env.NEXT_PUBLIC_VERCEL_ENV === "production")
+//         return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+//     if (process.env.NEXT_PUBLIC_VERCEL_ENV === "preview")
+//         return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+//     return "http://localhost:3000";
+// };
+
 export const getBaseUrl = () => {
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === "production")
-        return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV === "preview")
-        return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+    if (process.env.DEPLOY_ENV === "production")
+        return `https://${process.env.DEPLOY_URL}`;
+    if (process.env.DEPLOY_ENV === "staging ")
+        return `https://${process.env.DEPLOY_URL}`;
     return "http://localhost:3000";
 };
 
