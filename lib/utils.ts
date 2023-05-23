@@ -55,14 +55,19 @@ export const getBaseUrl = () => {
 export function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
-export function dataFolder() {
+export function dataFolder(fileName: string) {
+    try {
+        createTempDirectory();
+        accessSync(path.join(tmpdir(), "data", fileName), constants.F_OK);
+        return path.join(tmpdir(), "data", fileName);
+    } catch (error) {
+        return path.join(process.cwd(), "data", fileName);
+    }
+}
+function createTempDirectory() {
     try {
         accessSync(path.join(tmpdir(), "data"), constants.F_OK);
-        console.log("🚀 ~ file: utils.ts:63 ~ dataFolder ~ temp:");
-        return path.join(tmpdir(), "data");
     } catch (error) {
-        console.log("🚀 ~ file: utils.ts:63 ~ dataFolder ~ error:", error);
         mkdirSync(path.join(tmpdir(), "data"), { recursive: true });
-        return path.join(process.cwd(), "data");
     }
 }

@@ -10,7 +10,7 @@ import { dataFolder } from "./utils";
 
 // const jsonDirectory = path.join(process.cwd(), "data");
 // const jsonDirectory = path.join(process.cwd(), "tmp", "data");
-const dataFilePath = path.join(dataFolder(), "categories.json");
+const dataFilePath = dataFolder("categories.json");
 
 const Categories = (async function Categories() {
     return JSON.parse(await fs.readFile(dataFilePath, "utf8"));

@@ -7,7 +7,7 @@ import { dataFolder } from "./utils";
 // let discounts = require("data/discounts.json") as Discount[];
 
 // const jsonDirectory = path.join(process.cwd(), "tmp");
-const dataFilePath = path.join(dataFolder(), "discounts.json");
+const dataFilePath = dataFolder("discounts.json");
 
 const Discounts = (async function Discounts() {
     return JSON.parse(await fs.readFile(dataFilePath, "utf8"));

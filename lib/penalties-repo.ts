@@ -8,7 +8,7 @@ import { dataFolder } from "./utils";
 // let penalties = require("data/penalties.json") as Penalty[];
 
 // const jsonDirectory = path.join(process.cwd(), "tmp");
-const dataFilePath = path.join(dataFolder(), "penalties.json");
+const dataFilePath = dataFolder("penalties.json");
 
 const Penalties = (async function Penalties() {
     return JSON.parse(await fs.readFile(dataFilePath, "utf8"));

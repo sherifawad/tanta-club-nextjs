@@ -10,7 +10,7 @@ import { dataFolder } from "./utils";
 // let sports = require("data/sports.json") as Sport[];
 
 // const jsonDirectory = path.join(process.cwd(), "tmp");
-const dataFilePath = path.join(dataFolder(), "sports.json");
+const dataFilePath = dataFolder("sports.json");
 
 const Sports = (async function Sports() {
     return JSON.parse(await fs.readFile(dataFilePath, "utf8"));
