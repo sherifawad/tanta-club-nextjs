@@ -59,8 +59,17 @@ export function dataFolder(fileName: string) {
     try {
         createTempDirectory();
         accessSync(path.join(tmpdir(), "data", fileName), constants.F_OK);
+        console.log(
+            "🚀 ~ file: utils.ts:62 ~ dataFolder ~ :",
+            path.join(tmpdir(), "data", fileName)
+        );
         return path.join(tmpdir(), "data", fileName);
     } catch (error) {
+        console.log("🚀 ~ file: utils.ts:68 ~ dataFolder ~ error:", error);
+        console.log(
+            "🚀 ~ file: utils.ts:62 ~ dataFolder ~ :",
+            path.join(process.cwd(), "data", fileName)
+        );
         return path.join(process.cwd(), "data", fileName);
     }
 }
