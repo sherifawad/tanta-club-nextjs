@@ -75,7 +75,7 @@ async function _delete(id: number) {
 // private helper functions
 
 async function saveData(categories: Category[]) {
-    // await fs.unlink(`${dataFilePath}`);
+    await fs.unlink(`${dataFilePath}`);
 
     await fs.writeFile(`${dataFilePath}`, JSON.stringify(categories, null, 4), {
         encoding: "utf8",
