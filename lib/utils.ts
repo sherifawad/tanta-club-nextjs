@@ -67,7 +67,7 @@ export const getBaseUrl = () => {
         case "branch-deploy":
             return `https://${process.env.DEPLOY_PRIME_URL ?? ""}`;
         default:
-            return "http://localhost:3000";
+            return `https://${process.env.DEPLOY_URL ?? ""}`;
     }
 };
 
