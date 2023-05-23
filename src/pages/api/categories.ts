@@ -105,14 +105,6 @@ export default async function handler(
                 title,
                 hidden,
             } as Category);
-            await fs.writeFile(
-                `${tmpdir()}/data/categories.json`,
-                JSON.stringify(categories, null, 4),
-                {
-                    encoding: "utf8",
-                    flag: "w",
-                }
-            );
 
             return res.status(200).json({
                 success: true,

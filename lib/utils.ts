@@ -76,20 +76,20 @@ export function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
 export function dataFolder(fileName: string) {
-    const tempPath = path.join(tmpdir(), "data", fileName);
-    const originalPath = path.join(process.cwd(), "data", fileName);
-    try {
-        createTempDirectory();
-        accessSync(tempPath, constants.F_OK);
-        return tempPath;
-    } catch (error) {
-        const data = JSON.parse(readFileSync(originalPath, "utf8"));
-        writeFileSync(tempPath, JSON.stringify(data, null, 4), {
-            encoding: "utf8",
-            flag: "w",
-        });
-        return tempPath;
-    }
+    return path.join(process.cwd(), "data", fileName);
+    // const tempPath = path.join(tmpdir(), "data", fileName);
+    // try {
+    //     createTempDirectory();
+    //     accessSync(tempPath, constants.F_OK);
+    //     return tempPath;
+    // } catch (error) {
+    //     const data = JSON.parse(readFileSync(originalPath, "utf8"));
+    //     writeFileSync(tempPath, JSON.stringify(data, null, 4), {
+    //         encoding: "utf8",
+    //         flag: "w",
+    //     });
+    //     return tempPath;
+    // }
 }
 function createTempDirectory() {
     try {

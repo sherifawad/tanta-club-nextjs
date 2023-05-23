@@ -59,7 +59,7 @@ async function update(
 
     // update and save
     Object.assign(category, params);
-    // await saveData(categories);
+    await saveData(categories);
     return categories;
 }
 
