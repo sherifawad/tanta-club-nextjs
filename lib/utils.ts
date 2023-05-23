@@ -74,7 +74,7 @@ export function dataFolder(fileName: string) {
             encoding: "utf8",
             flag: "w",
         });
-        return path.join(process.cwd(), "data", fileName);
+        return tempPath;
     }
 }
 function createTempDirectory() {
