@@ -61,13 +61,13 @@ export const arrayToReactSelectOption = (
 export const getBaseUrl = () => {
     switch (process.env.CONTEXT) {
         case "production":
-            return `https://${process.env.URL ?? ""}`;
+            return `https://${process.env.NEXT_PUBLIC_URL ?? ""}`;
         case "deploy-preview":
-            return `https://${process.env.DEPLOY_URL ?? ""}`;
+            return `https://${process.env.NEXT_PUBLIC_DEPLOY_URL ?? ""}`;
         case "branch-deploy":
-            return `https://${process.env.DEPLOY_PRIME_URL ?? ""}`;
+            return `https://${process.env.NEXT_PUBLIC_DEPLOY_PRIME_URL ?? ""}`;
         default:
-            return `https://${process.env.DEPLOY_URL ?? ""}`;
+            return `https://${process.env.NEXT_PUBLIC_DEPLOY_URL ?? ""}`;
     }
 };
 
