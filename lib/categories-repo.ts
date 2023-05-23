@@ -17,7 +17,10 @@ const Categories = (async function Categories() {
 })() as unknown as Promise<Category[]>;
 
 export const categoriesRepo = {
-    getAll: async () => await Categories,
+    getAll: async () =>
+        JSON.parse(
+            await fs.readFile(dataFilePath, "utf8")
+        ) as unknown as Promise<Category[]>,
     getById: async (id: number) => (await Categories).find((x) => x.id === id),
     find: async (x: (x: Category) => boolean) => (await Categories).find(x),
     create,
