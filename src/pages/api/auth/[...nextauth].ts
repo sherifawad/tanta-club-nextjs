@@ -1,9 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth, { DefaultSession, NextAuthOptions } from "next-auth";
-import { usersRepo } from "lib/users-repo";
 import { isPasswordValid } from "lib/hash";
-import { Role } from "types";
-import { z } from "zod";
+import { usersPrismaRepo } from "@/lib/users-repo-prisma";
+import type { Role } from "@prisma/client";
 
 declare module "next-auth" {
     interface Session extends DefaultSession {
@@ -58,15 +57,15 @@ export const authOptions: NextAuthOptions = {
                         password: string;
                     };
 
-                    const user = await usersRepo.find(
-                        (x) =>
-                            x.name.toLocaleLowerCase() ===
-                                username.toLocaleLowerCase() && x.enabled
-                    );
+                    const user = await usersPrismaRepo.find({
+                        name: {
+                            equals: username,
+                            mode: "insensitive",
+                        },
+                        enabled: true,
+                    });
 
-                    if (user == null || !user.enabled) {
-                        return null;
-                    }
+                    if (!user) return null;
 
                     // Validate password
                     const isPasswordMatch = await isPasswordValid(
