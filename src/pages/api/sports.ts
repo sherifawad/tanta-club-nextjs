@@ -1,5 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getCurrentUser } from "@/lib/session";
+import { Role, type Sport } from "@prisma/client";
+import {
+    sportsPrismaRepo,
+    type SportToEditType,
+} from "@/lib/sports-repo-prisma";
 
 const secret = process.env.NEXTAUTH_SECRET;
 export default async function handler(
@@ -21,7 +26,7 @@ export default async function handler(
                 categoryId,
                 penaltyId,
                 discounts,
-            }: Sport = JSON.parse(newSport);
+            }: SportToEditType = JSON.parse(newSport);
 
             if (
                 !name ||
@@ -49,7 +54,12 @@ export default async function handler(
                 });
             }
             // Check if discount exists
-            const sportExist = await sportsRepo.find((x) => x.name === name);
+            const sportExist = await sportsPrismaRepo.find({
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            });
             if (sportExist) {
                 return res.status(422).json({
                     success: false,
@@ -58,7 +68,7 @@ export default async function handler(
                 });
             }
             // Store new discount
-            const storeSport = await sportsRepo.create({
+            const storeSport = await sportsPrismaRepo.create({
                 name,
                 title,
                 price,
@@ -66,7 +76,7 @@ export default async function handler(
                 categoryId,
                 penaltyId,
                 discounts,
-            } as Sport);
+            } as SportToEditType);
 
             return res.status(201).json({
                 success: true,
@@ -96,18 +106,21 @@ export default async function handler(
                 categoryId,
                 penaltyId,
                 discounts,
-            }: Sport = JSON.parse(req.body);
+            }: SportToEditType = JSON.parse(req.body);
 
-            const sportExist = await sportsRepo.getById(id);
+            const sportExist = await sportsPrismaRepo.getById(id);
             if (!sportExist) {
                 return res.status(422).json({
                     success: false,
                     message: "No user exists!",
                 });
             }
-            const sportNameExist = await sportsRepo.find(
-                (x) => x.name === name
-            );
+            const sportNameExist = await sportsPrismaRepo.find({
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            });
             if (sportNameExist && sportNameExist.id !== id) {
                 return res.status(422).json({
                     success: false,
@@ -115,7 +128,7 @@ export default async function handler(
                     sportExist: true,
                 });
             }
-            await sportsRepo.update(id, {
+            await sportsPrismaRepo.update(id, {
                 name,
                 title,
                 price,
@@ -123,7 +136,7 @@ export default async function handler(
                 categoryId,
                 penaltyId,
                 discounts,
-            } as Sport);
+            } as SportToEditType);
 
             return res.status(200).json({
                 success: true,
@@ -131,7 +144,9 @@ export default async function handler(
             });
         } else {
             if (req.headers.appsecret === process.env.APP_SECRET) {
-                const sports = sportsRepo.getAll();
+                const sports = (await sportsPrismaRepo.getAll()).filter(
+                    (x) => x.hidden === false
+                );
                 return res.status(200).send(sports);
             }
             return res.status(401).send("Unauthorized");

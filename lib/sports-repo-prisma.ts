@@ -1,16 +1,16 @@
 import { prisma } from "lib/prisma";
 import type { Prisma, Sport, Penalty, Discount } from "@prisma/client";
 
-type SportToEditType = Sport & {
+export type SportToEditType = Sport & {
     discounts?: Prisma.DiscountWhereUniqueInput[] | null;
 };
 
-export const sportsRepo = {
+export const sportsPrismaRepo = {
     getSports: async () => await prisma.sport.findMany({}),
     getAll: async () =>
         await prisma.sport.findMany({
             include: {
-                DiscountOptions: true,
+                discounts: true,
                 Penalty: true,
             },
         }),
@@ -30,7 +30,7 @@ async function create(sport: SportToEditType) {
             sport: await prisma.sport.create({
                 data: {
                     ...rest,
-                    DiscountOptions: connectSportToDiscounts(discounts),
+                    discounts: connectSportToDiscounts(discounts),
                 },
             }),
             error: null,
@@ -49,7 +49,7 @@ async function update(id: number, params: SportToEditType) {
                 where: { id },
                 data: {
                     ...rest,
-                    DiscountOptions: connectSportToDiscounts(discounts),
+                    discounts: connectSportToDiscounts(discounts),
                 },
             }),
             error: null,
