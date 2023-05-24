@@ -59,7 +59,10 @@ export const arrayToReactSelectOption = (
 // };
 
 export const getBaseUrl = () => {
-    return "https://stage--endearing-croquembouche-bd79b8.netlify.app/";
+    return `https://${
+        process.env.NEXT_PUBLIC_VERCEL_URL ??
+        "stage--endearing-croquembouche-bd79b8.netlify.app"
+    }`;
     switch (process.env.CONTEXT) {
         case "production":
             return `https://${process.env.NEXT_PUBLIC_URL ?? ""}`;

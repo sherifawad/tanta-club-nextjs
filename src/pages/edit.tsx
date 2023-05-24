@@ -1461,7 +1461,7 @@ function SportEdit({
         </div>
     );
 }
-const fs = require("fs");
+import { promises as fs } from "fs";
 import path from "path";
 export async function getServerSideProps({
     req,
