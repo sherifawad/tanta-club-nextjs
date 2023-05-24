@@ -1,6 +1,4 @@
-import { sportsRepo } from "lib/sports-repo";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Role, Sport } from "types";
 import { getCurrentUser } from "@/lib/session";
 
 const secret = process.env.NEXTAUTH_SECRET;

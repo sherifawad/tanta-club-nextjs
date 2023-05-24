@@ -32,7 +32,7 @@ enum Role {
 
 model User {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @unique
   password  String
   enabled   Boolean  @default(true)
   role      Role     @default(CLIENT)
@@ -41,26 +41,26 @@ model User {
 }
 
 model Sport {
-  id              Int        @id @default(autoincrement())
-  name            String?
-  title           String?
-  code            String?
-  note            String?
-  price           Float
-  hidden          Boolean    @default(false)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  DiscountOptions Discount[]
-  Category        Category?  @relation(fields: [categoryId], references: [id])
-  categoryId      Int?
-  Penalty         Penalty?   @relation(fields: [penaltyId], references: [id])
-  penaltyId       Int?
+  id         Int        @id @default(autoincrement())
+  name       String?    @unique
+  title      String?    @unique
+  code       String?
+  note       String?
+  price      Float
+  hidden     Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  discounts  Discount[]
+  Category   Category?  @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  Penalty    Penalty?   @relation(fields: [penaltyId], references: [id])
+  penaltyId  Int?
 }
 
 model Category {
   id        Int      @id @default(autoincrement())
-  name      String
-  title     String?
+  name      String   @unique
+  title     String?  @unique
   note      String?
   hidden    Boolean  @default(false)
   sports    Sport[]
@@ -70,8 +70,8 @@ model Category {
 
 model Discount {
   id         Int          @id @default(autoincrement())
-  name       String
-  title      String?
+  name       String       @unique
+  title      String?      @unique
   note       String?
   type       DiscountType
   step       Float
@@ -89,8 +89,8 @@ model Discount {
 
 model Penalty {
   id        Int            @id @default(autoincrement())
-  name      String
-  title     String?
+  name      String         @unique
+  title     String?        @unique
   note      String?
   type      DiscountType
   repeated  RepetitionType @default(DAILY)
