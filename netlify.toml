@@ -1,0 +1,4 @@
+[[redirects]]
+from = "/json-data"
+to = "/.netlify/functions/json-data"
+status = 200
