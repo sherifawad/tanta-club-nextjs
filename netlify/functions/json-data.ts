@@ -14,7 +14,7 @@ exports.handler = async (event: any, context: any) => {
         body: response,
         headers: {
             "Content-Type": "application/json; charset=utf-8",
-            "Access-Control-Allow-Origin": "*",
+            // "Access-Control-Allow-Origin": "*",
         },
     };
 };
