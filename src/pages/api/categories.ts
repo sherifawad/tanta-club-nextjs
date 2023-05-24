@@ -3,11 +3,10 @@ import { error } from "console";
 import { categoriesRepo } from "lib/categories-repo";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { Category, Role } from "types";
-import { promises as fs } from "fs";
 import path from "path";
 import { dataFolder } from "@/lib/utils";
 import { tmpdir } from "os";
-
+const fs = require("fs");
 // categories in JSON file for simplicity, store in a db for production applications
 // let categories = require("data/categories.json") as Category[];
 
@@ -82,29 +81,42 @@ export default async function handler(
             }
 
             const { id, title, hidden, name }: Category = JSON.parse(req.body);
+            const cats = JSON.parse(
+                await fs.readFile("./categories.json", "utf8")
+            ) as Category[];
 
-            const categoryExist = await categoriesRepo.getById(id);
-            if (!categoryExist) {
-                return res.status(422).json({
-                    success: false,
-                    message: "No user exists!",
-                });
-            }
-            const categoryNameExist = await categoriesRepo.find(
-                (x) => x.name === name
-            );
-            if (categoryNameExist && categoryNameExist.id !== id) {
-                return res.status(422).json({
-                    success: false,
-                    message: "A user with the same name already exists!",
-                    categoryExist: true,
-                });
-            }
-            const categories = await categoriesRepo.update(id, {
-                name,
-                title,
-                hidden,
-            } as Category);
+            const category = cats.find((x) => x.id === id);
+            if (!category || category == null) return;
+
+            // set date updated
+            category.updatedAt = new Date().toISOString();
+
+            // update and save
+            Object.assign(category, { title, hidden, name });
+            fs.writeFileSync("./categories.json", JSON.stringify(req.body));
+
+            // const categoryExist = await categoriesRepo.getById(id);
+            // if (!categoryExist) {
+            //     return res.status(422).json({
+            //         success: false,
+            //         message: "No user exists!",
+            //     });
+            // }
+            // const categoryNameExist = await categoriesRepo.find(
+            //     (x) => x.name === name
+            // );
+            // if (categoryNameExist && categoryNameExist.id !== id) {
+            //     return res.status(422).json({
+            //         success: false,
+            //         message: "A user with the same name already exists!",
+            //         categoryExist: true,
+            //     });
+            // }
+            // const categories = await categoriesRepo.update(id, {
+            //     name,
+            //     title,
+            //     hidden,
+            // } as Category);
 
             return res.status(200).json({
                 success: true,

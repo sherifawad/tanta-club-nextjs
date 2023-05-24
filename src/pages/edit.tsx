@@ -1461,7 +1461,8 @@ function SportEdit({
         </div>
     );
 }
-
+const fs = require("fs");
+import path from "path";
 export async function getServerSideProps({
     req,
     res,
@@ -1481,7 +1482,13 @@ export async function getServerSideProps({
                 },
             };
         }
-        const categories = await categoriesRepo.getAll();
+        // const categories = await categoriesRepo.getAll();
+        const dataFilePath = path.join(
+            process.cwd(),
+            "src/pages/api/",
+            "categories.json"
+        );
+        const categories = JSON.parse(await fs.readFile(dataFilePath, "utf8"));
         const sports = await sportsRepo.getSports();
         const discounts = await discountsRepo.getAll();
         const penalties = await penaltiesRepo.getAll();
