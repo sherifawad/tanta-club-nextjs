@@ -76,7 +76,7 @@ export function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
 }
 export function dataFolder(fileName: string) {
-    return path.join(process.cwd(), "public", "data", fileName);
+    return path.join(process.cwd(), "/pages/api/json/", fileName);
     // const tempPath = path.join(tmpdir(), "data", fileName);
     // try {
     //     createTempDirectory();

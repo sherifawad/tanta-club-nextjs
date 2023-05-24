@@ -1,0 +1,63 @@
+[
+    {
+        "id": 5965,
+        "name": "sherifawad",
+        "password": "$2a$12$C02QjilFL0Y8qhhM3zwWIelJqEVZsJ2Zeay8T2r1NKH0C7j133ynm",
+        "role": "OWNER",
+        "enabled": true
+    },
+    {
+        "name": "ahmed",
+        "role": "USER",
+        "password": "$2a$12$LxXfsIl5XFwTsSqtP.c4H.ngAom6qk48EuWGTuYi3ZXbbah8Sr9f.",
+        "id": 5966,
+        "createdAt": "2023-05-18T15:32:13.249Z",
+        "updatedAt": "2023-05-20T23:02:49.062Z",
+        "enabled": true
+    },
+    {
+        "name": "ali",
+        "role": "ADMIN",
+        "password": "$2a$12$QpFlVEBRFxzHYT2N7VdMW.GaZTzvuEFFpZvGH1XBigx/Bo3ix6uIK",
+        "id": 5967,
+        "createdAt": "2023-05-18T15:44:05.225Z",
+        "updatedAt": "2023-05-20T22:50:40.210Z",
+        "enabled": true
+    },
+    {
+        "name": "said",
+        "role": "ADMIN",
+        "password": "$2a$12$fGO.YUoggXAcssjrB87ahejSuvzMPKvdFG9GjuDDkC9PuNgTOTxIq",
+        "id": 5968,
+        "createdAt": "2023-05-20T00:38:38.224Z",
+        "updatedAt": "2023-05-20T00:38:38.224Z",
+        "enabled": true
+    },
+    {
+        "name": "nehal",
+        "role": "CLIENT",
+        "password": "$2a$12$QNVOHaVv54TrH5bA4LTiNunQU/oZHIBHpjE.a85g498aXipkvBZ5W",
+        "enabled": true,
+        "id": 5969,
+        "createdAt": "2023-05-20T23:03:20.755Z",
+        "updatedAt": "2023-05-20T23:03:20.755Z"
+    },
+    {
+        "name": "hassan",
+        "role": "CLIENT",
+        "password": "$2a$12$iVNNgTVYVIrdaqsbt3t9OOzexjRbyZVSPqK6qMqwuzNktPr/JY/Mq",
+        "enabled": true,
+        "id": 5970,
+        "createdAt": "2023-05-22T02:19:21.541Z",
+        "updatedAt": "2023-05-22T02:19:21.541Z"
+    },
+    {
+        "name": "newuser",
+        "role": "CLIENT",
+        "password": "$2a$12$5BTMIEJnzeGutJp6J.z.sOfzdjTpIPLIsxJjDFB4Unon0bG1IzVlO",
+        "enabled": true,
+        "id": 5971,
+        "createdAt": "2023-05-22T02:40:46.380Z",
+        "updatedAt": "2023-05-22T02:40:46.380Z"
+    }
+]
