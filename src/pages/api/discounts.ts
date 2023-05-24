@@ -1,7 +1,7 @@
+import { discountsPrismaRepo } from "@/lib/discounts-repo-prisma";
 import { getCurrentUser } from "@/lib/session";
-import { discountsRepo } from "lib/discounts-repo";
+import { DiscountType, type Discount, Role } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Discount, DiscountType, Role } from "types";
 
 export default async function handler(
     req: NextApiRequest,
@@ -52,9 +52,12 @@ export default async function handler(
                 });
             }
             // Check if discount exists
-            const discountExist = await discountsRepo.find(
-                (x) => x.name === name
-            );
+            const discountExist = await discountsPrismaRepo.find({
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            });
             if (discountExist) {
                 return res.status(422).json({
                     success: false,
@@ -63,7 +66,7 @@ export default async function handler(
                 });
             }
             // Store new discount
-            const storeDiscount = await discountsRepo.create({
+            const storeDiscount = await discountsPrismaRepo.create({
                 name,
                 title,
                 type,
@@ -71,7 +74,7 @@ export default async function handler(
                 Maximum,
                 step,
                 enabled,
-            } as Discount);
+            });
 
             return res.status(201).json({
                 success: true,
@@ -103,16 +106,19 @@ export default async function handler(
                 enabled,
             }: Discount = JSON.parse(req.body);
 
-            const discountExist = await discountsRepo.getById(id);
+            const discountExist = await discountsPrismaRepo.getById(id);
             if (!discountExist) {
                 return res.status(422).json({
                     success: false,
                     message: "No user exists!",
                 });
             }
-            const discountNameExist = await discountsRepo.find(
-                (x) => x.name === name
-            );
+            const discountNameExist = await discountsPrismaRepo.find({
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            });
             if (discountNameExist && discountNameExist.id !== id) {
                 return res.status(422).json({
                     success: false,
@@ -120,7 +126,7 @@ export default async function handler(
                     discountExist: true,
                 });
             }
-            await discountsRepo.update(id, {
+            await discountsPrismaRepo.update(id, {
                 name,
                 title,
                 type,
@@ -128,7 +134,7 @@ export default async function handler(
                 Maximum,
                 step,
                 enabled,
-            } as Discount);
+            });
 
             return res.status(200).json({
                 success: true,
@@ -136,7 +142,9 @@ export default async function handler(
             });
         } else {
             if (req.headers.appsecret === process.env.APP_SECRET) {
-                const discounts = await discountsRepo.getAll();
+                const discounts = (await discountsPrismaRepo.getAll()).filter(
+                    (x) => x.enabled === true
+                );
                 return res.status(200).send(discounts);
             }
         }

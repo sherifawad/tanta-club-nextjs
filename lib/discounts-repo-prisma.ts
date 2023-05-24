@@ -1,7 +1,7 @@
 import { prisma } from "lib/prisma";
 import type { Prisma } from "@prisma/client/edge";
 
-export const categoriesPrismaRepo = {
+export const discountsPrismaRepo = {
     getAll: async () => await prisma.discount.findMany({}),
     getById: async (id: number) =>
         await prisma.discount.findUnique({ where: { id } }),
