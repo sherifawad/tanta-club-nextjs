@@ -2,6 +2,7 @@ import { User } from "types";
 import { promises as fs } from "fs";
 import path from "path";
 import { dataFolder } from "./utils";
+import { prisma } from "lib/prisma";
 
 // users in JSON file for simplicity, store in a db for production applications
 // let users = require("data/users.json") as User[];
