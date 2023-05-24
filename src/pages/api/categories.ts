@@ -6,7 +6,9 @@ import { Category, Role } from "types";
 import path from "path";
 import { dataFolder } from "@/lib/utils";
 import { tmpdir } from "os";
-const fs = require("fs");
+// const fs = require("fs");
+import { promises as fs } from "fs";
+
 // categories in JSON file for simplicity, store in a db for production applications
 // let categories = require("data/categories.json") as Category[];
 
@@ -93,7 +95,7 @@ export default async function handler(
 
             // update and save
             Object.assign(category, { title, hidden, name });
-            fs.writeFileSync("./categories.json", JSON.stringify(req.body));
+            fs.writeFile("./categories.json", JSON.stringify(cats));
 
             // const categoryExist = await categoriesRepo.getById(id);
             // if (!categoryExist) {
