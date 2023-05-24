@@ -1,25 +1,8 @@
+import { categoriesPrismaRepo } from "@/lib/categories-repo-prisma";
 import { getCurrentUser } from "@/lib/session";
+import { type Category, Role } from "@prisma/client";
 import { error } from "console";
-import { categoriesRepo } from "lib/categories-repo";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Category, Role } from "types";
-import path from "path";
-import { dataFolder } from "@/lib/utils";
-import { tmpdir } from "os";
-// const fs = require("fs");
-import { promises as fs } from "fs";
-
-// categories in JSON file for simplicity, store in a db for production applications
-// let categories = require("data/categories.json") as Category[];
-
-// const jsonDirectory = path.join(process.cwd(), "data");
-// const jsonDirectory = path.join(process.cwd(), "tmp", "data");
-
-const dataFilePath = path.join(
-    process.cwd(),
-    "src/pages/api/",
-    "categories.json"
-);
 
 export default async function handler(
     req: NextApiRequest,
@@ -52,9 +35,12 @@ export default async function handler(
                 });
             }
             // Check if category exists
-            const categoryExist = await categoriesRepo.find(
-                (x) => x.name === name
-            );
+            const categoryExist = await categoriesPrismaRepo.find({
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            });
             if (categoryExist) {
                 return res.status(422).json({
                     success: false,
@@ -63,11 +49,11 @@ export default async function handler(
                 });
             }
             // Store new category
-            const storeCategory = await categoriesRepo.create({
+            const storeCategory = await categoriesPrismaRepo.create({
                 name,
                 hidden,
                 title,
-            } as Category);
+            });
 
             return res.status(201).json({
                 success: true,
@@ -89,42 +75,32 @@ export default async function handler(
             }
 
             const { id, title, hidden, name }: Category = JSON.parse(req.body);
-            const cats = JSON.parse(
-                await fs.readFile(dataFilePath, "utf8")
-            ) as Category[];
 
-            const category = cats.find((x) => x.id === id);
-            if (!category || category == null) return;
-
-            // set date updated
-            category.updatedAt = new Date().toISOString();
-
-            // update and save
-            Object.assign(category, { title, hidden, name });
-            fs.writeFile(dataFilePath, JSON.stringify(cats));
-
-            // const categoryExist = await categoriesRepo.getById(id);
-            // if (!categoryExist) {
-            //     return res.status(422).json({
-            //         success: false,
-            //         message: "No user exists!",
-            //     });
-            // }
-            // const categoryNameExist = await categoriesRepo.find(
-            //     (x) => x.name === name
-            // );
-            // if (categoryNameExist && categoryNameExist.id !== id) {
-            //     return res.status(422).json({
-            //         success: false,
-            //         message: "A user with the same name already exists!",
-            //         categoryExist: true,
-            //     });
-            // }
-            // const categories = await categoriesRepo.update(id, {
-            //     name,
-            //     title,
-            //     hidden,
-            // } as Category);
+            const categoryExist = await categoriesPrismaRepo.getById(id);
+            if (!categoryExist) {
+                return res.status(422).json({
+                    success: false,
+                    message: "No user exists!",
+                });
+            }
+            const categoryNameExist = await categoriesPrismaRepo.find({
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            });
+            if (categoryNameExist && categoryNameExist.id !== id) {
+                return res.status(422).json({
+                    success: false,
+                    message: "A user with the same name already exists!",
+                    categoryExist: true,
+                });
+            }
+            const categories = await categoriesPrismaRepo.update(id, {
+                name,
+                title,
+                hidden,
+            });
 
             return res.status(200).json({
                 success: true,
@@ -132,7 +108,7 @@ export default async function handler(
             });
         } else {
             if (req.headers.appsecret === process.env.APP_SECRET) {
-                const categories = (await categoriesRepo.getAll()).filter(
+                const categories = (await categoriesPrismaRepo.getAll()).filter(
                     (x) => x.hidden === false
                 );
                 return res.status(200).send(categories);
