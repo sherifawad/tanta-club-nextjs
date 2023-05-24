@@ -1488,11 +1488,8 @@ export async function getServerSideProps({
             "src/pages/api/",
             "categories.json"
         );
-        console.log("🚀 ~ file: edit.tsx:1491 ~ dataFilePath:", dataFilePath);
         const jsonData = await fs.readFile(dataFilePath, "utf8");
-        console.log("🚀 ~ file: edit.tsx:1493 ~ jsonData:", jsonData);
         const categories = JSON.parse(jsonData) as Category[];
-        console.log("🚀 ~ file: edit.tsx:1495 ~ categories:", categories);
         const sports = await sportsRepo.getSports();
         const discounts = await discountsRepo.getAll();
         const penalties = await penaltiesRepo.getAll();
