@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum DiscountType {
+  FIXED
+  PERCENTAGE
+}
+
+enum RepetationType {
+  DAILY
+  MONTHLY
+  YEARLY
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  USER
+  CLIENT
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  password  String
+  enabled   Boolean  @default(true)
+  role      Role     @default(CLIENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sport {
+  id              Int        @id @default(autoincrement())
+  name            String?
+  title           String?
+  code            String?
+  note            String?
+  price           Float
+  hidden          Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  DiscountOptions Discount[]
+  Category        Category?  @relation(fields: [categoryId], references: [id])
+  categoryId      Int?
+  Penalty         Penalty?   @relation(fields: [penaltyId], references: [id])
+  penaltyId       Int?
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  title     String?
+  note      String?
+  hidden    Boolean  @default(false)
+  sports    Sport[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Discount {
+  id         Int          @id @default(autoincrement())
+  name       String
+  title      String?
+  note       String?
+  type       DiscountType
+  step       Float
+  minimum    Float
+  Maximum    Float
+  startDay   Int?
+  startMonth Int?
+  endDay     Int?
+  endMonth   Int?
+  sports     Sport[]
+  enabled    Boolean      @default(true)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+model Penalty {
+  id        Int            @id @default(autoincrement())
+  name      String
+  title     String?
+  note      String?
+  type      DiscountType
+  repeated  RepetationType @default(DAILY)
+  start     Int?
+  end       Int?
+  step      Float
+  minimum   Float
+  Maximum   Float
+  sports    Sport[]
+  enabled   Boolean        @default(true)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
