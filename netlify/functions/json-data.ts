@@ -1,17 +1,18 @@
 import type { Handler, HandlerEvent, HandlerContext } from "@netlify/functions";
 import { categoriesRepo } from "lib/categories-repo";
 import { Category } from "types";
+import { promises as fs } from "fs";
 
 const handler: Handler = async (
     event: HandlerEvent,
     context: HandlerContext
 ) => {
     try {
-        const newCategory = await categoriesRepo.create({
-            title: Math.random().toString(),
-            name: Math.random().toString(),
-            hidden: false,
-        } as Category);
+        // const newCategory = await categoriesRepo.create({
+        //     title: Math.random().toString(),
+        //     name: Math.random().toString(),
+        //     hidden: false,
+        // } as Category);
         const quotes = [
             "I find your lack of faith disturbing.",
             "Do. Or do not. There is no try.",
@@ -19,9 +20,8 @@ const handler: Handler = async (
         ];
 
         const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-
-        const categories = await categoriesRepo.getAll();
-        const response = JSON.stringify({ categories: categories });
+        const jsonData = await fs.readFile("./categories.json", "utf8");
+        const response = JSON.stringify({ categories: jsonData });
 
         return {
             statusCode: 200,
