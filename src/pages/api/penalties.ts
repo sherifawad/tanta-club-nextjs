@@ -1,7 +1,12 @@
 import { getCurrentUser } from "@/lib/session";
-import { penaltiesRepo } from "lib/penalties-repo";
+import {
+    DiscountType,
+    Role,
+    RepetitionType,
+    type Penalty,
+} from "@prisma/client";
+import { penaltiesPrismaRepo } from "lib/penalties-repo-prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { DiscountType, Penalty, RepetitionType, Role } from "types";
 
 export default async function handler(
     req: NextApiRequest,
@@ -59,9 +64,12 @@ export default async function handler(
                 });
             }
             // Check if penalty exists
-            const penaltyExist = await penaltiesRepo.find(
-                (x) => x.name === name
-            );
+            const penaltyExist = await penaltiesPrismaRepo.find({
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            });
             if (penaltyExist) {
                 return res.status(422).json({
                     success: false,
@@ -70,7 +78,7 @@ export default async function handler(
                 });
             }
             // Store new penalty
-            const storePenalty = await penaltiesRepo.create({
+            const storePenalty = await penaltiesPrismaRepo.create({
                 name,
                 title,
                 type,
@@ -81,7 +89,7 @@ export default async function handler(
                 enabled,
                 start,
                 end,
-            } as Penalty);
+            });
 
             return res.status(201).json({
                 success: true,
@@ -116,16 +124,19 @@ export default async function handler(
                 end,
             }: Penalty = JSON.parse(req.body);
 
-            const penaltyExist = await penaltiesRepo.getById(id);
+            const penaltyExist = await penaltiesPrismaRepo.getById(id);
             if (!penaltyExist) {
                 return res.status(422).json({
                     success: false,
                     message: "No user exists!",
                 });
             }
-            const penaltyNameExist = await penaltiesRepo.find(
-                (x) => x.name === name
-            );
+            const penaltyNameExist = await penaltiesPrismaRepo.find({
+                name: {
+                    equals: name,
+                    mode: "insensitive",
+                },
+            });
             if (penaltyNameExist && penaltyNameExist.id !== id) {
                 return res.status(422).json({
                     success: false,
@@ -133,7 +144,7 @@ export default async function handler(
                     penaltyExist: true,
                 });
             }
-            await penaltiesRepo.update(id, {
+            await penaltiesPrismaRepo.update(id, {
                 name,
                 title,
                 type,
@@ -152,7 +163,9 @@ export default async function handler(
             });
         } else {
             if (req.headers.appsecret === process.env.APP_SECRET) {
-                const penalties = penaltiesRepo.getAll();
+                const penalties = (await penaltiesPrismaRepo.getAll()).filter(
+                    (x) => x.enabled === true
+                );
                 return res.status(200).send(penalties);
             }
             return res.status(401).send("Unauthorized");

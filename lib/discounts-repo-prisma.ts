@@ -12,28 +12,28 @@ export const discountsPrismaRepo = {
     delete: _delete,
 };
 
-async function create(user: Prisma.DiscountCreateInput) {
+async function create(discount: Prisma.DiscountCreateInput) {
     try {
         return {
-            user: await prisma.discount.create({ data: user }),
+            discount: await prisma.discount.create({ data: discount }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { discount: null, error: error };
     }
 }
 
 async function update(id: number, params: Prisma.DiscountUpdateInput) {
     try {
         return {
-            user: await prisma.discount.update({
+            discount: await prisma.discount.update({
                 where: { id },
                 data: params,
             }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { discount: null, error: error };
     }
 }
 
@@ -41,12 +41,12 @@ async function update(id: number, params: Prisma.DiscountUpdateInput) {
 async function _delete(id: number) {
     try {
         return {
-            user: await prisma.discount.delete({
+            discount: await prisma.discount.delete({
                 where: { id },
             }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { discount: null, error: error };
     }
 }

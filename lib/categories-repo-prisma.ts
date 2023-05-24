@@ -12,28 +12,28 @@ export const categoriesPrismaRepo = {
     delete: _delete,
 };
 
-async function create(user: Prisma.CategoryCreateInput) {
+async function create(category: Prisma.CategoryCreateInput) {
     try {
         return {
-            user: await prisma.category.create({ data: user }),
+            category: await prisma.category.create({ data: category }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { category: null, error: error };
     }
 }
 
 async function update(id: number, params: Prisma.CategoryUpdateInput) {
     try {
         return {
-            user: await prisma.category.update({
+            category: await prisma.category.update({
                 where: { id },
                 data: params,
             }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { category: null, error: error };
     }
 }
 
@@ -41,12 +41,12 @@ async function update(id: number, params: Prisma.CategoryUpdateInput) {
 async function _delete(id: number) {
     try {
         return {
-            user: await prisma.category.delete({
+            category: await prisma.category.delete({
                 where: { id },
             }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { category: null, error: error };
     }
 }

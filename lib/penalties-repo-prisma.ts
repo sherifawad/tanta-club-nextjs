@@ -12,28 +12,28 @@ export const penaltiesPrismaRepo = {
     delete: _delete,
 };
 
-async function create(user: Prisma.PenaltyCreateInput) {
+async function create(penalty: Prisma.PenaltyCreateInput) {
     try {
         return {
-            user: await prisma.penalty.create({ data: user }),
+            penalty: await prisma.penalty.create({ data: penalty }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { penalty: null, error: error };
     }
 }
 
 async function update(id: number, params: Prisma.PenaltyUpdateInput) {
     try {
         return {
-            user: await prisma.penalty.update({
+            penalty: await prisma.penalty.update({
                 where: { id },
                 data: params,
             }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { penalty: null, error: error };
     }
 }
 
@@ -41,12 +41,12 @@ async function update(id: number, params: Prisma.PenaltyUpdateInput) {
 async function _delete(id: number) {
     try {
         return {
-            user: await prisma.penalty.delete({
+            penalty: await prisma.penalty.delete({
                 where: { id },
             }),
             error: null,
         };
     } catch (error) {
-        return { user: null, error: error };
+        return { penalty: null, error: error };
     }
 }

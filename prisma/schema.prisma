@@ -17,7 +17,7 @@ enum DiscountType {
   PERCENTAGE
 }
 
-enum RepetationType {
+enum RepetitionType {
   DAILY
   MONTHLY
   YEARLY
@@ -93,7 +93,7 @@ model Penalty {
   title     String?
   note      String?
   type      DiscountType
-  repeated  RepetationType @default(DAILY)
+  repeated  RepetitionType @default(DAILY)
   start     Int?
   end       Int?
   step      Float
