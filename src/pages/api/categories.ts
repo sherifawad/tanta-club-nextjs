@@ -15,6 +15,12 @@ import { promises as fs } from "fs";
 // const jsonDirectory = path.join(process.cwd(), "data");
 // const jsonDirectory = path.join(process.cwd(), "tmp", "data");
 
+const dataFilePath = path.join(
+    process.cwd(),
+    "src/pages/api/",
+    "categories.json"
+);
+
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
@@ -84,8 +90,9 @@ export default async function handler(
 
             const { id, title, hidden, name }: Category = JSON.parse(req.body);
             const cats = JSON.parse(
-                await fs.readFile("./categories.json", "utf8")
+                await fs.readFile(dataFilePath, "utf8")
             ) as Category[];
+            console.log("🚀 ~ file: categories.ts:89 ~ cats:", cats);
 
             const category = cats.find((x) => x.id === id);
             if (!category || category == null) return;
@@ -95,7 +102,7 @@ export default async function handler(
 
             // update and save
             Object.assign(category, { title, hidden, name });
-            fs.writeFile("./categories.json", JSON.stringify(cats));
+            fs.writeFile(dataFilePath, JSON.stringify(cats));
 
             // const categoryExist = await categoriesRepo.getById(id);
             // if (!categoryExist) {
