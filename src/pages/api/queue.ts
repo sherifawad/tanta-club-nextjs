@@ -1,18 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { setCookie } from "@/lib/cookies";
-// import { getSession } from "@/lib/hash";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 import { Queue, QueueStatus, Role } from "types";
-import { authOptions } from "./auth/[...nextauth]";
-import { getToken } from "next-auth/jwt";
-import axios from "axios";
-import { getCookie } from "cookies-next";
 import { getCurrentUser } from "@/lib/session";
-
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 type Data = {
     current: number;

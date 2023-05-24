@@ -1,8 +1,8 @@
 import { getCurrentUser } from "@/lib/session";
+import { usersPrismaRepo } from "@/lib/users-repo-prisma";
+import { Role, type User } from "@prisma/client";
 import { hashPassword, isPasswordValid } from "lib/hash";
-import { usersRepo } from "lib/users-repo";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Role, User } from "types";
 
 export default async function handler(
     req: NextApiRequest,
@@ -46,7 +46,12 @@ export default async function handler(
             });
         }
         // Check if user exists
-        const userExists = await usersRepo.find((x) => x.name === name);
+        const userExists = await usersPrismaRepo.find({
+            name: {
+                equals: name,
+                mode: "insensitive",
+            },
+        });
         if (userExists) {
             return res.status(422).json({
                 success: false,
@@ -59,12 +64,12 @@ export default async function handler(
         const hashedPassword = await hashPassword(password);
 
         // Store new user
-        const storeUser = await usersRepo.create({
+        const storeUser = await usersPrismaRepo.create({
             name,
             role,
             password: hashedPassword,
             enabled,
-        } as User);
+        });
 
         return res.status(201).json({
             success: true,
@@ -86,6 +91,7 @@ export default async function handler(
             newPassword,
         }: { id?: number; oldPassword?: string; newPassword?: string } =
             JSON.parse(req.body);
+
         if (
             !id ||
             id === null ||
@@ -99,7 +105,7 @@ export default async function handler(
             });
         }
 
-        const userExists = await usersRepo.getById(id);
+        const userExists = await usersPrismaRepo.getById(id);
         if (!userExists) {
             return res.status(422).json({
                 success: false,
@@ -120,9 +126,9 @@ export default async function handler(
         }
         const hashedPassword = await hashPassword(newPassword);
 
-        await usersRepo.update(id, {
+        await usersPrismaRepo.update(id, {
             password: hashedPassword,
-        } as User);
+        });
 
         return res.status(200).json({
             success: true,
@@ -140,7 +146,8 @@ export default async function handler(
             req.body
         );
 
-        const userExists = await usersRepo.getById(id);
+        const userExists = await usersPrismaRepo.getById(id);
+
         if (!userExists) {
             return res.status(422).json({
                 success: false,
@@ -148,7 +155,13 @@ export default async function handler(
             });
         }
 
-        const userNameExist = await usersRepo.find((x) => x.name === name);
+        const userNameExist = await usersPrismaRepo.find({
+            name: {
+                equals: name,
+                mode: "insensitive",
+            },
+        });
+
         if (userNameExist && userNameExist.id !== id) {
             return res.status(422).json({
                 success: false,
@@ -175,7 +188,7 @@ export default async function handler(
                 ? await hashPassword(password)
                 : userExists.password,
         } as User;
-        await usersRepo.update(id, { ...userUpdated });
+        await usersPrismaRepo.update(id, userUpdated);
 
         return res.status(200).json({
             success: true,
