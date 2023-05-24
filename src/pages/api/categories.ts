@@ -92,7 +92,6 @@ export default async function handler(
             const cats = JSON.parse(
                 await fs.readFile(dataFilePath, "utf8")
             ) as Category[];
-            console.log("🚀 ~ file: categories.ts:89 ~ cats:", cats);
 
             const category = cats.find((x) => x.id === id);
             if (!category || category == null) return;
