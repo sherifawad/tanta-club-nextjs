@@ -10,20 +10,22 @@ const discounts = require("./data/discounts.json");
 const penalties = require("./data/penalties.json");
 const sports = require("./data/sports.json");
 const users = require("./data/users.json");
-import type { Category, Discount, Penalty, User } from "@prisma/client";
+const sportsData = require("./data/sport-data.json");
 
 const client = new PrismaClient();
 async function seed() {
-    await client.sport.deleteMany();
-    await client.category.deleteMany();
-    await client.discount.deleteMany();
-    await client.penalty.deleteMany();
-    await client.user.deleteMany();
+    await client.data.deleteMany();
+    // await client.sport.deleteMany();
+    // await client.category.deleteMany();
+    // await client.discount.deleteMany();
+    // await client.penalty.deleteMany();
+    // await client.user.deleteMany();
 
-    await client.category.createMany({ data: categories });
-    await client.discount.createMany({ data: discounts });
-    await client.penalty.createMany({ data: penalties });
-    await client.user.createMany({ data: users });
+    // await client.category.createMany({ data: categories });
+    // await client.discount.createMany({ data: discounts });
+    // await client.penalty.createMany({ data: penalties });
+    // await client.user.createMany({ data: users });
+    await client.data.createMany({ data: sportsData });
 
     // const sprts1 = sports.slice(0, 30);
     // const sprts2 = sports.slice(30, 60);
