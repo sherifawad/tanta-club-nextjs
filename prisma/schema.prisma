@@ -27,17 +27,19 @@ enum Role {
   OWNER
   ADMIN
   USER
+  DASHBOARD
   CLIENT
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  password  String
-  enabled   Boolean  @default(true)
-  role      Role     @default(CLIENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              Int        @id @default(autoincrement())
+  name            String     @unique
+  password        String
+  enabled         Boolean    @default(true)
+  role            Role       @default(CLIENT)
+  dashBoardAccess Category[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 }
 
 model Sport {
@@ -55,6 +57,21 @@ model Sport {
   categoryId Int?
   Penalty    Penalty?   @relation(fields: [penaltyId], references: [id])
   penaltyId  Int?
+  data       Data[]
+}
+
+model Data {
+  id          Int      @id @default(autoincrement())
+  note        String?
+  from        DateTime @db.Date
+  to          DateTime @db.Date
+  hidden      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Sport       Sport?   @relation(fields: [sportId], references: [id])
+  sportId     Int?
+  totalPrice  Float
+  totalNumber Int
 }
 
 model Category {
@@ -66,6 +83,7 @@ model Category {
   sports    Sport[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  users     User[]
 }
 
 model Discount {
