@@ -1,42 +1,34 @@
 import Head from "next/head";
-import { Category, Discount, Penalty, Sport } from "types";
+import { type Category } from "@prisma/client";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { moreThanTwoPlayers, swimmingDiscount } from "lib/calc";
 import { splitPrivateSwimming } from "helpers/sportsUtils";
 import { BiFootball } from "react-icons/bi";
 import Card from "@/components/Card";
 import ListCard from "@/components/ListCard";
-import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Popup from "reactjs-popup";
-import "reactjs-popup/dist/index.css";
 import { Player, PlayerSport } from "types";
-import CustomButton from "@/components/ui/CustomButton";
-import { ButtonsType } from "@/data/constants";
 import ResultComponents from "@/components/ResultComponents";
 import Search from "@/components/Search";
 import { FcCalculator } from "react-icons/fc";
 import PopUp from "@/components/PopUp";
-import CategoriesList from "@/components/CategoriesList";
 import { divvyUp } from "helpers/arrayUtils";
 import { mergePlayers } from "helpers/playerUtils";
-import { sportsRepo } from "lib/sports-repo";
-import { categoriesRepo } from "lib/categories-repo";
-import { discountsRepo } from "lib/discounts-repo";
-import { penaltiesRepo } from "lib/penalties-repo";
 import { arrayToReactSelectOption, getBaseUrl } from "@/lib/utils";
 import SingleSelect from "@/components/SingleSelect";
+import { categoriesPrismaRepo } from "@/lib/categories-repo-prisma";
+import { sportsPrismaRepo } from "@/lib/sports-repo-prisma";
 
 export async function getServerSideProps() {
     try {
-        const categoriesList = await categoriesRepo.getAll();
+        const categoriesList = await categoriesPrismaRepo.getAll();
 
         const categories = categoriesList
             ? categoriesList.filter((x) => x.hidden === false)
             : null;
-        const sportsList = await sportsRepo.getAll();
+        const sportsList = await sportsPrismaRepo.getAll();
         const sports =
             sportsList != null && sportsList.length > 0
                 ? sportsList.filter((x) => x.hidden === false)
