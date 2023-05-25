@@ -6,7 +6,16 @@ export type SportToEditType = Sport & {
 };
 
 export const sportsPrismaRepo = {
-    getSports: async () => await prisma.sport.findMany({}),
+    getSports: async () =>
+        await prisma.sport.findMany({
+            include: {
+                discounts: {
+                    select: {
+                        id: true,
+                    },
+                },
+            },
+        }),
     getAll: async () =>
         await prisma.sport.findMany({
             include: {

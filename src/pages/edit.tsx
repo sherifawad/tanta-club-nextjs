@@ -1,10 +1,5 @@
 import Search from "@/components/Search";
 import SingleSelect from "@/components/SingleSelect";
-import { categoriesRepo } from "@/lib/categories-repo";
-import { discountsRepo } from "@/lib/discounts-repo";
-import { penaltiesRepo } from "@/lib/penalties-repo";
-import { sportsRepo } from "@/lib/sports-repo";
-import { usersRepo } from "@/lib/users-repo";
 import { arrayToReactSelectOption, getBaseUrl } from "@/lib/utils";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerSession, type Session } from "next-auth";
@@ -16,16 +11,8 @@ import {
     SyntheticEvent,
     useState,
 } from "react";
-import {
-    Category,
-    Discount,
-    DiscountType,
-    Penalty,
-    RepetitionType,
-    Role,
-    Sport,
-    User,
-} from "types";
+import type { Category, Discount, Penalty, Sport, User } from "@prisma/client";
+import { DiscountType, RepetitionType, Role } from "@prisma/client";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { type NextRouter, useRouter } from "next/router";
 
@@ -35,7 +22,7 @@ type EditProps = {
     categories: Category[] | null;
     discounts: Discount[] | null;
     penalties: Penalty[] | null;
-    sports: Sport[] | null;
+    sports: SportToEditType[] | null;
     users: User[] | null;
 };
 type BasicEditProps = {
@@ -1194,7 +1181,9 @@ function SportEdit({
     const [sportIsHidden, setSportIsHidden] = useState(false);
     const [penaltyId, setPenaltyId] = useState<number | null | undefined>(null);
     const [categoryId, setCategoryId] = useState<number | null>(null);
-    const [discountList, setDiscountList] = useState<number[] | null>(null);
+    const [discountList, setDiscountList] = useState<
+        number[] | undefined | null
+    >(null);
 
     const handleSelectChange = (id: number) => {
         const findData = sportsList?.find((x) => x.id === id);
@@ -1204,7 +1193,9 @@ function SportEdit({
         setSportIsHidden(findData.hidden);
         setCategoryId(findData.categoryId);
         setPenaltyId(findData.penaltyId);
-        setDiscountList((findData.discounts ?? []).map((d) => d.id));
+        setDiscountList(
+            (findData.discounts ?? []).map((d) => d.id) as number[]
+        );
     };
 
     // handle on change according to input name and setState
@@ -1291,7 +1282,7 @@ function SportEdit({
                                     discounts: discountList?.map(
                                         (discountId) => ({ id: discountId })
                                     ),
-                                };
+                                } as SportToEditType;
                             } else {
                                 return s;
                             }
@@ -1463,6 +1454,11 @@ function SportEdit({
 }
 import { promises as fs } from "fs";
 import path from "path";
+import { SportToEditType, sportsPrismaRepo } from "@/lib/sports-repo-prisma";
+import { discountsPrismaRepo } from "@/lib/discounts-repo-prisma";
+import { usersPrismaRepo } from "@/lib/users-repo-prisma";
+import { penaltiesPrismaRepo } from "@/lib/penalties-repo-prisma";
+import { categoriesPrismaRepo } from "@/lib/categories-repo-prisma";
 export async function getServerSideProps({
     req,
     res,
@@ -1482,18 +1478,11 @@ export async function getServerSideProps({
                 },
             };
         }
-        // const categories = await categoriesRepo.getAll();
-        const dataFilePath = path.join(
-            process.cwd(),
-            "src/pages/api/",
-            "categories.json"
-        );
-        const jsonData = await fs.readFile(dataFilePath, "utf8");
-        const categories = JSON.parse(jsonData) as Category[];
-        const sports = await sportsRepo.getSports();
-        const discounts = await discountsRepo.getAll();
-        const penalties = await penaltiesRepo.getAll();
-        const usersList = await usersRepo.getAll();
+        const categories = await categoriesPrismaRepo.getAll();
+        const sports = await sportsPrismaRepo.getSports();
+        const discounts = await discountsPrismaRepo.getAll();
+        const penalties = await penaltiesPrismaRepo.getAll();
+        const usersList = await usersPrismaRepo.getAll();
         const users = usersList
             ? session.user.role === Role.OWNER
                 ? usersList.filter((x) => x.role !== Role.OWNER)

@@ -1,6 +1,5 @@
 import { getBaseUrl } from "@/lib/utils";
 import { Tab } from "@headlessui/react";
-import { stat } from "fs";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { SyntheticEvent, useEffect, useState } from "react";
