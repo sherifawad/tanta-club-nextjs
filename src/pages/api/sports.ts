@@ -59,6 +59,10 @@ export default async function handler(
                     equals: name,
                     mode: "insensitive",
                 },
+                title: {
+                    equals: title,
+                    mode: "insensitive",
+                },
             });
             if (sportExist) {
                 return res.status(422).json({
@@ -118,6 +122,10 @@ export default async function handler(
             const sportNameExist = await sportsPrismaRepo.find({
                 name: {
                     equals: name,
+                    mode: "insensitive",
+                },
+                title: {
+                    equals: title,
                     mode: "insensitive",
                 },
             });

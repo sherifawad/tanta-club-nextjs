@@ -69,6 +69,10 @@ export default async function handler(
                     equals: name,
                     mode: "insensitive",
                 },
+                title: {
+                    equals: title,
+                    mode: "insensitive",
+                },
             });
             if (penaltyExist) {
                 return res.status(422).json({
@@ -134,6 +138,10 @@ export default async function handler(
             const penaltyNameExist = await penaltiesPrismaRepo.find({
                 name: {
                     equals: name,
+                    mode: "insensitive",
+                },
+                title: {
+                    equals: title,
                     mode: "insensitive",
                 },
             });

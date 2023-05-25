@@ -40,6 +40,10 @@ export default async function handler(
                     equals: name,
                     mode: "insensitive",
                 },
+                title: {
+                    equals: title,
+                    mode: "insensitive",
+                },
             });
             if (categoryExist) {
                 return res.status(422).json({
@@ -86,6 +90,10 @@ export default async function handler(
             const categoryNameExist = await categoriesPrismaRepo.find({
                 name: {
                     equals: name,
+                    mode: "insensitive",
+                },
+                title: {
+                    equals: title,
                     mode: "insensitive",
                 },
             });

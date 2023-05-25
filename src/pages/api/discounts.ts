@@ -57,6 +57,10 @@ export default async function handler(
                     equals: name,
                     mode: "insensitive",
                 },
+                title: {
+                    equals: title,
+                    mode: "insensitive",
+                },
             });
             if (discountExist) {
                 return res.status(422).json({
@@ -116,6 +120,10 @@ export default async function handler(
             const discountNameExist = await discountsPrismaRepo.find({
                 name: {
                     equals: name,
+                    mode: "insensitive",
+                },
+                title: {
+                    equals: title,
                     mode: "insensitive",
                 },
             });
