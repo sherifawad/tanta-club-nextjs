@@ -1,11 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 
-import * as categories from "./data/categories.json";
-import * as discounts from "./data/discounts.json";
-import * as penalties from "./data/penalties.json";
-import * as sports from "./data/sports.json";
-import * as users from "./data/users.json";
-import type { Discount, Penalty, User } from "@prisma/client";
+// import * as categories from "./data/categories.json";
+// import * as discounts from "./data/discounts.json";
+// import * as penalties from "./data/penalties.json";
+// import * as sports from "./data/sports.json";
+// import * as users from "./data/users.json";
+const categories = require("./data/categories.json");
+const discounts = require("./data/discounts.json");
+const penalties = require("./data/penalties.json");
+const sports = require("./data/sports.json");
+const users = require("./data/users.json");
+import type { Category, Discount, Penalty, User } from "@prisma/client";
 
 const client = new PrismaClient();
 async function seed() {
@@ -15,38 +20,40 @@ async function seed() {
     await client.penalty.deleteMany();
     await client.user.deleteMany();
 
-    categories.forEach(async (category) => {
-        await client.category.create({ data: category });
-    });
+    await client.category.createMany({ data: categories });
+    await client.discount.createMany({ data: discounts });
+    await client.penalty.createMany({ data: penalties });
+    await client.user.createMany({ data: users });
 
-    (discounts as Discount[]).forEach(async (discount) => {
-        await client.discount.create({ data: discount });
-    });
+    // const sprts1 = sports.slice(0, 30);
+    // const sprts2 = sports.slice(30, 60);
+    // const sprts3 = sports.slice(60, 90);
+    // const sprts4 = sports.slice(89);
 
-    (penalties as Penalty[]).forEach(async (penalty) => {
-        await client.penalty.create({ data: penalty });
-    });
+    // Promise.all(
+    //     sprts4.map((sport: any) => {
+    //         const { discounts, ...rest } = sport;
 
-    (users as User[]).forEach(async (user) => {
-        await client.user.create({ data: user });
-    });
+    //         return client.sport.create({
+    //             data: {
+    //                 ...rest,
 
-    sports.forEach(async (sport) => {
-        const { discounts, ...rest } = sport;
-        await client.sport.create({
-            data: {
-                ...rest,
-                discounts:
-                    discounts && discounts.length > 0
-                        ? {
-                              connect: discounts.map((disc) => ({
-                                  id: disc.id,
-                              })),
-                          }
-                        : undefined,
-            },
-        });
-    });
+    //                 discounts:
+    //                     discounts && discounts.length > 0
+    //                         ? {
+    //                               connect: discounts.map((disc: any) => ({
+    //                                   id: disc.id,
+    //                               })),
+    //                           }
+    //                         : undefined,
+    //             },
+    //         });
+    //     })
+    // )
+    //     .then(() => console.info("[SEED] Successfully create Sport records"))
+    //     .catch((e) =>
+    //         console.error("[SEED] Failed to create Sport records", e)
+    //     );
 }
 
 seed()
