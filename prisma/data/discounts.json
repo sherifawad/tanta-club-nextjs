@@ -1,0 +1,64 @@
+[
+    {
+        "id": 1,
+        "type": "PERCENTAGE",
+        "title": "خصم تعدد إخوة نسبة",
+        "minimum": 10,
+        "Maximum": 20,
+        "step": 10,
+        "name": "brothersPercentage",
+        "enabled": true
+    },
+    {
+        "id": 2,
+        "type": "PERCENTAGE",
+        "title": "خصم تعددالعاب نسبة",
+        "minimum": 10,
+        "Maximum": 20,
+        "step": 10,
+        "name": "multiSportsPercentage",
+        "enabled": true
+    },
+    {
+        "id": 3,
+        "type": "FIXED",
+        "title": "خصم تعدد إخوة ثابت",
+        "minimum": 25,
+        "Maximum": 50,
+        "step": 25,
+        "name": "brothersFixed",
+        "enabled": true
+    },
+    {
+        "id": 4,
+        "type": "FIXED",
+        "title": "خصم تعددالعاب ثابت",
+        "minimum": 25,
+        "Maximum": 50,
+        "step": 25,
+        "name": "multiSportsFixed",
+        "enabled": true
+    },
+    {
+        "id": 5,
+        "type": "PERCENTAGE",
+        "title": "خصم دفع مبكر نسبة",
+        "minimum": 10,
+        "Maximum": 10,
+        "step": 0,
+        "name": "firstDays",
+        "startDay": 1,
+        "endDay": 5,
+        "enabled": true
+    },
+    {
+        "id": 6,
+        "type": "PERCENTAGE",
+        "title": "خصم تعدد إخوة سباحة نسبة",
+        "minimum": 20,
+        "Maximum": 20,
+        "step": 0,
+        "name": "brothersSwimmingPercentage",
+        "enabled": true
+    }
+]

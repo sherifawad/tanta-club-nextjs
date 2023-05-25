@@ -1,0 +1,14 @@
+[
+    {
+        "id": 1,
+        "type": "FIXED",
+        "minimum": 5,
+        "Maximum": 25,
+        "step": 5,
+        "name": "swimmingDelayPenalty",
+        "title": "غرامة تأخير دفع سباحة",
+        "repeated": "DAILY",
+        "start": 11,
+        "enabled": true
+    }
+]

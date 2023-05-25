@@ -1,0 +1,124 @@
+[
+    {
+        "id": 1,
+        "name": "swimming",
+        "title": "سباحة",
+        "hidden": false,
+        "updatedAt": "2023-05-22T17:15:01.395Z"
+    },
+    {
+        "id": 2,
+        "name": "footBall",
+        "title": "كرة قدم",
+        "hidden": false,
+        "updatedAt": "2023-05-21T00:09:27.692Z"
+    },
+    {
+        "id": 3,
+        "name": "basket",
+        "title": "كرة سلة",
+        "hidden": false
+    },
+    {
+        "id": 4,
+        "name": "handBall",
+        "title": "كرة يد",
+        "hidden": false
+    },
+    {
+        "id": 5,
+        "name": "volleyBall",
+        "title": "كرة طائرة",
+        "hidden": false
+    },
+    {
+        "id": 6,
+        "name": "taekwondo",
+        "title": "تايكوندو",
+        "hidden": false
+    },
+    {
+        "id": 7,
+        "name": "judo",
+        "title": "جودو",
+        "hidden": false
+    },
+    {
+        "id": 8,
+        "name": "pingPong",
+        "title": "تنس طاولة",
+        "hidden": false
+    },
+    {
+        "id": 9,
+        "name": "art",
+        "title": "طلائع",
+        "hidden": false
+    },
+    {
+        "id": 10,
+        "name": "snooker",
+        "title": "بلياردو",
+        "hidden": false
+    },
+    {
+        "id": 11,
+        "name": "modernPentathlon",
+        "title": "خماسي حديث",
+        "hidden": false
+    },
+    {
+        "id": 12,
+        "name": "boxing",
+        "title": "ملاكمة",
+        "hidden": false
+    },
+    {
+        "id": 13,
+        "name": "tennis",
+        "title": "نتس أرضي",
+        "hidden": false
+    },
+    {
+        "id": 14,
+        "name": "squash",
+        "title": "اسكواش",
+        "hidden": false
+    },
+    {
+        "id": 15,
+        "name": "gymnastics",
+        "title": "جمباز",
+        "hidden": false
+    },
+    {
+        "id": 16,
+        "name": "gymnasium",
+        "title": "جيم",
+        "hidden": false
+    },
+    {
+        "id": 17,
+        "name": "athletics",
+        "title": "ألعاب قوى",
+        "hidden": false
+    },
+    {
+        "id": 18,
+        "name": "fitness",
+        "title": "فتنس تراك",
+        "hidden": false
+    },
+    {
+        "id": 19,
+        "name": "karate",
+        "title": "كاراتيه",
+        "hidden": false
+    },
+    {
+        "id": 20,
+        "name": "fencing",
+        "title": "سلاح",
+        "hidden": false
+    }
+]
