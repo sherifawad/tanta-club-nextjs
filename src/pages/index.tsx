@@ -35,8 +35,8 @@ export async function getServerSideProps() {
                 : null;
         return {
             props: {
-                categories,
-                sports,
+                categories: JSON.parse(JSON.stringify(categories)),
+                sports: JSON.parse(JSON.stringify(sports)),
             },
         };
     } catch (error) {

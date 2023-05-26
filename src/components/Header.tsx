@@ -12,7 +12,7 @@ const Header = () => {
     const { data: Session, status } = useSession();
     const [openModel, setOpenModel] = useState(false);
     return (
-        <header className="border-b min-h-[4rem] shadow shadow-customOrange-900 flex items-center ">
+        <header className=" min-h-[4rem] shadow shadow-customOrange-900 flex items-center ">
             <ToastContainer />
             <POPUPPassword
                 Session={Session}
