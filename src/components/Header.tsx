@@ -76,6 +76,20 @@ const Header = () => {
                                             )}
                                         </Menu.Item>
                                     ) : null}
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <Link
+                                                href="/dashboard"
+                                                className={`${
+                                                    active
+                                                        ? "bg-customOrange-100 text-customOrange-900"
+                                                        : "text-gray-900"
+                                                } group flex w-full items-center px-2 py-2 text-sm justify-center `}
+                                            >
+                                                تقارير
+                                            </Link>
+                                        )}
+                                    </Menu.Item>
                                     {status === "authenticated" ? (
                                         <Menu.Item>
                                             {({ active }) => (

@@ -1,16 +1,12 @@
+import { RangeInputType } from "@/pages/dashboard";
 import isWithinInterval from "date-fns/isWithinInterval";
 import parseISO from "date-fns/parseISO";
 import { Dispatch, SetStateAction, useState } from "react";
 
 type DateRangeProps = {
-    setDate: Dispatch<
-        SetStateAction<{
-            from: Date | null;
-            to: Date | null;
-        }>
-    >;
+    onRangeSelect: ({ from, to }: RangeInputType) => void;
 };
-function DateRange({ setDate }: DateRangeProps) {
+function DateRange({ onRangeSelect }: DateRangeProps) {
     const [value, setValue] = useState({
         from: "",
         to: "",
@@ -19,14 +15,11 @@ function DateRange({ setDate }: DateRangeProps) {
     const [minDate, setMinDate] = useState(new Date().toString());
     const applyDateFilter = () => {
         if (!value.from) return;
-        const from = parseISO(value.from);
-        const to = parseISO(value.to ?? value.from);
-        setIsChanging(false);
-        setDate({ from, to });
+        onRangeSelect({ from: value.from, to: value.to ?? value.from });
     };
 
     return (
-        <div className="grid grid-cols-1 gap-4 p-4 sm:flex sm:grid-cols-2 place-items-to">
+        <div className="grid grid-cols-1 gap-4 py-4 mx-auto sm:flex sm:grid-cols-2">
             <div className="grid grid-cols-2 gap-4 my-1 sm:place-items-to">
                 <div className="flex flex-col items-center">
                     <label>من</label>
@@ -70,10 +63,6 @@ function DateRange({ setDate }: DateRangeProps) {
                         setValue({
                             from: "",
                             to: "",
-                        });
-                        setDate({
-                            from: null,
-                            to: null,
                         });
                     }}
                 >

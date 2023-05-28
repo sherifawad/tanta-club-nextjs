@@ -1,39 +1,32 @@
-import Link from "next/link";
-import { RxSketchLogo, RxDashboard, RxPerson } from "react-icons/rx";
-import { HiOutlineShoppingBag } from "react-icons/hi";
-import { FiSettings } from "react-icons/fi";
+import { RxSketchLogo, RxDashboard } from "react-icons/rx";
 import { type Category } from "@prisma/client";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
+import IconImage from "./IconImage";
 
 const Sidebar = ({
     children,
     categoriesList,
-    setCategory,
+    onCategoryChange,
 }: {
     children: React.ReactNode;
-    setCategory: Dispatch<SetStateAction<Category | null>>;
+    onCategoryChange: (category: Category | null) => void;
     categoriesList: Category[] | null;
 }) => {
     const [selectedId, setSelectedId] = useState(0);
 
-    const onMainItemSelected = () => {
-        setSelectedId(0);
-        setCategory(null);
-    };
-
-    const onItemSelected = (category: Category) => {
-        setSelectedId(category.id);
-        setCategory(category);
+    const onItemSelected = (category: Category | null) => {
+        setSelectedId(category?.id ?? 0);
+        onCategoryChange(category);
     };
 
     return (
         <div className="flex">
-            <main className="w-full mr-15 ">{children}</main>
+            <main className="w-full mr-[50px] ">{children}</main>
 
-            <nav className="fixed w-15 h-screen p-1 bg-customOrange-100 border-orange-400 border-l-[1px] flex flex-col justify-between">
+            <nav className="fixed w-[50px] h-screen p-1 bg-customOrange-100 border-orange-400 border-l-[1px] flex flex-col justify-between">
                 <div className="flex flex-col items-center h-full ">
                     <div
-                        onClick={onMainItemSelected}
+                        onClick={() => onItemSelected(null)}
                         className={`${
                             selectedId === 0
                                 ? "bg-orange-400 hover:bg-orange-600 text-white"
@@ -52,11 +45,15 @@ const Sidebar = ({
                                 <div
                                     className={`${
                                         selectedId === cat.id
-                                            ? "bg-orange-400 hover:bg-orange-600 text-white"
-                                            : "bg-gray-100 hover:bg-gray-200 text-black"
+                                            ? "bg-orange-600 hover:bg-orange-400 text-white"
+                                            : "bg-slate-900 hover:bg-slate-600 text-black"
                                     } inline-block p-3 mx-2 rounded-lg cursor-pointer `}
                                 >
-                                    <RxDashboard size={15} />
+                                    <IconImage
+                                        src={
+                                            cat ? `/icons/${cat?.image}` : null
+                                        }
+                                    />
                                 </div>
                             </li>
                         ))}

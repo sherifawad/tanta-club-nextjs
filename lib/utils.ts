@@ -50,30 +50,30 @@ export const arrayToReactSelectOption = (
     );
 };
 
-// export const getBaseUrl = () => {
-//     if (process.env.NEXT_PUBLIC_VERCEL_ENV === "production")
-//         return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-//     if (process.env.NEXT_PUBLIC_VERCEL_ENV === "preview")
-//         return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
-//     return "http://localhost:3000";
-// };
-
 export const getBaseUrl = () => {
-    return `https://${
-        process.env.NEXT_PUBLIC_VERCEL_URL ??
-        "stage--endearing-croquembouche-bd79b8.netlify.app"
-    }`;
-    switch (process.env.CONTEXT) {
-        case "production":
-            return `https://${process.env.NEXT_PUBLIC_URL ?? ""}`;
-        case "deploy-preview":
-            return `https://${process.env.NEXT_PUBLIC_DEPLOY_URL ?? ""}`;
-        case "branch-deploy":
-            return `https://${process.env.NEXT_PUBLIC_DEPLOY_PRIME_URL ?? ""}`;
-        default:
-            return `https://${process.env.NEXT_PUBLIC_DEPLOY_URL ?? ""}`;
-    }
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV === "production")
+        return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV === "preview")
+        return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+    return "http://localhost:3000";
 };
+
+// export const getBaseUrl = () => {
+//     return `https://${
+//         process.env.NEXT_PUBLIC_VERCEL_URL ??
+//         "stage--endearing-croquembouche-bd79b8.netlify.app"
+//     }`;
+//     switch (process.env.CONTEXT) {
+//         case "production":
+//             return `https://${process.env.NEXT_PUBLIC_URL ?? ""}`;
+//         case "deploy-preview":
+//             return `https://${process.env.NEXT_PUBLIC_DEPLOY_URL ?? ""}`;
+//         case "branch-deploy":
+//             return `https://${process.env.NEXT_PUBLIC_DEPLOY_PRIME_URL ?? ""}`;
+//         default:
+//             return `https://${process.env.NEXT_PUBLIC_DEPLOY_URL ?? ""}`;
+//     }
+// };
 
 export function classNames(...classes: any) {
     return classes.filter(Boolean).join(" ");
@@ -101,3 +101,11 @@ function createTempDirectory() {
         mkdirSync(path.join(tmpdir(), "data"), { recursive: true });
     }
 }
+
+export const ConvertToArabicNumbers = (num: number) => {
+    const arabicNumbers =
+        "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669";
+    return new String(num).replace(/[0123456789]/g, (d) => {
+        return arabicNumbers[d as any];
+    });
+};

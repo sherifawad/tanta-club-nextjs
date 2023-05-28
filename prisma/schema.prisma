@@ -3,13 +3,13 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["jsonProtocol"]
+  previewFeatures = ["jsonProtocol", "filteredRelationCount"]
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 enum DiscountType {
@@ -53,7 +53,7 @@ model Sport {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   discounts  Discount[]
-  Category   Category?  @relation(fields: [categoryId], references: [id])
+  category   Category?  @relation(fields: [categoryId], references: [id])
   categoryId Int?
   Penalty    Penalty?   @relation(fields: [penaltyId], references: [id])
   penaltyId  Int?
@@ -68,7 +68,7 @@ model Data {
   hidden      Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  Sport       Sport?   @relation(fields: [sportId], references: [id])
+  sport       Sport?   @relation(fields: [sportId], references: [id])
   sportId     Int?
   totalPrice  Float
   totalNumber Int
@@ -79,6 +79,7 @@ model Category {
   name      String   @unique
   title     String?  @unique
   note      String?
+  image     String?
   hidden    Boolean  @default(false)
   sports    Sport[]
   createdAt DateTime @default(now())

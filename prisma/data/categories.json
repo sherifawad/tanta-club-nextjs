@@ -3,120 +3,140 @@
         "id": 1,
         "name": "swimming",
         "title": "سباحة",
-        "hidden": false
+        "hidden": false,
+        "image": "swimming.png"
     },
     {
         "id": 2,
         "name": "footBall",
         "title": "كرة قدم",
-        "hidden": false
+        "hidden": false,
+        "image": "football.png"
     },
     {
         "id": 3,
-        "name": "basket",
+        "name": "basketBall",
         "title": "كرة سلة",
-        "hidden": false
+        "hidden": false,
+        "image": "basketball.png"
     },
     {
         "id": 4,
         "name": "handBall",
         "title": "كرة يد",
-        "hidden": false
+        "hidden": false,
+        "image": "handball.png"
     },
     {
         "id": 5,
         "name": "volleyBall",
         "title": "كرة طائرة",
-        "hidden": false
+        "hidden": false,
+        "image": "volleyball.png"
     },
     {
         "id": 6,
         "name": "taekwondo",
         "title": "تايكوندو",
-        "hidden": false
+        "hidden": false,
+        "image": "taekwondo.png"
     },
     {
         "id": 7,
         "name": "judo",
         "title": "جودو",
-        "hidden": false
+        "hidden": false,
+        "image": "judo.png"
     },
     {
         "id": 8,
         "name": "pingPong",
         "title": "تنس طاولة",
-        "hidden": false
+        "hidden": false,
+        "image": "ping-pong.png"
     },
     {
         "id": 9,
         "name": "art",
         "title": "طلائع",
-        "hidden": false
+        "hidden": false,
+        "image": "art.png"
     },
     {
         "id": 10,
         "name": "snooker",
         "title": "بلياردو",
-        "hidden": false
+        "hidden": false,
+        "image": "snooker.png"
     },
     {
         "id": 11,
         "name": "modernPentathlon",
         "title": "خماسي حديث",
-        "hidden": false
+        "hidden": false,
+        "image": "pentathlon.png"
     },
     {
         "id": 12,
         "name": "boxing",
         "title": "ملاكمة",
-        "hidden": false
+        "hidden": false,
+        "image": "boxing.png"
     },
     {
         "id": 13,
         "name": "tennis",
         "title": "نتس أرضي",
-        "hidden": false
+        "hidden": false,
+        "image": "tennis.png"
     },
     {
         "id": 14,
         "name": "squash",
         "title": "اسكواش",
-        "hidden": false
+        "hidden": false,
+        "image": "squash.png"
     },
     {
         "id": 15,
         "name": "gymnastics",
         "title": "جمباز",
-        "hidden": false
+        "hidden": false,
+        "image": "gymnastics.png"
     },
     {
         "id": 16,
         "name": "gymnasium",
         "title": "جيم",
-        "hidden": false
+        "hidden": false,
+        "image": "gymnasium.png"
     },
     {
         "id": 17,
         "name": "athletics",
         "title": "ألعاب قوى",
-        "hidden": false
+        "hidden": false,
+        "image": "athletics.png"
     },
     {
         "id": 18,
         "name": "fitness",
         "title": "فتنس تراك",
-        "hidden": false
+        "hidden": false,
+        "image": "fitness.png"
     },
     {
         "id": 19,
         "name": "karate",
         "title": "كاراتيه",
-        "hidden": false
+        "hidden": false,
+        "image": "karate.png"
     },
     {
         "id": 20,
         "name": "fencing",
         "title": "سلاح",
-        "hidden": false
+        "hidden": false,
+        "image": "fencing.png"
     }
 ]
