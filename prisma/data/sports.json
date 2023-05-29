@@ -750,15 +750,7 @@
         "title": "جيم حصة واحدة",
         "price": 30,
         "hidden": false,
-        "categoryId": 16,
-        "discounts": [
-            {
-                "id": 1
-            },
-            {
-                "id": 2
-            }
-        ]
+        "categoryId": 16
     },
     {
         "id": 58,

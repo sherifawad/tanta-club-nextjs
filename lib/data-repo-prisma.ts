@@ -1,6 +1,7 @@
 import { prisma } from "lib/prisma";
 import type { Prisma, Data, Sport } from "@prisma/client";
 import { parseISO } from "date-fns";
+import { divvyUp } from "helpers/arrayUtils";
 
 export type dataInputProps = {
     from: string;
@@ -18,6 +19,7 @@ export type aggregatedData = {
     title: string | null | undefined;
     totalNumber: number;
     totalPrice: number;
+    discounts?: { id: number }[] | null;
 };
 
 export const dataPrismaRepo = {
@@ -34,8 +36,27 @@ export const dataPrismaRepo = {
 
 async function getCategoryData({ from, to, categoryId }: dataInputProps) {
     try {
-        const parsedFrom = parseISO(from);
-        const parsedTo = parseISO(to);
+        const formValidDay = new Date(
+            new Date(from as string).getFullYear(),
+            new Date(from as string).getMonth(),
+            new Date(from as string).getDate() + 1
+        );
+        console.log(
+            "🚀 ~ file: data-repo-prisma.ts:44 ~ getCategoryData ~ formValidDay:",
+            formValidDay
+        );
+        const toValidDay = new Date(
+            new Date(to as string).getFullYear(),
+            new Date(to as string).getMonth(),
+            new Date(to as string).getDate() + 1
+        );
+        console.log(
+            "🚀 ~ file: data-repo-prisma.ts:50 ~ getCategoryData ~ toValidDay:",
+            toValidDay
+        );
+        // const parsedFrom = parseISO(formValidDay);
+
+        // const parsedTo = parseISO(to);
 
         const sports = await prisma.data.groupBy({
             by: ["sportId"],
@@ -44,10 +65,10 @@ async function getCategoryData({ from, to, categoryId }: dataInputProps) {
                     categoryId,
                 },
                 from: {
-                    gte: parsedFrom,
+                    gte: formValidDay,
                 },
                 to: {
-                    lte: parsedTo,
+                    lte: toValidDay,
                 },
                 hidden: false,
             },
@@ -67,7 +88,11 @@ async function getCategoryData({ from, to, categoryId }: dataInputProps) {
                 } = sport;
                 const sportData = await prisma.sport.findUnique({
                     where: { id: sportId },
-                    select: { name: true, title: true },
+                    select: {
+                        name: true,
+                        title: true,
+                        discounts: { select: { id: true } },
+                    },
                 });
                 datalist = [
                     ...datalist,
@@ -77,6 +102,7 @@ async function getCategoryData({ from, to, categoryId }: dataInputProps) {
                         title: sportData?.title,
                         totalNumber,
                         totalPrice,
+                        discounts: sportData?.discounts,
                     },
                 ];
             })
@@ -85,6 +111,32 @@ async function getCategoryData({ from, to, categoryId }: dataInputProps) {
             error,
         }));
 
+        const [sportsWithDiscount, onlySports] = divvyUp(datalist, (sport) =>
+            categoryId === 1 || categoryId == undefined
+                ? sport.discounts &&
+                  sport.discounts.length > 0 &&
+                  !sport.name?.includes("rivat")
+                : sport.discounts && sport.discounts.length > 0
+        );
+
+        const others = onlySports?.reduce(
+            (acc, sport) => {
+                return {
+                    ...acc,
+                    totalNumber: acc.totalNumber + sport.totalNumber,
+                    totalPrice: acc.totalPrice + sport.totalPrice,
+                };
+            },
+            {
+                id: 200,
+                name: "other",
+                title: "اخري",
+                totalNumber: 0,
+                totalPrice: 0,
+            } as aggregatedData
+        );
+
+        return { sports: [...sportsWithDiscount, others] as any, error: null };
         return { sports: datalist as any, error: null };
     } catch (error) {
         return { sports: null, error };

@@ -1,7 +1,7 @@
 import { SportData, aggregatedData } from "@/lib/data-repo-prisma";
 import { ConvertToArabicNumbers } from "@/lib/utils";
 import type { Data, Sport, Category } from "@prisma/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TbSwimming } from "react-icons/tb";
 import IconImage from "./IconImage";
 
@@ -13,6 +13,18 @@ type TopCardsProps = {
 const TopCards = ({ sportsData, category }: TopCardsProps) => {
     const [totalPrice, setTotalPrice] = useState(0);
     const [totalRecites, setTotalRecites] = useState(0);
+
+    useEffect(() => {
+        let initialPrice = 0;
+        let initialRecites = 0;
+        sportsData?.forEach((s) => {
+            initialPrice += s.totalPrice;
+            initialRecites += s.totalNumber;
+        });
+        setTotalRecites(initialRecites);
+        setTotalPrice(initialPrice);
+    }, [sportsData]);
+
     return (
         <div className="grid grid-cols-1 mx-auto gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
             <div className="w-full gap-4 p-4 overflow-hidden bg-white border rounded-lg aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8">
