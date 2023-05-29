@@ -9,6 +9,7 @@ import {
     Dispatch,
     SetStateAction,
     SyntheticEvent,
+    useRef,
     useState,
 } from "react";
 import type { Category, Discount, Penalty, Sport, User } from "@prisma/client";
@@ -988,13 +989,29 @@ function CategoryEdit({
         title: "",
         name: "",
     } as Category;
+
+    const fileRef = useRef<HTMLInputElement>(null);
     const [data, setData] = useState<Category>(defaultValues);
     const [categoryIsHidden, setCategoryIsHidden] = useState(false);
+    const [file, setFile] = useState<File | null>();
 
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFile(e.target.files[0]);
+        }
+    };
+
+    const handleFileReset = () => {
+        if (fileRef.current) {
+            fileRef.current.value = "";
+            setFile(null);
+        }
+    };
     const reset = () => {
         setData(defaultValues);
         setSelectValue(null);
         setCategoryIsHidden(false);
+        handleFileReset();
         setError("");
     };
     const handleSelectChange = (id: number) => {
@@ -1133,7 +1150,15 @@ function CategoryEdit({
                         }}
                     />
                 </div>
-
+                <div className="py-2">
+                    <input
+                        ref={fileRef}
+                        className="block w-full px-4 py-2 bg-gray-200 border-2 border-gray-100 rounded-lg focus:outline-none focus:border-gray-700"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                    />
+                </div>
                 <div className="flex items-center gap-2 py-2">
                     <input
                         className="mt-2 accent-customOrange-900"
@@ -1144,6 +1169,7 @@ function CategoryEdit({
                     />
                     <span className="">مفعل</span>
                 </div>
+
                 <div className="py-2">
                     <button
                         type="submit"
@@ -1492,11 +1518,17 @@ export async function getServerSideProps({
             : null;
         return {
             props: {
-                categories: categories ? categories : null,
-                discounts: discounts ? discounts : null,
-                penalties: penalties ? penalties : null,
-                sports: sports ? sports : null,
-                users: users ? users : null,
+                categories: categories
+                    ? JSON.parse(JSON.stringify(categories))
+                    : null,
+                discounts: discounts
+                    ? JSON.parse(JSON.stringify(discounts))
+                    : null,
+                penalties: penalties
+                    ? JSON.parse(JSON.stringify(penalties))
+                    : null,
+                sports: sports ? JSON.parse(JSON.stringify(sports)) : null,
+                users: users ? JSON.parse(JSON.stringify(users)) : null,
             },
         };
     } catch (error) {
