@@ -10,13 +10,22 @@ export default async function handler(
 ) {
     try {
         if (req.method === "POST") {
+            const filee = (req as any).files?.file;
+            console.log("🚀 ~ file: categories.ts:14 ~ filee:", filee);
+
             const newCategory = req.body;
+            console.log("🚀 ~ file: categories.ts:14 ~ req.body:", req.body);
             if (!newCategory || newCategory == null)
                 return res
                     .status(400)
                     .json({ success: false, message: "Invalid method" });
-            const { name, title, hidden }: Category = JSON.parse(newCategory);
-
+            const {
+                name,
+                title,
+                hidden,
+                file,
+            }: Category & { file: File | null } = JSON.parse(newCategory);
+            console.log("🚀 ~ file: categories.ts:23 ~ file:", file);
             if (!name || name.length < 0 || !title || title.length < 0) {
                 return res
                     .status(400)

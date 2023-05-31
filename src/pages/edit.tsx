@@ -1048,10 +1048,21 @@ function CategoryEdit({
                 data.title.length < 0
             )
                 return;
+            // const formData = new FormData();
+            // formData.append("myfile", file, file.name);
+            // formData.append("name", data.name);
+            // formData.append("title", data.title);
+            // formData.append("hidden", data.title);
 
             const response = await fetch(`${getBaseUrl()}/api/categories`, {
                 method: data.id ? "PUT" : "POST",
-                body: JSON.stringify({ ...data, hidden: categoryIsHidden }),
+                body: new URLSearchParams(
+                    JSON.stringify({
+                        ...data,
+                        hidden: categoryIsHidden,
+                        file,
+                    })
+                ),
                 credentials: "include",
             });
             const {

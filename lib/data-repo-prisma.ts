@@ -136,7 +136,24 @@ async function getCategoryData({ from, to, categoryId }: dataInputProps) {
             } as aggregatedData
         );
 
-        return { sports: [...sportsWithDiscount, others] as any, error: null };
+        const monthly = sportsWithDiscount?.reduce(
+            (acc, sport) => {
+                return {
+                    ...acc,
+                    totalNumber: acc.totalNumber + sport.totalNumber,
+                    totalPrice: acc.totalPrice + sport.totalPrice,
+                };
+            },
+            {
+                id: 201,
+                name: "monthly",
+                title: "شهري",
+                totalNumber: 0,
+                totalPrice: 0,
+            } as aggregatedData
+        );
+
+        return { sports: [monthly, others] as any, error: null };
         return { sports: datalist as any, error: null };
     } catch (error) {
         return { sports: null, error };
