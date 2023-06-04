@@ -72,6 +72,8 @@ model Data {
   sportId     Int?
   totalPrice  Float
   totalNumber Int
+
+  @@unique([from, to, sportId])
 }
 
 model Category {

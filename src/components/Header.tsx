@@ -1,12 +1,12 @@
 import { getBaseUrl } from "@/lib/utils";
 import { Dialog, Menu, Transition } from "@headlessui/react";
+import { Role } from "@prisma/client";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Fragment, SyntheticEvent, useState } from "react";
 import { TbDots } from "react-icons/tb";
 import { ToastContainer, toast } from "react-toastify";
-import { Role } from "types";
 
 const Header = () => {
     const { data: Session, status } = useSession();
@@ -76,20 +76,26 @@ const Header = () => {
                                             )}
                                         </Menu.Item>
                                     ) : null}
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <Link
-                                                href="/dashboard"
-                                                className={`${
-                                                    active
-                                                        ? "bg-customOrange-100 text-customOrange-900"
-                                                        : "text-gray-900"
-                                                } group flex w-full items-center px-2 py-2 text-sm justify-center `}
-                                            >
-                                                تقارير
-                                            </Link>
-                                        )}
-                                    </Menu.Item>
+                                    {status === "authenticated" &&
+                                    (Session.user.role === Role.OWNER ||
+                                        Session.user.role === Role.ADMIN ||
+                                        Session.user.role ===
+                                            Role.DASHBOARD) ? (
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <Link
+                                                    href="/dashboard"
+                                                    className={`${
+                                                        active
+                                                            ? "bg-customOrange-100 text-customOrange-900"
+                                                            : "text-gray-900"
+                                                    } group flex w-full items-center px-2 py-2 text-sm justify-center `}
+                                                >
+                                                    تقارير
+                                                </Link>
+                                            )}
+                                        </Menu.Item>
+                                    ) : null}
                                     {status === "authenticated" ? (
                                         <Menu.Item>
                                             {({ active }) => (

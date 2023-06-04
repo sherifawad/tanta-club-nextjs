@@ -1,4 +1,10 @@
-import { RangeInputType } from "@/pages/dashboard";
+import {
+    FromWeeks,
+    Months,
+    RangeInputType,
+    ToWeeks,
+    Years,
+} from "@/pages/dashboard";
 import isWithinInterval from "date-fns/isWithinInterval";
 import parseISO from "date-fns/parseISO";
 import {
@@ -9,34 +15,6 @@ import {
     useMemo,
     useState,
 } from "react";
-
-const Months = [
-    { title: "يناير", value: 0 },
-    { title: "فبراير", value: 1 },
-    { title: "مارس", value: 2 },
-    { title: "إبريل", value: 3 },
-    { title: "مايو", value: 4 },
-    { title: "يونيو", value: 5 },
-    { title: "يوليو", value: 6 },
-    { title: "أغسطس", value: 7 },
-    { title: "سبتمبر", value: 8 },
-    { title: "أكتوبر", value: 9 },
-    { title: "نوفمبر", value: 10 },
-    { title: "ديسمير", value: 11 },
-] as const;
-const Years = [2023, 2024, 2025, 2026, 2027, 2028, 2029] as const;
-const FromWeeks = [
-    { title: "الأسبوع الأول", value: 1 },
-    { title: "الأسبوع الثاني", value: 8 },
-    { title: "الأسبوع الثالث", value: 15 },
-    { title: "الأسبوع الأخير", value: 22 },
-] as const;
-const ToWeeks = [
-    { title: "الأسبوع الأول", value: 7 },
-    { title: "الأسبوع الثاني", value: 14 },
-    { title: "الأسبوع الثالث", value: 21 },
-    { title: "الأسبوع الأخير", value: 31 },
-] as const;
 
 type DateRangeProps = {
     onRangeSelect: ({ from, to }: RangeInputType) => void;

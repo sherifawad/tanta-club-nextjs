@@ -16,6 +16,15 @@ export const sportsPrismaRepo = {
                 },
             },
         }),
+    getSportsName: async () =>
+        await prisma.sport.findMany({
+            select: {
+                id: true,
+                name: true,
+                title: true,
+                categoryId: true,
+            },
+        }),
     getAll: async () =>
         await prisma.sport.findMany({
             include: {

@@ -6,7 +6,7 @@ import { divvyUp } from "helpers/arrayUtils";
 export type dataInputProps = {
     from: string;
     to: string;
-    categoryId: number;
+    categoryId: number | undefined;
 };
 
 export type SportData = Sport & {
@@ -41,18 +41,10 @@ async function getCategoryData({ from, to, categoryId }: dataInputProps) {
             new Date(from as string).getMonth(),
             new Date(from as string).getDate() + 1
         );
-        console.log(
-            "🚀 ~ file: data-repo-prisma.ts:44 ~ getCategoryData ~ formValidDay:",
-            formValidDay
-        );
         const toValidDay = new Date(
             new Date(to as string).getFullYear(),
             new Date(to as string).getMonth(),
             new Date(to as string).getDate() + 1
-        );
-        console.log(
-            "🚀 ~ file: data-repo-prisma.ts:50 ~ getCategoryData ~ toValidDay:",
-            toValidDay
         );
         // const parsedFrom = parseISO(formValidDay);
 
@@ -61,9 +53,11 @@ async function getCategoryData({ from, to, categoryId }: dataInputProps) {
         const sports = await prisma.data.groupBy({
             by: ["sportId"],
             where: {
-                sport: {
-                    categoryId,
-                },
+                sport: categoryId
+                    ? {
+                          categoryId,
+                      }
+                    : undefined,
                 from: {
                     gte: formValidDay,
                 },
@@ -168,11 +162,28 @@ async function create(data: Prisma.DataCreateInput) {
     }
 }
 
-async function update(id: number, params: Prisma.DataUpdateInput) {
+async function update(
+    {
+        from,
+        to,
+        sportId,
+    }: {
+        from: any;
+        to: any;
+        sportId: any;
+    },
+    params: Prisma.DataUpdateInput
+) {
     try {
         return {
             data: await prisma.data.update({
-                where: { id },
+                where: {
+                    from_to_sportId: {
+                        from,
+                        to,
+                        sportId,
+                    },
+                },
                 data: params,
             }),
             error: null,
