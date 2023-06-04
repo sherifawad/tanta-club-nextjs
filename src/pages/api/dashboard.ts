@@ -127,6 +127,22 @@ export default async function handler(
                     error: true,
                     message: "invalid Method",
                 });
+            const user = await getCurrentUser({ req, res });
+            if (!user || user == null) {
+                return res.status(401).send({
+                    message:
+                        "You must be signed in to view the protected content on this page.",
+                });
+            }
+            if (
+                user.role !== Role.ADMIN &&
+                user.role !== Role.OWNER &&
+                user.role !== Role.DASHBOARD
+            ) {
+                return res.status(401).send({
+                    message: "Un-Authorized",
+                });
+            }
             const { sports, error } = await dataPrismaRepo.getCategoryData({
                 from: from as string,
                 to: to as string,

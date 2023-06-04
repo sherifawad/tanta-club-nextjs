@@ -371,6 +371,13 @@ function UserEdit({
                         >
                             مالك
                         </option>
+                        <option
+                            disabled={Session?.user.role != Role.DASHBOARD}
+                            className="block w-full px-4 py-2 bg-gray-100"
+                            value={Role.DASHBOARD}
+                        >
+                            تقارير
+                        </option>
                     </select>
                 </div>
                 <div className="flex items-center gap-2 py-2">
