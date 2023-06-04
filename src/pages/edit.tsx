@@ -372,7 +372,10 @@ function UserEdit({
                             مالك
                         </option>
                         <option
-                            disabled={Session?.user.role != Role.DASHBOARD}
+                            disabled={
+                                Session?.user.role != Role.ADMIN &&
+                                Session?.user.role != Role.OWNER
+                            }
                             className="block w-full px-4 py-2 bg-gray-100"
                             value={Role.DASHBOARD}
                         >
