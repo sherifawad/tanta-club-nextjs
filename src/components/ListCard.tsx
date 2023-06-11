@@ -33,7 +33,7 @@ const ListCard = forwardRef<null | HTMLButtonElement, Props>(function ListCard(
     }, [players]);
 
     return (
-        <div className="grid grid-rows-[60px_1fr_120px] bg-white border border-customGray-100 rounded-lg shadow md:min-w-[20rem] w-60 sm:max-h-[90vh] max-h-[60vh] min-h-[60vh]">
+        <div className="grid grid-rows-[60px_1fr_120px] bg-white border border-customGray-100 rounded-lg shadow md:min-w-[20rem] w-60 sm:max-h-[90vh]  min-h-[60vh]">
             <div className="p-4">
                 <CustomButton
                     onClick={newPlayer}

@@ -441,7 +441,7 @@ export default function Home({
                     {/* data */}
                     <div
                         style={{ paddingInlineEnd: "10px" }}
-                        className="flex flex-col gap-4 lg:flex-row pt-28"
+                        className="flex flex-col gap-4 pt-2 lg:flex-row sm:pt-28"
                     >
                         <div className="flex flex-col w-full px-8 mx-auto">
                             {/* fixed */}

@@ -25,7 +25,11 @@ function PopUp({
             open={openNameModel}
             closeOnDocumentClick
             onClose={onClose}
-            contentStyle={{ width: "18rem", borderRadius: "0.75rem" }}
+            contentStyle={{
+                width: "18rem",
+                borderRadius: "0.75rem",
+                backgroundColor: "white",
+            }}
         >
             <div className="modal">
                 <div className="flex flex-col justify-center gap-4">
@@ -38,7 +42,7 @@ function PopUp({
                         </div>
                         <input
                             dir="rtl"
-                            className="text-xl placeholder-customGray-900 outline-none rounded-xl"
+                            className="text-xl outline-none placeholder-customGray-900 rounded-xl"
                             onChange={onChange}
                             placeholder="اي اسم"
                             value={playerName}
