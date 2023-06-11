@@ -2,7 +2,7 @@ import { prisma } from "lib/prisma";
 import type { Prisma, Sport, Penalty, Discount } from "@prisma/client";
 
 export type SportToEditType = Sport & {
-    discounts?: Prisma.DiscountWhereUniqueInput[] | null;
+    discounts?: Prisma.DiscountWhereUniqueInput[];
 };
 
 export const sportsPrismaRepo = {
@@ -67,7 +67,7 @@ async function update(id: number, params: SportToEditType) {
                 where: { id },
                 data: {
                     ...rest,
-                    discounts: connectSportToDiscounts(discounts),
+                    discounts: { connect: discounts },
                 },
             }),
             error: null,

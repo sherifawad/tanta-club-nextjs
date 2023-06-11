@@ -210,7 +210,7 @@ function UserEdit({
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value.trim() });
+        setData({ ...data, [e.target.name]: e.target.value });
     };
 
     const reset = () => {
@@ -448,7 +448,7 @@ function DiscountEdit({
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value.trim() });
+        setData({ ...data, [e.target.name]: e.target.value });
     };
     const handleSubmitDiscount = async (e: SyntheticEvent) => {
         try {
@@ -707,7 +707,7 @@ function PenaltyEdit({
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value.trim() });
+        setData({ ...data, [e.target.name]: e.target.value });
     };
     const handleSubmitPenalty = async (e: SyntheticEvent) => {
         try {
@@ -1036,7 +1036,7 @@ function CategoryEdit({
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value.trim() });
+        setData({ ...data, [e.target.name]: e.target.value });
     };
     const handleSubmitCategory = async (e: SyntheticEvent) => {
         try {
@@ -1249,7 +1249,7 @@ function SportEdit({
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setData({ ...data, [e.target.name]: e.target.value.trim() });
+        setData({ ...data, [e.target.name]: e.target.value });
     };
 
     const reset = () => {

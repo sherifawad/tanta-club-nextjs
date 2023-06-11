@@ -5,6 +5,7 @@ import { Dialog, Tab, Transition } from "@headlessui/react";
 import { Queue, QueueStatus, Role } from "types";
 import { classNames, getBaseUrl, stringTrim } from "@/lib/utils";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps({
     req,
@@ -191,6 +192,8 @@ export default function QueuePage({
     current: number;
     queueCookie: Queue | undefined;
 }) {
+    const router = useRouter();
+
     const { data: Session, status } = useSession();
     const [queueNumber, setQueueNumberState] = useState<Queue | undefined>(
         queueCookie
@@ -202,28 +205,51 @@ export default function QueuePage({
     const [currentNumber, setCurrentNumber] = useState(current);
 
     const [openModel, setOpenModel] = useState(false);
+    const [isStopped, setIsStopped] = useState(false);
+    const [messages, setMessages] = useState("");
 
     async function getQueue(code: string, force: boolean = false) {
         const data = await fetch(`${getBaseUrl()}/api/queue`, {
             method: "POST",
             body: JSON.stringify({ id: undefined, code, force }),
         });
-        const { queue, current }: { queue: Queue; current: number } =
-            await data.json();
-        setCurrentNumber(current);
-        if (current <= queue.id) {
-            setQueueNumberState(queue);
+        const {
+            queue,
+            current,
+            isStopped,
+            message = "",
+        }: {
+            queue: Queue;
+            current: number;
+            isStopped: boolean;
+            message?: string;
+        } = await data.json();
+        setIsStopped(isStopped);
+        if (!isStopped) {
+            setCurrentNumber(current);
+            if (current <= queue.id) {
+                setQueueNumberState(queue);
+            }
+            setMessages("");
+        } else {
+            setMessages(message);
+            setCurrentNumber(0);
+            setQueueNumberState(undefined);
         }
     }
+
     async function completeQueue(id: number | undefined, status: QueueStatus) {
-        if (!id || id === null) return;
+        if (status !== QueueStatus.POSTPONE && (!id || id === null)) return;
+
         const data = await fetch(`${getBaseUrl()}/api/queue`, {
             method: "PUT",
             body: JSON.stringify({ id, status }),
             credentials: "include",
         });
-        const { queue }: { queue: Queue } = await data.json();
+        const { queue, isStopped }: { queue: Queue; isStopped: boolean } =
+            await data.json();
         setCurrentQueue(queue);
+        setIsStopped(isStopped);
     }
 
     async function getCurrentQueue() {
@@ -236,6 +262,24 @@ export default function QueuePage({
         setCurrentQueue(queue);
     }
 
+    useEffect(() => {
+        const timeoutID = setTimeout(() => {
+            if (
+                status !== "authenticated" ||
+                !openModel ||
+                queueNumber?.status === QueueStatus.PENDING ||
+                queueNumber?.status === QueueStatus.POSTPONE
+            ) {
+                router.reload();
+            }
+        }, 120000);
+
+        return () => {
+            // 👇️ clear timeout when the component unmounts
+            clearTimeout(timeoutID);
+        };
+    }, [openModel, queueNumber?.status, router, status]);
+
     return (
         <div className="container grid mx-auto">
             <POPUPQueue
@@ -245,7 +289,10 @@ export default function QueuePage({
             />
 
             <div className="max-w-md px-2 py-16 mx-auto ">
-                <Tab.Group>
+                <p className="text-xl text-center text-red-500 uppercase ">
+                    {messages}
+                </p>
+                <Tab.Group onChange={() => setMessages("")}>
                     <Tab.List className="flex items-center justify-between gap-4 p-1 space-x-1 ">
                         {TABS.map((tab, idx) => (
                             <Tab
@@ -270,7 +317,10 @@ export default function QueuePage({
                             </Tab>
                         ))}
                     </Tab.List>
-                    <Tab.Panels className="mt-2">
+                    <Tab.Panels
+                        className="mt-2"
+                        onClick={() => setMessages("")}
+                    >
                         <Tab.Panel
                             className={classNames(
                                 "rounded-xl  p-3",
@@ -293,12 +343,23 @@ export default function QueuePage({
                                     <p className="text-3xl">
                                         {queueNumber?.id}
                                     </p>
-                                    <p className="pb-2 text-lg text-customGray-900">
-                                        {queueNumber?.status}
-                                    </p>
+                                    <div className="flex items-center justify-center w-full gap-2 pb-2">
+                                        <span
+                                            className="w-1/4 cursor-pointer text-start"
+                                            onClick={() => router.reload()}
+                                        >
+                                            🔄️
+                                        </span>
+                                        <p className="flex-grow text-lg text-customGray-900 text-start">
+                                            {queueNumber?.status}
+                                        </p>
+                                    </div>
                                 </div>
                                 <button
-                                    onClick={() => setOpenModel(true)}
+                                    onClick={() => {
+                                        setOpenModel(true);
+                                        setMessages("");
+                                    }}
                                     className="py-2 rounded-full shadow text-customOrange-900 bg-customOrange-100 shadow-customGray-900"
                                 >
                                     احصل على دور
@@ -337,7 +398,7 @@ export default function QueuePage({
                                 </div>
                                 <div className="flex items-center justify-around w-full gap-2">
                                     <button
-                                        disabled={!currentQueue}
+                                        disabled={!currentQueue || isStopped}
                                         onClick={() =>
                                             completeQueue(
                                                 currentQueue?.id,
@@ -349,7 +410,7 @@ export default function QueuePage({
                                         تم
                                     </button>
                                     <button
-                                        disabled={!currentQueue}
+                                        disabled={!currentQueue || isStopped}
                                         onClick={() =>
                                             completeQueue(
                                                 currentQueue?.id,
@@ -372,6 +433,17 @@ export default function QueuePage({
                                 تأجيل
                             </button> */}
                                 </div>
+                                <button
+                                    onClick={() =>
+                                        completeQueue(
+                                            currentQueue?.id,
+                                            QueueStatus.POSTPONE
+                                        )
+                                    }
+                                    className="p-2 rounded-md shadow text-customOrange-900 bg-customOrange-100 shadow-customGray-900"
+                                >
+                                    {isStopped ? "تشغيل الدور" : "إيقاف الدور"}
+                                </button>
                             </section>
                         </Tab.Panel>
                     </Tab.Panels>

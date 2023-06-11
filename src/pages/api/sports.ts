@@ -139,7 +139,7 @@ export default async function handler(
             await sportsPrismaRepo.update(id, {
                 name,
                 title,
-                price,
+                price: +price,
                 hidden,
                 categoryId,
                 penaltyId,

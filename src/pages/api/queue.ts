@@ -8,10 +8,12 @@ type Data = {
     current: number;
     queue?: Queue;
     message?: string;
+    isStopped?: boolean;
 };
 
 const queueList: Queue[] = [];
 let current = 1;
+let isStopped = false;
 
 export default async function handler(
     req: NextApiRequest,
@@ -21,13 +23,24 @@ export default async function handler(
         const { code, id, force } = req.body
             ? JSON.parse(req.body)
             : { code: undefined, id: undefined, force: false };
+        if (isStopped) {
+            return res.status(200).json({
+                current,
+                isStopped,
+                message: "الحصول على دور متوقف حاليا",
+            });
+        }
         if (code && code !== null) {
             const queue = queueList.findLast((x) => x.code === code);
             if (queue && queue.status !== QueueStatus.COMPLETED && !force) {
-                return res.status(200).json({ queue: queue, current });
+                return res
+                    .status(200)
+                    .json({ queue: queue, current, isStopped });
             }
             if (queue && queue.status === QueueStatus.COMPLETED && !force) {
-                return res.status(200).json({ queue: queue, current });
+                return res
+                    .status(200)
+                    .json({ queue: queue, current, isStopped });
             }
 
             const newQueue: Queue = {
@@ -45,7 +58,9 @@ export default async function handler(
 
             // Return the `set-cookie` header so we can display it in the browser and show that it works!
             // res.end(res.getHeader("Set-Cookie")).status(200).json({ queue });
-            return res.status(200).json({ queue: newQueue, current });
+            return res
+                .status(200)
+                .json({ queue: newQueue, current, isStopped });
         } else if (id && id !== null) {
             const queue = queueList.find((x) => x.id == id);
             setCookie(res, "QUEUE", JSON.stringify(queue), {
@@ -57,6 +72,7 @@ export default async function handler(
         return res.status(200).json({
             current,
             queue: queueList.findLast((x) => x.id === current),
+            isStopped,
         });
     } else if (req.method === "PUT") {
         const user = await getCurrentUser({ req, res });
@@ -76,12 +92,21 @@ export default async function handler(
         const { id, status } = req.body
             ? JSON.parse(req.body)
             : { id: undefined, status: QueueStatus };
+        if (status && status === QueueStatus.POSTPONE) {
+            isStopped = !isStopped;
+            return res.status(200).json({
+                current,
+                queue: queueList.findLast((x) => x.id === current),
+                isStopped,
+            });
+        }
         if (!id || id === null || !status || status === null) {
             return res.status(200).json({
                 current,
                 queue: queueList.findLast((x) => x.id === current),
             });
         }
+
         current = current + 1;
         const queueIndex = queueList.findLastIndex((x) => x.id === id);
         if (queueIndex < 0) {
