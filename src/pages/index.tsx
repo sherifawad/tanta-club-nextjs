@@ -118,29 +118,33 @@ export default function Home({
                     return;
                 }
                 // if (playersList.length < 1) return;
-                let player = currentPlayer;
-                if (player == null) return;
-                const exist = player.sports.some((s) => s.id === sport.id);
-
-                if (exist) {
-                    toast.error(
-                        ` لعبة مكررة ${sport.title} ${player.name}  للاعب `,
-                        {
-                            position: "top-right",
-                            autoClose: 1000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: "light",
-                        }
-                    );
-                    return;
-                }
+                if (currentPlayer == null) return;
 
                 setPlayersList((prev) => {
-                    const getPlayer = prev.find((p) => p.id === player!.id);
+                    const getPlayer = prev.find(
+                        (p) => p.id === currentPlayer.id
+                    );
+
+                    const exist = getPlayer?.sports.some(
+                        (s) => s.id === sport.id
+                    );
+
+                    if (exist) {
+                        toast.error(
+                            ` لعبة مكررة ${sport.title} ${currentPlayer.name}  للاعب `,
+                            {
+                                position: "top-right",
+                                autoClose: 1000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                            }
+                        );
+                        return prev;
+                    }
 
                     if (getPlayer == null) return prev;
                     const orderedSports = [...getPlayer.sports, sport].sort(
@@ -151,25 +155,25 @@ export default function Home({
                                 ? -1
                                 : 0
                     );
+                    toast.success(
+                        `${currentPlayer.name} تم إضافة ${sport.title}  للاعب `,
+                        {
+                            position: "top-right",
+                            autoClose: 500,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                        }
+                    );
                     return prev.map((player) =>
                         player.id === getPlayer?.id
                             ? { ...getPlayer, sports: orderedSports }
                             : player
                     );
                 });
-                toast.success(
-                    `${player.name} تم إضافة ${sport.title}  للاعب `,
-                    {
-                        position: "top-right",
-                        autoClose: 500,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "light",
-                    }
-                );
             } catch (error) {
                 console.error(error);
             } finally {
