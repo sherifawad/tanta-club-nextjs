@@ -12,7 +12,13 @@ const IconImage = ({ src, className = "" }: IconImageProps) => {
             {src == null ? (
                 <RxDashboard className="w-full h-full" />
             ) : (
-                <Image src={src} alt="Category Image" quality={100} fill />
+                <Image
+                    src={src}
+                    alt="Category Image"
+                    quality={100}
+                    width={50}
+                    height={50}
+                />
             )}
         </div>
     );

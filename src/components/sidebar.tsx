@@ -23,8 +23,8 @@ const Sidebar = ({
         <div className="flex">
             <main className="w-full mr-[50px] ">{children}</main>
 
-            <nav className="fixed w-[50px] h-screen p-1 bg-customOrange-100 border-orange-400 border-l-[1px] flex flex-col justify-between">
-                <div className="flex flex-col items-center h-full ">
+            <nav className="fixed w-[50px] h-full p-1 bg-customOrange-100 border-orange-400 border-l-[1px] flex flex-col justify-between">
+                <div className="flex flex-col items-center max-h-[calc(100%-4rem)] overflow-y-auto">
                     <div
                         onClick={() => onItemSelected(null)}
                         className={`${
@@ -36,7 +36,7 @@ const Sidebar = ({
                         <RxSketchLogo size={15} />
                     </div>
                     <span className="border-b-[1px] border-orange-400 w-full p-2"></span>
-                    <ul className="flex flex-col items-center gap-2 my-2 overflow-scroll no-scrollbar">
+                    <ul className="flex flex-col items-center gap-2 my-2 overflow-scroll ">
                         {categoriesList?.map((cat) => (
                             <li
                                 key={cat.id}

@@ -103,6 +103,7 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
                         isOpen={isOpen}
                         sports={sportsOptions}
                         closeModal={() => setIsOpen(false)}
+                        categoryName={category?.name ?? ""}
                     />
                     <h1 className="mx-auto text-3xl font-bold text-orange-500">
                         {category?.title ?? "الكل"}
@@ -127,9 +128,15 @@ type POPUPQueueProps = {
     closeModal: () => void;
     isOpen: boolean;
     sports: Sport[];
+    categoryName: string;
 };
 
-function POPUPQueue({ closeModal, isOpen, sports }: POPUPQueueProps) {
+function POPUPQueue({
+    closeModal,
+    isOpen,
+    sports,
+    categoryName,
+}: POPUPQueueProps) {
     const [date, setDate] = useState<{
         year: number;
         month: number;
@@ -152,7 +159,7 @@ function POPUPQueue({ closeModal, isOpen, sports }: POPUPQueueProps) {
     useEffect(() => {
         const date = new Date();
         const year = date.getFullYear();
-        const month = date.getMonth() - 1;
+        const month = date.getMonth();
         setDate({ year, month, week: 1 });
         if (sports && sports.length > 0) {
             setSelectedSportId(sports[0].id);
@@ -297,7 +304,7 @@ function POPUPQueue({ closeModal, isOpen, sports }: POPUPQueueProps) {
                                         as="h3"
                                         className="text-lg font-medium leading-6 text-customGray-900 text-start"
                                     >
-                                        اضف البيانات
+                                        {`اضف البيانات ${categoryName} `}
                                     </Dialog.Title>
                                     <div className="flex flex-col justify-between gap-4 px-2 mt-2 flex-cols item-center">
                                         <div className="p-2 text-center text-red-400 rounded text-md">
