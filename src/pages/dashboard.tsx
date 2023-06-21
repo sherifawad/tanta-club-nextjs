@@ -61,6 +61,7 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
     const [category, setCategory] = useState<Category | null>(null);
     const [sportsList, setSportsList] = useState<aggregatedData[] | null>([]);
     const { data: Session, status } = useSession();
+    const [isLoading, setIsLoading] = useState(false);
 
     const onCategoryChange = (category: Category | null) => {
         setCategory(category);
@@ -72,6 +73,16 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
 
     const onRangeSelect = async ({ from, to }: RangeInputType) => {
         try {
+            console.log(
+                "🚀 ~ file: dashboard.tsx:75 ~ onRangeSelect ~ to:",
+                to
+            );
+            console.log(
+                "🚀 ~ file: dashboard.tsx:75 ~ onRangeSelect ~ from:",
+                from
+            );
+            if (isLoading) return;
+            setIsLoading(true);
             const response = await fetch(
                 `${getBaseUrl()}/api/dashboard?from=${from}&to=${to}&categoryId=${
                     category?.id
@@ -89,7 +100,10 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
                 sports: aggregatedData[] | null;
             } = await response.json();
             setSportsList(sports);
-        } catch (error) {}
+        } catch (error) {
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

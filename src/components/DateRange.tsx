@@ -47,8 +47,12 @@ function DateRange({ onRangeSelect }: DateRangeProps) {
                 fromDate.year,
                 fromDate.month,
                 fromDate.week
-            ).toDateString(),
-            to: new Date(toDate.year, toDate.month, toDate.week).toDateString(),
+            ).toLocaleDateString(),
+            to: new Date(
+                toDate.year,
+                toDate.month,
+                toDate.week
+            ).toLocaleDateString(),
         });
     };
 

@@ -121,6 +121,8 @@ export default async function handler(
         } else {
             const query = req.query;
             const { from, to, categoryId } = query;
+            console.log("🚀 ~ file: dashboard.ts:124 ~ to:", to);
+            console.log("🚀 ~ file: dashboard.ts:124 ~ from:", from);
             if (!from || from.length < 8 || !to || to.length < 8)
                 return res.status(402).json({
                     success: false,
