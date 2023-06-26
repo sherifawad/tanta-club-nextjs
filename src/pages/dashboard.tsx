@@ -13,6 +13,7 @@ import { sportsPrismaRepo } from "@/lib/sports-repo-prisma";
 import { Dialog, Transition } from "@headlessui/react";
 import { number, setErrorMap } from "zod";
 import { useSession } from "next-auth/react";
+import FilterPopUp from "@/components/FilterPopUp";
 
 export const Months = [
     { title: "يناير", value: 0 },
@@ -73,14 +74,6 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
 
     const onRangeSelect = async ({ from, to }: RangeInputType) => {
         try {
-            console.log(
-                "🚀 ~ file: dashboard.tsx:75 ~ onRangeSelect ~ to:",
-                to
-            );
-            console.log(
-                "🚀 ~ file: dashboard.tsx:75 ~ onRangeSelect ~ from:",
-                from
-            );
             if (isLoading) return;
             setIsLoading(true);
             const response = await fetch(
@@ -132,6 +125,15 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
                         sportsData={sportsList ?? []}
                         category={category}
                     />
+                    <div className="flex items-center justify-center">
+                        <button
+                            className={`  p-2 text-lg text-white bg-green-300  rounded-lg hover:bg-green-600`}
+                        >
+                            رسم بياني
+                        </button>
+                    </div>
+
+                    <FilterPopUp />
                 </div>
             </Sidebar>
         </div>
