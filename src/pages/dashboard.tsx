@@ -121,10 +121,14 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
                     ) : null}
 
                     <DateRange onRangeSelect={onRangeSelect} />
-                    <TopCards
-                        sportsData={sportsList ?? []}
-                        category={category}
-                    />
+                    {isLoading ? (
+                        <span>Loading...</span>
+                    ) : (
+                        <TopCards
+                            sportsData={sportsList ?? []}
+                            category={category}
+                        />
+                    )}
                     <div className="flex items-center justify-center">
                         <button
                             className={`  p-2 text-lg text-white bg-green-300  rounded-lg hover:bg-green-600`}
