@@ -6,7 +6,7 @@ import { getServerSession } from "next-auth/next";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { authOptions } from "./api/auth/[...nextauth]";
 import { categoriesPrismaRepo } from "@/lib/categories-repo-prisma";
-import { getBaseUrl } from "@/lib/utils";
+import { ConvertToLocalDateString, getBaseUrl } from "@/lib/utils";
 import TopCards from "@/components/TopCards";
 import { aggregatedData } from "@/lib/data-repo-prisma";
 import { sportsPrismaRepo } from "@/lib/sports-repo-prisma";
@@ -137,7 +137,7 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
                         </button>
                     </div>
 
-                    <FilterPopUp />
+                    <FilterPopUp category={category} />
                 </div>
             </Sidebar>
         </div>
@@ -195,55 +195,47 @@ function POPUPQueue({
                 switch (date?.week) {
                     case 1:
                         return {
-                            from: new Date(
-                                date.year,
-                                date.month,
-                                2
-                            ).toISOString(),
-                            to: new Date(
-                                date.year,
-                                date.month,
-                                8
-                            ).toISOString(),
+                            from: ConvertToLocalDateString({
+                                ...date,
+                                week: 1,
+                            }),
+                            to: ConvertToLocalDateString({
+                                ...date,
+                                week: 7,
+                            }),
                         };
                     case 2:
                         return {
-                            from: new Date(
-                                date.year,
-                                date.month,
-                                9
-                            ).toISOString(),
-                            to: new Date(
-                                date.year,
-                                date.month,
-                                15
-                            ).toISOString(),
+                            from: ConvertToLocalDateString({
+                                ...date,
+                                week: 8,
+                            }),
+                            to: ConvertToLocalDateString({
+                                ...date,
+                                week: 14,
+                            }),
                         };
                     case 3:
                         return {
-                            from: new Date(
-                                date.year,
-                                date.month,
-                                16
-                            ).toISOString(),
-                            to: new Date(
-                                date.year,
-                                date.month,
-                                22
-                            ).toISOString(),
+                            from: ConvertToLocalDateString({
+                                ...date,
+                                week: 15,
+                            }),
+                            to: ConvertToLocalDateString({
+                                ...date,
+                                week: 21,
+                            }),
                         };
                     case 4:
                         return {
-                            from: new Date(
-                                date.year,
-                                date.month,
-                                23
-                            ).toISOString(),
-                            to: new Date(
-                                date.year,
-                                date.month,
-                                31
-                            ).toISOString(),
+                            from: ConvertToLocalDateString({
+                                ...date,
+                                week: 22,
+                            }),
+                            to: ConvertToLocalDateString({
+                                ...date,
+                                week: 31,
+                            }),
                         };
 
                     default:
@@ -275,10 +267,6 @@ function POPUPQueue({
                 success: boolean;
                 message: string;
             } = await result.json();
-            console.log(
-                "🚀 ~ file: dashboard.tsx:244 ~ clickHandler ~ success:",
-                success
-            );
             if (success) {
                 reset();
                 closeModal();

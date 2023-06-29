@@ -1,3 +1,5 @@
+import { aggregatedData } from "@/lib/data-repo-prisma";
+import { ConvertToLocalDateString, getBaseUrl } from "@/lib/utils";
 import {
     FromWeeks,
     Months,
@@ -5,6 +7,7 @@ import {
     ToWeeks,
     Years,
 } from "@/pages/dashboard";
+import { Category } from "@prisma/client";
 import {
     ChangeEvent,
     Dispatch,
@@ -14,16 +17,7 @@ import {
     useMemo,
     useState,
 } from "react";
-
-type dateInput = {
-    week: number;
-    month: number;
-    year: number;
-};
-type RangeInput = {
-    from: dateInput;
-    to: dateInput;
-};
+import { RangeInput, dateInput } from "types";
 
 type DateRangeProps = {
     date: RangeInput;
@@ -149,8 +143,19 @@ const FilterButtons = ({
     );
 };
 
-const FilterPopUp = () => {
+type FilterPopUpProps = {
+    category: Category | null;
+};
+
+type FilterData = aggregatedData & {
+    range: string;
+};
+
+const FilterPopUp = ({ category }: FilterPopUpProps) => {
+    const [isLoading, setIsLoading] = useState(false);
+
     const [dateList, setDateList] = useState<RangeInput[]>([]);
+    const [filterResult, setFilterResult] = useState<FilterData[]>([]);
     const [date, setdate] = useState<RangeInput>({
         from: { week: 1, month: 0, year: 2023 },
         to: { week: 7, month: 0, year: 2023 },
@@ -226,21 +231,88 @@ const FilterPopUp = () => {
         []
     );
 
-    const buttons = useMemo(
-        () => (
-            <div className="grid grid-cols-2 gap-4 pb-4 place-items-center place-content-center sm:place-items-start">
-                <button
-                    className={`w-8 p-1 text-lg text-white bg-green-600 rounded-lg hover:bg-green-300`}
-                >
-                    +
-                </button>
-                <button className="w-8 p-1 text-lg text-white bg-pink-500 rounded-lg hover:bg-pink-600">
-                    -
-                </button>
-            </div>
-        ),
-        []
-    );
+    const onRangeSelect = async () => {
+        try {
+            if (isLoading) return;
+            setIsLoading(true);
+            setFilterResult([]);
+            // const fromDate = ConvertToLocalDate(dateList[0].from);
+            // const toDate = ConvertToLocalDate(dateList[0].to);
+            // const response = await fetch(
+            //     `${getBaseUrl()}/api/dashboard?from=${fromDate}&to=${toDate}&categoryId=${
+            //         category?.id
+            //     }`,
+            //     {
+            //         method: "GET",
+            //         credentials: "include",
+            //     }
+            // );
+
+            // const {
+            //     sports,
+            //     success,
+            // }: {
+            //     success: boolean;
+            //     sports: aggregatedData[] | null;
+            // } = await response.json();
+            // console.log(
+            //     "🚀 ~ file: FilterPopUp.tsx:257 ~ onRangeSelect ~ sports:",
+            //     sports
+            // );
+
+            Promise.all(
+                dateList.map((u) => {
+                    const fromDate = ConvertToLocalDateString(u.from);
+                    const toDate = ConvertToLocalDateString(u.to);
+                    return fetch(
+                        `${getBaseUrl()}/api/dashboard?from=${fromDate}&to=${toDate}&categoryId=${
+                            category?.id
+                        }`,
+                        {
+                            method: "GET",
+                            credentials: "include",
+                        }
+                    );
+                })
+            )
+                .then((responses) =>
+                    Promise.all(responses.map((res) => res.json()))
+                )
+                .then((results) => {
+                    results.forEach((r) => {
+                        const { sports, range, success, error } = r;
+
+                        if (error) {
+                            throw new Error(error);
+                        }
+
+                        const fromString = new Date(
+                            range.from
+                        ).toLocaleDateString();
+                        const toString = new Date(
+                            range.to
+                        ).toLocaleDateString();
+                        const sportsData = sports.map((sp: aggregatedData) => {
+                            return {
+                                ...sp,
+                                range: `${fromString}-${toString}`,
+                            };
+                        });
+
+                        setFilterResult((prev) => [...prev, ...sportsData]);
+                    });
+                })
+                .catch((error) => {
+                    console.log(
+                        "🚀 ~ file: FilterPopUp.tsx:295 ~ onRangeSelect ~ error:",
+                        error
+                    );
+                });
+        } catch (error) {
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div>
@@ -280,9 +352,15 @@ const FilterPopUp = () => {
             <div className="flex items-center justify-center">
                 <button
                     className={`p-2 text-lg text-white bg-orange-400 rounded-lg`}
+                    onClick={onRangeSelect}
                 >
                     موافق
                 </button>
+            </div>
+            <div className="">
+                <pre>
+                    <code>{JSON.stringify(filterResult, null, 2)}</code>
+                </pre>
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 import { dataPrismaRepo } from "@/lib/data-repo-prisma";
 import { discountsPrismaRepo } from "@/lib/discounts-repo-prisma";
 import { getCurrentUser } from "@/lib/session";
+import { ConvertToDate } from "@/lib/utils";
 import { Discount, DiscountType, Role } from "@prisma/client";
 import { error } from "console";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -52,8 +53,8 @@ export default async function handler(
                 });
             }
             const { error } = await dataPrismaRepo.create({
-                from,
-                to,
+                from: ConvertToDate(from),
+                to: ConvertToDate(to),
                 sport: {
                     connect: {
                         id: sportId,
@@ -108,7 +109,7 @@ export default async function handler(
                 });
             }
             const { error } = await dataPrismaRepo.update(
-                { from, to, sportId },
+                { from: ConvertToDate(from), to: ConvertToDate(to), sportId },
                 {
                     totalNumber: totalRecites,
                     totalPrice,
@@ -143,15 +144,17 @@ export default async function handler(
                     message: "Un-Authorized",
                 });
             }
-            const { sports, error } = await dataPrismaRepo.getCategoryData({
-                from: from as string,
-                to: to as string,
-                categoryId: categoryId ? +categoryId : undefined,
-            });
+            const { sports, error, range } =
+                await dataPrismaRepo.getCategoryData({
+                    from: from as string,
+                    to: to as string,
+                    categoryId: categoryId ? +categoryId : undefined,
+                });
             return res.status(201).json({
                 success: error ? false : true,
                 sports,
                 error,
+                range,
             });
         }
         return res.status(401).send("Unauthorized");

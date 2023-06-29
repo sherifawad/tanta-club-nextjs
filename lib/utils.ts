@@ -1,5 +1,5 @@
 import path from "path";
-import { IReactSelectOption } from "../types";
+import { IReactSelectOption, dateInput } from "../types";
 import {
     accessSync,
     constants,
@@ -108,4 +108,45 @@ export const ConvertToArabicNumbers = (num: number) => {
     return new String(num).replace(/[0123456789]/g, (d) => {
         return arabicNumbers[d as any];
     });
+};
+
+export const ConvertToLocalDateString = (input: dateInput) => {
+    const weeks = input.week;
+    if (weeks === 31) {
+        const lastDateOfTheMonth = new Date(
+            input.year,
+            input.month + 1,
+            0
+        ).getDate();
+
+        return new Date(
+            input.year,
+            input.month,
+            lastDateOfTheMonth
+        ).toLocaleDateString();
+    }
+    return new Date(input.year, input.month, input.week).toLocaleDateString();
+};
+export const ConvertToISODateString = (input: dateInput) => {
+    const weeks = input.week;
+    if (weeks === 31) {
+        const lastDateOfTheMonth = new Date(
+            input.year,
+            input.month + 1,
+            0
+        ).getDate();
+
+        return new Date(
+            input.year,
+            input.month,
+            lastDateOfTheMonth
+        ).toISOString();
+    }
+    return new Date(input.year, input.month, input.week).toISOString();
+};
+export const ConvertToDate = (inputDateString: string) => {
+    var parts = inputDateString.split("/");
+    // Please pay attention to the month (parts[1]); JavaScript counts months from 0:
+    // January - 0, February - 1, etc.
+    return new Date(+parts[2], +parts[1] - 1, +parts[0] + 1);
 };

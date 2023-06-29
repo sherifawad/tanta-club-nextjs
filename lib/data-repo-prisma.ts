@@ -2,6 +2,7 @@ import { prisma } from "lib/prisma";
 import type { Prisma, Data, Sport } from "@prisma/client";
 import { parseISO } from "date-fns";
 import { divvyUp } from "helpers/arrayUtils";
+import { ConvertToDate } from "./utils";
 
 export type dataInputProps = {
     from: string;
@@ -36,16 +37,19 @@ export const dataPrismaRepo = {
 
 async function getCategoryData({ from, to, categoryId }: dataInputProps) {
     try {
-        const formValidDay = new Date(
-            new Date(from as string).getFullYear(),
-            new Date(from as string).getMonth(),
-            new Date(from as string).getDate() + 1
-        );
-        const toValidDay = new Date(
-            new Date(to as string).getFullYear(),
-            new Date(to as string).getMonth(),
-            new Date(to as string).getDate() + 1
-        );
+        // const formValidDay = new Date(
+        //     new Date(from as string).getFullYear(),
+        //     new Date(from as string).getMonth(),
+        //     new Date(from as string).getDate()
+        // );
+        // const toValidDay = new Date(
+        //     new Date(to as string).getFullYear(),
+        //     new Date(to as string).getMonth(),
+        //     new Date(to as string).getDate()
+        // );
+        const formValidDay = ConvertToDate(from);
+        const toValidDay = ConvertToDate(to);
+
         // const parsedFrom = parseISO(formValidDay);
 
         // const parsedTo = parseISO(to);
@@ -147,10 +151,17 @@ async function getCategoryData({ from, to, categoryId }: dataInputProps) {
             } as aggregatedData
         );
 
-        return { sports: [monthly, others] as any, error: null };
+        return {
+            sports: [monthly, others] as any,
+            error: null,
+            range: {
+                from: formValidDay,
+                to: toValidDay,
+            },
+        };
         return { sports: datalist as any, error: null };
     } catch (error) {
-        return { sports: null, error };
+        return { sports: null, error, range: null };
     }
 }
 

@@ -130,6 +130,16 @@ export enum QueueStatus {
     POSTPONE = "POSTPONE",
 }
 
+export type dateInput = {
+    week: number;
+    month: number;
+    year: number;
+};
+export type RangeInput = {
+    from: dateInput;
+    to: dateInput;
+};
+
 export interface PlayerSport extends Omit<Sport, "discounts"> {
     discounts?: Discount[] | null;
     penalty?: Penalty | null;

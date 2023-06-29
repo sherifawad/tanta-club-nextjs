@@ -1,3 +1,4 @@
+import { ConvertToLocalDateString } from "@/lib/utils";
 import {
     FromWeeks,
     Months,
@@ -43,16 +44,8 @@ function DateRange({ onRangeSelect }: DateRangeProps) {
     const applyDateFilter = () => {
         setShowDate(true);
         onRangeSelect({
-            from: new Date(
-                fromDate.year,
-                fromDate.month,
-                fromDate.week
-            ).toLocaleDateString(),
-            to: new Date(
-                toDate.year,
-                toDate.month,
-                toDate.week
-            ).toLocaleDateString(),
+            from: ConvertToLocalDateString(fromDate),
+            to: ConvertToLocalDateString(toDate),
         });
     };
 
@@ -198,19 +191,11 @@ function DateRange({ onRangeSelect }: DateRangeProps) {
             {showDate && (
                 <h1 className="flex items-center mx-auto text-orange-600">
                     <span className="text-lg font-bold">
-                        {new Date(
-                            fromDate.year,
-                            fromDate.month,
-                            fromDate.week
-                        ).toLocaleDateString()}
+                        {ConvertToLocalDateString(fromDate)}
                     </span>
                     <span className="text-3xl font-bold">~</span>
                     <span className="text-lg font-bold">
-                        {new Date(
-                            toDate.year,
-                            toDate.month,
-                            toDate.week
-                        ).toLocaleDateString()}
+                        {ConvertToLocalDateString(toDate)}
                     </span>
                 </h1>
             )}
