@@ -47,6 +47,10 @@ export const calcPenalty = (penalty: Penalty | undefined) => {
     if (!penalty) return 0;
     let totalPenalty = 0;
     const applyPenalty = penaltyTimeValid(penalty);
+    console.log(
+        "🚀 ~ file: penalityUtils.ts:50 ~ calcPenalty ~ applyPenalty:",
+        applyPenalty
+    );
     if (applyPenalty) {
         totalPenalty = penalty.minimum;
         switch (<RepetitionType>penalty.repeated) {

@@ -1,3 +1,5 @@
+import { aggregatedData } from "./lib/data-repo-prisma";
+
 /**
  * Model Queue
  *
@@ -24,7 +26,7 @@ export type Sport = {
     updatedAt: string;
     categoryId: number | null;
     penaltyId?: number | null;
-    penalty?: Penalty | null;
+    Penalty?: Penalty | null;
     discounts?: (Partial<Omit<Discount, "id">> & { id: number }[]) | null;
 };
 
@@ -142,7 +144,7 @@ export type RangeInput = {
 
 export interface PlayerSport extends Omit<Sport, "discounts"> {
     discounts?: Discount[] | null;
-    penalty?: Penalty | null;
+    Penalty?: Penalty | null;
     totalPenalty?: number;
     totalDiscount?: number;
 }
@@ -154,3 +156,16 @@ export interface Player {
 }
 
 export type IReactSelectOption = { value: any; label: string };
+
+export type FilterData = aggregatedData & {
+    range: string;
+};
+
+export type BarData = {
+    id: number;
+    name: string;
+    title: string;
+    totalNumber: number;
+    totalPrice: number;
+    range: string;
+};

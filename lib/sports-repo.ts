@@ -23,7 +23,7 @@ export const sportsRepo = {
         const result = sports.reduce(async (acc, current) => {
             let sport = current;
             if (sport.penaltyId) {
-                sport.penalty = await penaltiesRepo.getById(sport.penaltyId);
+                sport.Penalty = await penaltiesRepo.getById(sport.penaltyId);
             }
             if (sport.discounts != null && sport.discounts.length > 0) {
                 let discountList: Discount[] = [];

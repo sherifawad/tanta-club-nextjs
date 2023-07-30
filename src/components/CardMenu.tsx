@@ -28,7 +28,7 @@ function CardMenu({ sport }: Props) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
             >
-                <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-customGray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y rounded-md shadow-lg divide-customGray-100 ring-1 ring-black ring-opacity-5 focus:outline-none">
                     {sport.discounts?.map((discount) => (
                         <div key={discount.id} className="px-1 py-1 ">
                             <Menu.Item>
@@ -48,7 +48,7 @@ function CardMenu({ sport }: Props) {
                                 <button
                                     className={`text-customOrange-900 group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                 >
-                                    {sport.penalty?.title}
+                                    {sport.Penalty?.title}
                                 </button>
                             )}
                         </Menu.Item>

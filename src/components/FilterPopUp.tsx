@@ -17,7 +17,7 @@ import {
     useMemo,
     useState,
 } from "react";
-import { RangeInput, dateInput } from "types";
+import { FilterData, RangeInput, dateInput } from "types";
 
 type DateRangeProps = {
     date: RangeInput;
@@ -145,17 +145,14 @@ const FilterButtons = ({
 
 type FilterPopUpProps = {
     category: Category | null;
+    setFilterResult: Dispatch<SetStateAction<FilterData[]>>;
 };
 
-type FilterData = aggregatedData & {
-    range: string;
-};
-
-const FilterPopUp = ({ category }: FilterPopUpProps) => {
+const FilterPopUp = ({ category, setFilterResult }: FilterPopUpProps) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [dateList, setDateList] = useState<RangeInput[]>([]);
-    const [filterResult, setFilterResult] = useState<FilterData[]>([]);
+    // const [filterResult, setFilterResult] = useState<FilterData[]>([]);
     const [date, setdate] = useState<RangeInput>({
         from: { week: 1, month: 0, year: 2023 },
         to: { week: 7, month: 0, year: 2023 },
@@ -356,11 +353,6 @@ const FilterPopUp = ({ category }: FilterPopUpProps) => {
                 >
                     موافق
                 </button>
-            </div>
-            <div className="">
-                <pre>
-                    <code>{JSON.stringify(filterResult, null, 2)}</code>
-                </pre>
             </div>
         </div>
     );

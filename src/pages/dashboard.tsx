@@ -14,6 +14,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { number, setErrorMap } from "zod";
 import { useSession } from "next-auth/react";
 import FilterPopUp from "@/components/FilterPopUp";
+import { BarData, FilterData } from "types";
+import MyResponsiveBar from "@/components/MyResponsiveBar";
 
 export const Months = [
     { title: "يناير", value: 0 },
@@ -63,6 +65,8 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
     const [sportsList, setSportsList] = useState<aggregatedData[] | null>([]);
     const { data: Session, status } = useSession();
     const [isLoading, setIsLoading] = useState(false);
+
+    const [filterResult, setFilterResult] = useState<FilterData[]>([]);
 
     const onCategoryChange = (category: Category | null) => {
         setCategory(category);
@@ -137,7 +141,21 @@ const Dashboard = ({ categories, sports }: DashboardProps) => {
                         </button>
                     </div>
 
-                    <FilterPopUp category={category} />
+                    <FilterPopUp
+                        category={category}
+                        setFilterResult={setFilterResult}
+                    />
+                    <div className="">
+                        <pre>
+                            <code>{JSON.stringify(filterResult, null, 2)}</code>
+                        </pre>
+                    </div>
+                    <MyResponsiveBar
+                        ariaLabel="bat"
+                        data={filterResult as BarData[]}
+                        indexBy="range"
+                        keys={["title", "name"]}
+                    />
                 </div>
             </Sidebar>
         </div>
