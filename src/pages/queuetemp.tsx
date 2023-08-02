@@ -55,6 +55,7 @@ export default function QueueTempPage({ current = 0 }: { current: number }) {
 
         const { current }: { current: number } = await data.json();
         setCurrentQueue(current);
+        setCurrentNumber(0);
     }
 
     useEffect(() => {
@@ -132,13 +133,19 @@ export default function QueueTempPage({ current = 0 }: { current: number }) {
                         >
                             <form
                                 onSubmit={setCurrentQueueNumber}
-                                className="flex flex-col gap-4  p-4 bg-white border border-customGray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-customOrange-900"
+                                className="flex flex-col  gap-4  p-4 bg-white border border-customGray-100 rounded-lg  min-w-[15rem] min-h-[11rem] place-self-center shadow shadow-customOrange-900"
                             >
+                                <div className="flex flex-col items-center justify-center gap-4 ">
+                                    <span className="text-lg font-bold text-customOrange-900">
+                                        الحالي
+                                    </span>
+                                    <p className="text-3xl">{currentQueue}</p>
+                                </div>
                                 <label
-                                    className="py-2 text-center text-customOrange-900 "
+                                    className="text-center text-customOrange-900 "
                                     htmlFor="queueNumber"
                                 >
-                                    رقم الدور
+                                    رقم الدور الجديد
                                 </label>
                                 <input
                                     onChange={(e) =>
