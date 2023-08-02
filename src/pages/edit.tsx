@@ -1226,8 +1226,12 @@ function SportEdit({
     } as Sport;
     const [data, setData] = useState<Sport>(defaultValues);
     const [sportIsHidden, setSportIsHidden] = useState(false);
-    const [penaltyId, setPenaltyId] = useState<number | undefined>(undefined);
-    const [categoryId, setCategoryId] = useState<number | undefined>(undefined);
+    const [penaltyId, setPenaltyId] = useState<number | undefined | null>(
+        undefined
+    );
+    const [categoryId, setCategoryId] = useState<number | undefined | null>(
+        undefined
+    );
     const [discountList, setDiscountList] = useState<
         number[] | undefined | null
     >(null);
