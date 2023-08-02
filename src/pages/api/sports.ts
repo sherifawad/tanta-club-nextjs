@@ -71,11 +71,12 @@ export default async function handler(
                     sportExist: true,
                 });
             }
+            console.log("🚀 ~ file: sports.ts:68 ~ sportExist:", sportExist);
             // Store new discount
             const storeSport = await sportsPrismaRepo.create({
                 name,
                 title,
-                price,
+                price: +price,
                 hidden,
                 categoryId,
                 penaltyId,

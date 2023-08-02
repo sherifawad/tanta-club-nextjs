@@ -1,6 +1,5 @@
 [
     {
-        "id": 1,
         "name": "footBallSpecial",
         "title": "كرة قدم مميزة",
         "price": 275,
@@ -16,7 +15,6 @@
         ]
     },
     {
-        "id": 2,
         "name": "basketBall",
         "title": "سلة",
         "price": 275,
@@ -35,7 +33,6 @@
         ]
     },
     {
-        "id": 3,
         "name": "handBall",
         "title": "كرة يد",
         "price": 275,
@@ -54,7 +51,6 @@
         ]
     },
     {
-        "id": 4,
         "name": "volleyBall",
         "title": "كرة طائرة",
         "price": 275,
@@ -73,7 +69,6 @@
         ]
     },
     {
-        "id": 5,
         "name": "taekwondoMonthly",
         "title": "تايكوندو شهري",
         "price": 275,
@@ -89,7 +84,6 @@
         ]
     },
     {
-        "id": 6,
         "name": "taekwondoPrivate",
         "title": "تايكوندو خاص",
         "price": 175,
@@ -97,7 +91,6 @@
         "categoryId": 6
     },
     {
-        "id": 7,
         "name": "taekwondoTest",
         "title": "تايكوندو اختبار حزام",
         "price": 200,
@@ -105,7 +98,6 @@
         "categoryId": 6
     },
     {
-        "id": 8,
         "name": "judo",
         "title": "جودو",
         "price": 275,
@@ -121,7 +113,6 @@
         ]
     },
     {
-        "id": 9,
         "name": "pingPongMonthly",
         "title": "تنس طاولة شهري",
         "price": 325,
@@ -137,7 +128,6 @@
         ]
     },
     {
-        "id": 10,
         "name": "pingPongRent",
         "title": "إيجار تنس طاولة",
         "price": 25,
@@ -145,7 +135,6 @@
         "categoryId": 8
     },
     {
-        "id": 11,
         "name": "art",
         "title": "طلائع",
         "price": 50,
@@ -153,7 +142,6 @@
         "categoryId": 9
     },
     {
-        "id": 12,
         "name": "snooker",
         "title": "بلياردو شهري",
         "price": 375,
@@ -169,7 +157,6 @@
         ]
     },
     {
-        "id": 13,
         "name": "snookerRent",
         "title": "إيجار بلياردو",
         "price": 40,
@@ -177,7 +164,6 @@
         "categoryId": 10
     },
     {
-        "id": 14,
         "name": "modernPentathlonLaser",
         "title": "خماسي ليزر رن",
         "price": 325,
@@ -193,7 +179,6 @@
         ]
     },
     {
-        "id": 15,
         "name": "modernPentathlonDouble",
         "title": "خماسي ثنائي",
         "price": 375,
@@ -209,7 +194,6 @@
         ]
     },
     {
-        "id": 16,
         "name": "modernPentathlonTriple",
         "title": "خماسي ثلاثي",
         "price": 425,
@@ -225,7 +209,6 @@
         ]
     },
     {
-        "id": 17,
         "name": "modernPentathlonSchools",
         "title": "خماسي مدارس",
         "price": 325,
@@ -241,7 +224,6 @@
         ]
     },
     {
-        "id": 18,
         "name": "modernPentathlonMaster",
         "title": "خماسي ماسترز",
         "price": 425,
@@ -257,7 +239,6 @@
         ]
     },
     {
-        "id": 19,
         "name": "boxingBeginners",
         "title": "ملاكمة مبتدئين",
         "price": 225,
@@ -273,7 +254,6 @@
         ]
     },
     {
-        "id": 20,
         "name": "boxingAmateur",
         "title": "ملاكمة هواه",
         "price": 225,
@@ -289,7 +269,6 @@
         ]
     },
     {
-        "id": 21,
         "name": "boxingBuds",
         "title": "ملاكمة براعم",
         "price": 175,
@@ -305,7 +284,6 @@
         ]
     },
     {
-        "id": 22,
         "name": "boxingTeam",
         "title": "ملاكمة فريق",
         "price": 175,
@@ -321,7 +299,6 @@
         ]
     },
     {
-        "id": 23,
         "name": "boxingPrivate",
         "title": "ملاكمة خاص",
         "price": 325,
@@ -329,7 +306,6 @@
         "categoryId": 12
     },
     {
-        "id": 24,
         "name": "tennisSchools",
         "title": "تنس أرضي مدارس",
         "price": 325,
@@ -345,7 +321,6 @@
         ]
     },
     {
-        "id": 25,
         "name": "tennisTeam",
         "title": "تنس أرضي فريق",
         "price": 475,
@@ -361,7 +336,6 @@
         ]
     },
     {
-        "id": 26,
         "name": "tennisRentMorning",
         "title": "تنس أرضي إيجار صباحي",
         "price": 50,
@@ -369,7 +343,6 @@
         "categoryId": 13
     },
     {
-        "id": 27,
         "name": "tennisRentNight",
         "title": "تنس أرضي إيجار مسائي",
         "price": 125,
@@ -377,7 +350,6 @@
         "categoryId": 13
     },
     {
-        "id": 28,
         "name": "tennisPrivateSingleMorning",
         "title": "تنس أرضي خاص فردي صباحي",
         "price": 75,
@@ -385,7 +357,6 @@
         "categoryId": 13
     },
     {
-        "id": 29,
         "name": "tennisPrivateSingleNight",
         "title": "تنس أرضي خاص فردي مسائي",
         "price": 100,
@@ -393,7 +364,6 @@
         "categoryId": 13
     },
     {
-        "id": 30,
         "name": "tennisPrivateDoubleMorning",
         "title": "تنس أرضي خاص زوجي صباحي",
         "price": 90,
@@ -401,7 +371,6 @@
         "categoryId": 13
     },
     {
-        "id": 31,
         "name": "tennisPrivateDoubleNight",
         "title": "تنس أرضي خاص زوجي مسائي",
         "price": 150,
@@ -409,7 +378,6 @@
         "categoryId": 13
     },
     {
-        "id": 32,
         "name": "tennisPrivateTripleMorning",
         "title": "تنس أرضي خاص ثلاثي صباحي",
         "price": 125,
@@ -417,7 +385,6 @@
         "categoryId": 13
     },
     {
-        "id": 33,
         "name": "tennisPrivateTripleNight",
         "title": "تنس أرضي خاص ثلاثي مسائي",
         "price": 175,
@@ -425,7 +392,6 @@
         "categoryId": 13
     },
     {
-        "id": 34,
         "name": "squashBeginners",
         "title": "اسكواش مبتدئين",
         "price": 475,
@@ -441,7 +407,6 @@
         ]
     },
     {
-        "id": 35,
         "name": "squashAmateurs",
         "title": "اسكواش هواه",
         "price": 625,
@@ -457,7 +422,6 @@
         ]
     },
     {
-        "id": 36,
         "name": "squashBuds",
         "title": "اسكواش براعم",
         "price": 625,
@@ -473,7 +437,6 @@
         ]
     },
     {
-        "id": 37,
         "name": "squashTeam",
         "title": "اسكواش فريق",
         "price": 525,
@@ -489,7 +452,6 @@
         ]
     },
     {
-        "id": 38,
         "name": "squashPrivate",
         "title": "اسكواش خاص",
         "price": 110,
@@ -497,7 +459,6 @@
         "categoryId": 14
     },
     {
-        "id": 39,
         "name": "squashRentMember",
         "title": "اسكواش إيجار عضو",
         "price": 110,
@@ -505,7 +466,6 @@
         "categoryId": 14
     },
     {
-        "id": 40,
         "name": "squashRentTeam",
         "title": "اسكواش إيجار فريق",
         "price": 60,
@@ -513,7 +473,6 @@
         "categoryId": 14
     },
     {
-        "id": 41,
         "name": "gymnasticsGeneralTeam",
         "title": "جمباز عام فريق",
         "price": 350,
@@ -529,7 +488,6 @@
         ]
     },
     {
-        "id": 42,
         "name": "gymnasticsGeneralPrivate",
         "title": "جمباز عام خاص",
         "price": 125,
@@ -537,7 +495,6 @@
         "hidden": true
     },
     {
-        "id": 43,
         "name": "gymnasticsArtisticAcademy",
         "title": "جمباز فني أكاديمية",
         "price": 400,
@@ -553,7 +510,6 @@
         "hidden": false
     },
     {
-        "id": 44,
         "name": "gymnasticsArtistic_6-7_years",
         "title": "جمباز فني 6-7 سنوات",
         "price": 450,
@@ -569,7 +525,6 @@
         ]
     },
     {
-        "id": 45,
         "name": "gymnasticsArtistic_8-9_Years",
         "title": "جمباز فني 8-9 سنوات",
         "price": 500,
@@ -585,7 +540,6 @@
         ]
     },
     {
-        "id": 46,
         "name": "gymnasticsArtistic_10_Years",
         "title": "جمباز فني 10 سنوات",
         "price": 550,
@@ -601,7 +555,6 @@
         ]
     },
     {
-        "id": 47,
         "name": "gymnasticsArtistic_11-13_Years",
         "title": "جمباز فني 11-13 سنوات",
         "price": 850,
@@ -617,7 +570,6 @@
         ]
     },
     {
-        "id": 48,
         "name": "gymnasticsArtistic_1-2_Grade",
         "title": "جمباز فني درجة 1-2",
         "price": 900,
@@ -633,7 +585,6 @@
         ]
     },
     {
-        "id": 49,
         "name": "gymnasticsArtisticPrivate",
         "title": "جمباز فني حاص",
         "price": 60,
@@ -641,7 +592,6 @@
         "categoryId": 15
     },
     {
-        "id": 50,
         "name": "gymnasticsAerobicPrep",
         "title": "جمباز ايروبك تجهيزي",
         "price": 550,
@@ -657,7 +607,6 @@
         ]
     },
     {
-        "id": 51,
         "name": "gymnasticsAerobic_7-9_Years",
         "title": "جمباز ايروبك 7-9 سنوات",
         "price": 800,
@@ -673,7 +622,6 @@
         ]
     },
     {
-        "id": 52,
         "name": "gymnasticsAerobic_10-11_Years",
         "title": "جمباز ايروبك 10-11 سنوات",
         "price": 850,
@@ -689,7 +637,6 @@
         ]
     },
     {
-        "id": 53,
         "name": "gymnasticsAerobic_atLeast13_Years",
         "title": "جمباز ايروبك 13 فيما أعلى",
         "price": 950,
@@ -705,7 +652,6 @@
         ]
     },
     {
-        "id": 54,
         "name": "gymnasticsAerobicPrivate",
         "title": "جمباز ايروبك خاص",
         "price": 60,
@@ -713,7 +659,6 @@
         "categoryId": 15
     },
     {
-        "id": 55,
         "name": "gymnasticsRhythmic_10_Years",
         "title": "جمباز إيقاعي 10 سنوات",
         "price": 1500,
@@ -729,7 +674,6 @@
         ]
     },
     {
-        "id": 56,
         "name": "gymnasiumMonthly",
         "title": "جيم شهري",
         "price": 225,
@@ -745,7 +689,6 @@
         ]
     },
     {
-        "id": 57,
         "name": "gymnasiumOneSession",
         "title": "جيم حصة واحدة",
         "price": 30,
@@ -753,7 +696,6 @@
         "categoryId": 16
     },
     {
-        "id": 58,
         "name": "gymnasiumSinglePrivate",
         "title": "جيم خاص فردي",
         "price": 675,
@@ -761,7 +703,6 @@
         "categoryId": 16
     },
     {
-        "id": 59,
         "name": "gymnasiumDoublePrivate",
         "title": "جيم خاص زوجي",
         "price": 950,
@@ -769,7 +710,6 @@
         "categoryId": 16
     },
     {
-        "id": 60,
         "name": "gymnasiumTriplePrivate",
         "title": "جيم خاص ثلاثي",
         "price": 1400,
@@ -777,7 +717,6 @@
         "categoryId": 16
     },
     {
-        "id": 61,
         "name": "gymnasiumMassageSession",
         "title": "جيم حصة مساج",
         "price": 125,
@@ -785,7 +724,6 @@
         "categoryId": 16
     },
     {
-        "id": 62,
         "name": "gymnasium_3_Months",
         "title": "جيم ثلاث أشهر",
         "price": 600,
@@ -793,7 +731,6 @@
         "categoryId": 16
     },
     {
-        "id": 63,
         "name": "gymnasium_6_Months",
         "title": "جيم ستة أشهر",
         "price": 1100,
@@ -801,7 +738,6 @@
         "categoryId": 16
     },
     {
-        "id": 64,
         "name": "gymnasiumFriendsMonthly",
         "title": "جيم أصدقاء5 أفراد شهري",
         "price": 950,
@@ -809,7 +745,6 @@
         "categoryId": 16
     },
     {
-        "id": 65,
         "name": "athleticsMonthly",
         "title": "ألعاب قوى شهري",
         "price": 275,
@@ -825,7 +760,6 @@
         ]
     },
     {
-        "id": 66,
         "name": "athleticsPrivate",
         "title": "ألعاب قوى خاص",
         "price": 110,
@@ -833,7 +767,6 @@
         "categoryId": 17
     },
     {
-        "id": 67,
         "name": "fitnessMonthly",
         "title": "فتنس تراك شهري",
         "price": 275,
@@ -849,7 +782,6 @@
         ]
     },
     {
-        "id": 68,
         "name": "fitnessPrivate",
         "title": "فتنس تراك خاص",
         "price": 125,
@@ -857,7 +789,6 @@
         "categoryId": 18
     },
     {
-        "id": 69,
         "name": "fitnessPrivateGroup",
         "title": "فتنس تراك خاص مجموعة",
         "price": 500,
@@ -865,7 +796,6 @@
         "categoryId": 18
     },
     {
-        "id": 70,
         "name": "karateSchools",
         "title": "كاراتيه مدارس",
         "price": 275,
@@ -881,7 +811,6 @@
         ]
     },
     {
-        "id": 71,
         "name": "karateBuds",
         "title": "كاراتيه براعم",
         "price": 225,
@@ -897,7 +826,6 @@
         ]
     },
     {
-        "id": 72,
         "name": "karateYouth",
         "title": "كاراتيه ناشئين",
         "price": 175,
@@ -913,7 +841,6 @@
         ]
     },
     {
-        "id": 73,
         "name": "karateExam",
         "title": "كاراتيه اختبار",
         "price": 225,
@@ -921,7 +848,6 @@
         "categoryId": 19
     },
     {
-        "id": 74,
         "name": "karatePrivate",
         "title": "كاراتيه خاص 4",
         "price": 525,
@@ -929,7 +855,6 @@
         "categoryId": 19
     },
     {
-        "id": 75,
         "name": "karatePrivate_6-8_Group",
         "title": "كاراتيه خاص مجموعة 6-8",
         "price": 425,
@@ -937,7 +862,6 @@
         "categoryId": 19
     },
     {
-        "id": 76,
         "name": "fencingElite",
         "title": "سلاح نخبة",
         "price": 1200,
@@ -953,7 +877,6 @@
         ]
     },
     {
-        "id": 76,
         "name": "fencingSpecial",
         "title": "سلاح مميز",
         "price": 850,
@@ -969,7 +892,6 @@
         ]
     },
     {
-        "id": 77,
         "name": "fencingBeginners",
         "title": "سلاح مبتدئين",
         "price": 500,
@@ -985,7 +907,6 @@
         ]
     },
     {
-        "id": 78,
         "name": "fencingFitness",
         "title": "سلاح لياقة",
         "price": 250,
@@ -993,7 +914,6 @@
         "categoryId": 20
     },
     {
-        "id": 79,
         "name": "fencingOlympicLesson",
         "title": "سلاح درس أوليمبي",
         "price": 200,
@@ -1001,7 +921,6 @@
         "categoryId": 20
     },
     {
-        "id": 80,
         "name": "fencingInternationalLesson",
         "title": "سلاح درس دولي",
         "price": 150,
@@ -1009,7 +928,6 @@
         "categoryId": 20
     },
     {
-        "id": 81,
         "name": "fencingLocalLesson",
         "title": "سلاح درس محلي",
         "price": 100,
@@ -1017,7 +935,6 @@
         "categoryId": 20
     },
     {
-        "id": 82,
         "name": "fencingOneDayCamping",
         "title": "سلاح معسكر",
         "price": 300,
@@ -1025,7 +942,6 @@
         "categoryId": 20
     },
     {
-        "id": 83,
         "name": "fencingAdditionalLevel",
         "title": "سلاح مستوى إضافي",
         "price": 500,
@@ -1033,7 +949,6 @@
         "categoryId": 20
     },
     {
-        "id": 84,
         "name": "fencingUnit",
         "title": "سلاح وحدة تدريبية",
         "price": 150,
@@ -1041,7 +956,6 @@
         "categoryId": 20
     },
     {
-        "id": 85,
         "name": "fencingMonthly",
         "title": "سلاح شهري",
         "price": 200,
@@ -1057,7 +971,6 @@
         ]
     },
     {
-        "id": 86,
         "name": "swimmingSchools",
         "title": "سباحة مدارس",
         "price": 300,
@@ -1074,7 +987,6 @@
         ]
     },
     {
-        "id": 87,
         "name": "swimmingSpecialSchools",
         "title": " سباحة مدارس مميزة",
         "price": 475,
@@ -1091,7 +1003,6 @@
         ]
     },
     {
-        "id": 88,
         "name": "swimmingPrep",
         "title": "سباحة تجهيزي",
         "price": 275,
@@ -1108,7 +1019,6 @@
         ]
     },
     {
-        "id": 89,
         "name": "swimmingTeam",
         "title": "سباحة فريق",
         "price": 200,
@@ -1125,7 +1035,6 @@
         ]
     },
     {
-        "id": 90,
         "name": "swimmingPracticing",
         "title": "سباحة ممارسة",
         "price": 275,
@@ -1142,7 +1051,6 @@
         ]
     },
     {
-        "id": 91,
         "name": "swimmingSeniorEducation",
         "title": "سباحة تعليم كبار",
         "price": 525,
@@ -1158,7 +1066,6 @@
         ]
     },
     {
-        "id": 92,
         "name": "swimmingFree",
         "title": "سباحة فترة حرة",
         "price": 30,
@@ -1166,7 +1073,6 @@
         "categoryId": 1
     },
     {
-        "id": 93,
         "name": "swimmingPrivate_24",
         "title": "سباحة خاص 24 حصة",
         "price": 1000,
@@ -1182,7 +1088,6 @@
         ]
     },
     {
-        "id": 94,
         "name": "swimmingPrivate_12",
         "title": "سباحة خاص 12 حصة",
         "price": 600,
@@ -1198,7 +1103,6 @@
         ]
     },
     {
-        "id": 95,
         "name": "swimmingPrivate_8",
         "title": "سباحة خاص 8 حصص",
         "price": 450,
@@ -1214,7 +1118,6 @@
         ]
     },
     {
-        "id": 96,
         "name": "swimmingPrivate_4",
         "title": "سباحة خاص 4 حصص",
         "price": 250,
@@ -1230,7 +1133,6 @@
         ]
     },
     {
-        "id": 97,
         "name": "swimmingPrivate_12_Group",
         "title": "سباحة خاص مجموعة 12 حصة",
         "price": 1800,
@@ -1243,7 +1145,6 @@
         ]
     },
     {
-        "id": 98,
         "name": "swimmingPrivate_8_Group",
         "title": "سباحة خاص مجموعة 8 حصص",
         "price": 1500,
@@ -1256,7 +1157,6 @@
         ]
     },
     {
-        "id": 99,
         "name": "swimmingStar",
         "title": "سباحة النجوم",
         "price": 475,
@@ -1264,7 +1164,6 @@
         "categoryId": 1
     },
     {
-        "id": 100,
         "name": "footBallAcademy",
         "title": "أكاديمية كرة قدم",
         "price": 175,

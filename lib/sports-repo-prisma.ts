@@ -29,7 +29,7 @@ export const sportsPrismaRepo = {
         await prisma.sport.findMany({
             include: {
                 discounts: true,
-                Penalty: true,
+                penalty: true,
             },
         }),
     getById: async (id: number) =>
@@ -42,13 +42,29 @@ export const sportsPrismaRepo = {
 };
 
 async function create(sport: SportToEditType) {
-    const { discounts, ...rest } = sport;
+    console.log("🚀 ~ file: sports-repo-prisma.ts:45 ~ create ~ sport:", sport);
+    const { discounts, penaltyId, categoryId, ...rest } = sport;
+
     try {
         return {
             sport: await prisma.sport.create({
                 data: {
                     ...rest,
-                    discounts: connectSportToDiscounts(discounts),
+                    penalty: penaltyId
+                        ? {
+                              connect: {
+                                  id: penaltyId,
+                              },
+                          }
+                        : undefined,
+                    category: categoryId
+                        ? {
+                              connect: {
+                                  id: categoryId,
+                              },
+                          }
+                        : undefined,
+                    discounts: { connect: discounts },
                 },
             }),
             error: null,
@@ -59,7 +75,7 @@ async function create(sport: SportToEditType) {
 }
 
 async function update(id: number, params: SportToEditType) {
-    const { discounts, ...rest } = params;
+    const { discounts, penaltyId, categoryId, ...rest } = params;
 
     try {
         return {
@@ -67,6 +83,20 @@ async function update(id: number, params: SportToEditType) {
                 where: { id },
                 data: {
                     ...rest,
+                    penalty: penaltyId
+                        ? {
+                              connect: {
+                                  id: penaltyId,
+                              },
+                          }
+                        : undefined,
+                    category: categoryId
+                        ? {
+                              connect: {
+                                  id: categoryId,
+                              },
+                          }
+                        : undefined,
                     discounts: { connect: discounts },
                 },
             }),
@@ -97,9 +127,7 @@ function connectSportToDiscounts(
     if (!discounts || discounts == null || discounts.length < 1)
         return undefined;
     return {
-        connect: discounts.map((id) => ({
-            id,
-        })),
+        connect: discounts.map((id) => id),
     } as
         | Prisma.DiscountUncheckedCreateNestedManyWithoutSportsInput
         | Prisma.DiscountCreateNestedManyWithoutSportsInput;

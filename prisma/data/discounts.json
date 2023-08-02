@@ -1,6 +1,5 @@
 [
     {
-        "id": 1,
         "type": "PERCENTAGE",
         "title": "خصم تعدد إخوة نسبة",
         "minimum": 10,
@@ -10,7 +9,6 @@
         "enabled": true
     },
     {
-        "id": 2,
         "type": "PERCENTAGE",
         "title": "خصم تعددالعاب نسبة",
         "minimum": 10,
@@ -20,7 +18,6 @@
         "enabled": true
     },
     {
-        "id": 3,
         "type": "FIXED",
         "title": "خصم تعدد إخوة ثابت",
         "minimum": 25,
@@ -30,7 +27,6 @@
         "enabled": true
     },
     {
-        "id": 4,
         "type": "FIXED",
         "title": "خصم تعددالعاب ثابت",
         "minimum": 25,
@@ -40,7 +36,6 @@
         "enabled": true
     },
     {
-        "id": 5,
         "type": "PERCENTAGE",
         "title": "خصم دفع مبكر نسبة",
         "minimum": 10,
@@ -52,7 +47,6 @@
         "enabled": true
     },
     {
-        "id": 6,
         "type": "PERCENTAGE",
         "title": "خصم تعدد إخوة سباحة نسبة",
         "minimum": 20,

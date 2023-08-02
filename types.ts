@@ -26,7 +26,7 @@ export type Sport = {
     updatedAt: string;
     categoryId: number | null;
     penaltyId?: number | null;
-    Penalty?: Penalty | null;
+    penalty?: Penalty | null;
     discounts?: (Partial<Omit<Discount, "id">> & { id: number }[]) | null;
 };
 
@@ -144,7 +144,7 @@ export type RangeInput = {
 
 export interface PlayerSport extends Omit<Sport, "discounts"> {
     discounts?: Discount[] | null;
-    Penalty?: Penalty | null;
+    penalty?: Penalty | null;
     totalPenalty?: number;
     totalDiscount?: number;
 }

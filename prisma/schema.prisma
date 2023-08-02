@@ -55,7 +55,7 @@ model Sport {
   discounts  Discount[]
   category   Category?  @relation(fields: [categoryId], references: [id])
   categoryId Int?
-  Penalty    Penalty?   @relation(fields: [penaltyId], references: [id])
+  penalty    Penalty?   @relation(fields: [penaltyId], references: [id])
   penaltyId  Int?
   data       Data[]
 }

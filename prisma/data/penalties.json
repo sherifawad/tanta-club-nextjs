@@ -1,6 +1,5 @@
 [
     {
-        "id": 1,
         "type": "FIXED",
         "minimum": 5,
         "Maximum": 25,

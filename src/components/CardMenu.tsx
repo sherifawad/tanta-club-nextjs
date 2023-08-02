@@ -48,7 +48,7 @@ function CardMenu({ sport }: Props) {
                                 <button
                                     className={`text-customOrange-900 group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                                 >
-                                    {sport.Penalty?.title}
+                                    {sport.penalty?.title}
                                 </button>
                             )}
                         </Menu.Item>

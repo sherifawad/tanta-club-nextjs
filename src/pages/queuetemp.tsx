@@ -42,10 +42,6 @@ export default function QueueTempPage({ current = 0 }: { current: number }) {
             queueNumber: { value: number };
         };
         const number = target.queueNumber.value;
-        console.log(
-            "🚀 ~ file: queuetemp.tsx:45 ~ setCurrentQueueNumber ~ number:",
-            number
-        );
         const data = await fetch(`${getBaseUrl()}/api/queuetemp`, {
             method: "POST",
             body: JSON.stringify({

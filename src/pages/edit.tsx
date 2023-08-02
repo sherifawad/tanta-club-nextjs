@@ -1226,8 +1226,8 @@ function SportEdit({
     } as Sport;
     const [data, setData] = useState<Sport>(defaultValues);
     const [sportIsHidden, setSportIsHidden] = useState(false);
-    const [penaltyId, setPenaltyId] = useState<number | null | undefined>(null);
-    const [categoryId, setCategoryId] = useState<number | null>(null);
+    const [penaltyId, setPenaltyId] = useState<number | undefined>(undefined);
+    const [categoryId, setCategoryId] = useState<number | undefined>(undefined);
     const [discountList, setDiscountList] = useState<
         number[] | undefined | null
     >(null);
@@ -1257,8 +1257,8 @@ function SportEdit({
         setSelectValue(null);
         setSportIsHidden(false);
         setError("");
-        setCategoryId(0);
-        setPenaltyId(0);
+        setCategoryId(undefined);
+        setPenaltyId(undefined);
         setDiscountList(null);
     };
     const handleSubmitSport = async (e: SyntheticEvent) => {

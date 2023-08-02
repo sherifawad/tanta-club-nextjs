@@ -15,7 +15,10 @@ const sportsData = require("./data/sport-data.json");
 const client = new PrismaClient();
 async function seed() {
     // await client.data.deleteMany();
+
     // await client.sport.deleteMany();
+    // console.log("Deleted records in sport table");
+    // await client.$executeRaw`ALTER SEQUENCE Sport RESTART WITH 1`;
     // await client.category.deleteMany();
     // await client.discount.deleteMany();
     // await client.penalty.deleteMany();
@@ -25,34 +28,34 @@ async function seed() {
     // await client.penalty.createMany({ data: penalties });
     // await client.user.createMany({ data: users });
     // await client.data.createMany({ data: sportsData });
-    // const sprts1 = sports.slice(0, 30);
-    // const sprts2 = sports.slice(30, 60);
-    // const sprts3 = sports.slice(60, 90);
-    // const sprts4 = sports.slice(89);
-    // Promise.all(
-    //     sports.map((sport: any) => {
-    //         const { discounts, ...rest } = sport;
-    //         return client.sport.create({
-    //             data: {
-    //                 ...rest,
-    //                 discounts:
-    //                     discounts && discounts.length > 0
-    //                         ? {
-    //                               connect: discounts.map((disc: any) => ({
-    //                                   id: disc.id,
-    //                               })),
-    //                           }
-    //                         : undefined,
-    //             },
-    //         });
-    //     })
-    // )
-    //     .then(async () => {
-    //         console.info("[SEED] Successfully create Sport records");
-    //     })
-    //     .catch((e) =>
-    //         console.error("[SEED] Failed to create Sport records", e)
-    //     );
+    const sprts1 = sports.slice(0, 30);
+    const sprts2 = sports.slice(30, 60);
+    const sprts3 = sports.slice(60, 90);
+    const sprts4 = sports.slice(89);
+    Promise.all(
+        sprts4.map((sport: any) => {
+            const { discounts, ...rest } = sport;
+            return client.sport.create({
+                data: {
+                    ...rest,
+                    discounts:
+                        discounts && discounts.length > 0
+                            ? {
+                                  connect: discounts.map((disc: any) => ({
+                                      id: disc.id,
+                                  })),
+                              }
+                            : undefined,
+                },
+            });
+        })
+    )
+        .then(async () => {
+            console.info("[SEED] Successfully create Sport records");
+        })
+        .catch((e) =>
+            console.error("[SEED] Failed to create Sport records", e)
+        );
 }
 
 seed()
