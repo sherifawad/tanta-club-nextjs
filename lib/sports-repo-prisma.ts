@@ -65,7 +65,7 @@ async function create(sport: SportToEditType) {
                           }
                         : undefined,
                     discounts: { connect: discounts },
-                },
+                } as any,
             }),
             error: null,
         };
@@ -98,7 +98,7 @@ async function update(id: number, params: SportToEditType) {
                           }
                         : undefined,
                     discounts: { connect: discounts },
-                },
+                } as any,
             }),
             error: null,
         };
