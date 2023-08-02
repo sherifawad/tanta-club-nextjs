@@ -34,10 +34,16 @@ const Header = () => {
                             <p className="hidden sm:inline">الرئيسية</p>
                         </Link>
                     </li>
-                    <li>
+                    {/* <li>
                         <Link href="/queue" className="flex gap-2 sm:p-2">
                             <span>🏁</span>
                             <p className="hidden sm:inline">الانتظار</p>
+                        </Link>
+                    </li> */}
+                    <li>
+                        <Link href="/queuetemp" className="flex gap-2 sm:p-2">
+                            <span>🏁</span>
+                            <p className="hidden sm:inline">2الانتظار</p>
                         </Link>
                     </li>
                     <li className="self-end">
